@@ -1,0 +1,12 @@
+{
+    "out": "docs",
+    "exclude": ["**/node_modules/**", "**/*.spec.ts"],
+    "plugin": ["typedoc-theme-hierarchy", "typedoc-plugin-rename-defaults"],
+    "theme": "hierarchy",
+    "readme": "./README.md",    
+    "entryPoints": ["./src/index.ts"],
+    "entryPointStrategy": "expand",
+    "categorizeByGroup": true,
+    "name": "Realtime Web Suite Client package",
+    "jsDocCompatibility": true  
+}
