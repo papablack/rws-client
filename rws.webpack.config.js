@@ -1,7 +1,9 @@
 const path = require('path');
 const keysTransformer = require('ts-transformer-keys/transformer').default;
-const webpackFilters = require('./webpackFilters');
-const nodeExternals = require('webpack-node-externals');
+
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+
 
 module.exports = {
   entry: `${process.cwd()}/src/index.ts`,
@@ -16,7 +18,7 @@ module.exports = {
     extensions: ['.ts', '.js', '.node'],  
     alias: {
       '@App': path.resolve(process.cwd(), 'src'),
-    }
+    },  
   },
   module: {
     rules: [
@@ -24,13 +26,20 @@ module.exports = {
           test: /\.(js|ts)$/,
           exclude: /node_modules/,        
           use: `${process.cwd()}/node_modules/ts-loader/dist/index.js`        
+        },
+        {
+          test: /\.scss$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            'sass-loader',
+          ],
         }       
       ],
   },
   plugins: [
-  ],
-  stats: {
-    warningsFilter: webpackFilters,
-  },
-  externals: [nodeExternals()],
+    new MiniCssExtractPlugin({
+      filename: 'main.css',
+    }),
+  ]
 };

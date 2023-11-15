@@ -5,7 +5,9 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsc-watch --noClear -p ./tsconfig.json",
+    "docs": "typedoc --tsconfig ./tsconfig.json",
+    "build": "npx tsc"
   },
   "repository": {
     "type": "git",
@@ -23,16 +25,22 @@
     "url": "https://github.com/papablack/rws-client/issues"
   },
   "homepage": "https://github.com/papablack/rws-client#readme",
-  "dependencies": {          
-      "rws-js-server": "^1.6.2",
-      "reflect-metadata": "^0.1.13",
-      "ts-loader": "^9.4.4"
+  "dependencies": {
+    "reflect-metadata": "^0.1.13",
+    "ts-loader": "^9.4.4",
+    "tsc-watch": "^6.0.4"
   },
-  "devDependencies": {    
-      "ts-node": "^10.9.1",
-      "tsconfig-paths-webpack-plugin": "^4.1.0",
-      "typescript": "^5.1.6",
-      "webpack-cli": "^5.1.4",
-      "webpack-node-externals": "^3.0.0"
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "node-sass": "^9.0.0",
+    "sass-loader": "^13.3.2",
+    "style-loader": "^3.3.3",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
+    "typescript": "^5.1.6",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
   }
 }

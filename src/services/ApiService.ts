@@ -1,7 +1,5 @@
-import { RWSService } from 'rws-js-server';
-
-class ApiService extends RWSService {
-
+const ApiService = {
+   
 }
 
-export default ApiService.getSingleton();
+export default ApiService;
