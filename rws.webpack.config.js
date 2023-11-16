@@ -15,7 +15,7 @@ module.exports = {
     filename: 'rws.client.js',
   },
   resolve: {
-    extensions: ['.ts', '.js', '.node'],  
+    extensions: ['.ts', '.js'],  
     alias: {
       '@App': path.resolve(process.cwd(), 'src'),
     },  
