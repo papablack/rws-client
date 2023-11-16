@@ -1,6 +1,7 @@
 const path = require('path');
 const keysTransformer = require('ts-transformer-keys/transformer').default;
-
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const JsMinimizerPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
@@ -28,7 +29,7 @@ module.exports = {
           use: `${process.cwd()}/node_modules/ts-loader/dist/index.js`        
         },
         {
-          test: /\.scss$/,
+          test: /\.(scss|css)$/, 
           use: [
             MiniCssExtractPlugin.loader,
             'css-loader',
@@ -41,5 +42,11 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'main.css',
     }),
-  ]
+  ],
+  optimization: {
+    minimizer: [
+      new JsMinimizerPlugin(),
+      new CssMinimizerPlugin()
+    ]
+  }
 };

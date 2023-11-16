@@ -4,4 +4,4 @@ class ApiService extends TheService {
 
 }
 
-export default ApiService;
+export default ApiService.getSingleton();

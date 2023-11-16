@@ -27,16 +27,22 @@
   "homepage": "https://github.com/papablack/rws-client#readme",
   "dependencies": {
     "reflect-metadata": "^0.1.13",
+    "socket.io-client": "^4.7.2",
     "ts-loader": "^9.4.4",
-    "tsc-watch": "^6.0.4"
+    "tsc-watch": "^6.0.4",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@types/socket.io-client": "^3.0.0",
+    "@types/uuid": "^9.0.7",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
+    "css-minimizer-webpack-plugin": "^5.0.1",
     "mini-css-extract-plugin": "^2.7.6",
     "node-sass": "^9.0.0",
     "sass-loader": "^13.3.2",
     "style-loader": "^3.3.3",
+    "terser-webpack-plugin": "^5.3.9",
     "ts-node": "^10.9.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^5.1.6",
