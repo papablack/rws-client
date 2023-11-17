@@ -1,55 +1,78 @@
 import TheService from "./_service";
-import { FASTRouter, RouterConfiguration, Route } from '@microsoft/fast-router';
-import config from "./ConfigService";
 
-type RouteSettings = {
-  public?: boolean
-};
+import Router from 'url-router';
+import RWSViewComponent from "../components/_component";
+import { RouterComponent } from "../components/router/component";
+import { FASTElement } from "@microsoft/fast-element";
 
-class AppRouterConfiguration extends RouterConfiguration<RouteSettings> {
-  public configure() {
-    this.title = 'My App';
-    this.defaultLayout = config().get('defaultLayout');
-    this.routes.map(...config().get('routes'));
+type IFrontRoutes = Record<string, unknown>; 
 
-    // this.routes.fallback(
-    //   () => Session.isLoggedIn
-    //     ? { redirect: 'not-found' }
-    //     : { redirect: 'login' }
-    // );
+type IRWSRouteResult = {
+  handler: () => typeof RWSViewComponent;
+  params: Record<string, string>;
+}
 
-    // this.routes.converter("Confirmation", async (confirmationId) => {
-    //   return confirmation;
-    // });
-
-    this.contributors.push({
-      navigate(phase) {
-        const settings = phase.route.settings;
-        return;
-        // if (settings && settings.public) {
-        //   return;
-        // }
+class RWSRouter {
+  private baseComponent: RWSViewComponent;
+  private urlRouter: Router<any>;
   
-        // if (Session.loggedIn) {
-        //   return;
-        // }
-  
-        // phase.cancel(() => {
-        //   Session.returnUrl = Route.path.current;
-        //   Route.name.replace(phase.router, 'login');
-        // });
-      }
-    });
+  constructor(routerComponent: RWSViewComponent, urlRouter: Router<any>){
+    this.baseComponent = routerComponent;
+    this.urlRouter = urlRouter;
+  }
+
+  public routeComponent(newComponent: RWSViewComponent)
+  {
+    this.baseComponent.append(newComponent);
+  }
+
+  public handleRoute(route: IRWSRouteResult): typeof RWSViewComponent 
+  {
+    return route.handler();
+  }
+
+  public handleCurrentRoute(): typeof RWSViewComponent
+  {
+    const currentRoute = this.find(window.location.pathname);
+    return this.handleRoute(currentRoute);
+  }
+
+  public find(url: string): IRWSRouteResult
+  {
+    return this.urlRouter.find(url);
   }
 }
 
 class RoutingService extends TheService {
-  private routerConfig = new AppRouterConfiguration();
+  private router: Router<any>;
+  private routes: IFrontRoutes;
 
-  public config(): AppRouterConfiguration
+  constructor(){
+    super();        
+  }
+
+  public initRouting(routes: IFrontRoutes)
   {
-    return this.routerConfig;
+    this.routes = routes;
+    this.router = new Router(this.routes);
+
+    FASTElement.define(RouterComponent, RouterComponent.getDefinition());
+  }
+
+  public apply(comp: RWSViewComponent): RWSRouter
+  {
+    return new RWSRouter(comp, this.router);
+  }
+
+  public routeHandler = (comp: typeof RWSViewComponent) => () => {
+    return comp;
+  }  
+
+  public getRoutes(): IFrontRoutes
+  {
+    return this.routes;
   }
 }
 
 export default RoutingService.getSingleton();
+export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult }

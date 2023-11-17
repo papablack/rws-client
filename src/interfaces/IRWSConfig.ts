@@ -1,4 +1,4 @@
-import { Route } from "@microsoft/fast-router";
+import { IFrontRoutes } from "../services/RoutingService";
 import RWSViewComponent from "../components/_component";
 
 export default interface IRWSConfig {
@@ -6,5 +6,5 @@ export default interface IRWSConfig {
     backendUrl?: string,
     backendRoutes?: any[]
     apiPrefix?: string
-    routes?: Route[]
+    routes?: IFrontRoutes
 }

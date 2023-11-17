@@ -1,12 +1,16 @@
 import TheService from "./_service";
 import IRWSConfig from '../interfaces/IRWSConfig';
 
+import RoutingService from "./RoutingService";
+
 class ConfigService extends TheService {
     private data: IRWSConfig;    
   
     constructor(cfg: IRWSConfig) {
       super();    
-      this.data = cfg;      
+      this.data = cfg;    
+      
+      RoutingService.initRouting(this.data.routes);
     }    
   
     public get(key: keyof IRWSConfig): any

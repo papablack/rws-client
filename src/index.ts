@@ -3,23 +3,26 @@ import startClient from './run';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
 
 import NotifyService from './services/NotifyService';
-import RoutingService from './services/RoutingService';
-import { Route } from '@microsoft/fast-router';
+import RoutingService, { IFrontRoutes } from './services/RoutingService';
+
 import RWSViewComponent from './components/_component';
 import ApiService, { IBackendRoute } from './services/ApiService';
-
+import rwsConfig from './services/ConfigService';
+import { RouterComponent } from './components/router/component';
 class RWSClient {   
-    private config: IRWSConfig = { backendUrl: '', routes: [] };
+    private config: IRWSConfig = { backendUrl: '', routes: {} };
 
     async start(config: IRWSConfig): Promise<boolean> {    
-        this.config = {...this.config, ...config};            
+        this.config = {...this.config, ...config};                    
 
-        await startClient(this.config);
+        rwsConfig(this.config);        
+
+        await startClient();
     
         return true;
     }
 
-    public addRoutes(routes: Route[]){
+    public addRoutes(routes: IFrontRoutes){
         this.config.routes = routes;
     }
 
@@ -33,10 +36,14 @@ class RWSClient {
     }
 
     public setBackendRoutes(routes: IBackendRoute[]) {
-        this.config.backendRoutes = routes;    
-        console.log(routes);
+        this.config.backendRoutes = routes;            
+    }
+
+    private enableRouting(): void
+    {
+        
     }
 }
 
 export default RWSClient;
-export { NotifyUiType, NotifyLogType, RoutingService, NotifyService, RWSViewComponent, ApiService }
+export { NotifyUiType, NotifyLogType, RoutingService, NotifyService, RWSViewComponent, ApiService,  RouterComponent}

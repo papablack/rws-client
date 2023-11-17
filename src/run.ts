@@ -3,9 +3,9 @@ import appConfig, { ConfigService } from "./services/ConfigService";
 import NotifyService from "./services/NotifyService";
 import WSService from "./services/WSService";
 
-const main = async (cfg: IRWSConfig): Promise<boolean> => {
+const main = async (): Promise<boolean> => {    
     //First config run for setting up data. Later just use appConfig().get() to obtain data.
-    const config: ConfigService = appConfig(cfg);    
+    const config: ConfigService = appConfig();    
 
     WSService.on('ws:disconnected', (instance, params) => {
         NotifyService.notify('Your websocket client disconnected from the server.', 'error');
