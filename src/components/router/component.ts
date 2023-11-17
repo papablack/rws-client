@@ -2,7 +2,6 @@ import { customElement, FASTElement, observable, html, ref  } from "@microsoft/f
 import RoutingService, { RWSRouter } from "../../services/RoutingService";
 import RWSViewComponent from "../_component";
 
-import { DefaultLayout } from '../../../../../../src/components/default-layout/component';
 
 export class RouterComponent extends RWSViewComponent{
     static autoLoadFastElement = false;
