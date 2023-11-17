@@ -2,11 +2,11 @@ import TheService from "./_service";
 import IRWSConfig from '../interfaces/IRWSConfig';
 
 class ConfigService extends TheService {
-    private data: IRWSConfig;
+    private data: IRWSConfig;    
   
     constructor(cfg: IRWSConfig) {
       super();    
-      this.data = cfg;
+      this.data = cfg;      
     }    
   
     public get(key: keyof IRWSConfig): any

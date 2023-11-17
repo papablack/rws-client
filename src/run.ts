@@ -12,7 +12,7 @@ const main = async (cfg: IRWSConfig): Promise<boolean> => {
     });
 
     WSService.on('ws:connected', (instance, params) => {
-        NotifyService.alert('You are connected.', 'error');
+        NotifyService.notify('You are connected to websocket.', 'info');
     });
 
     WSService.on('ws:reconnect', (instance, params) => {
