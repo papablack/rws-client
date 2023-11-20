@@ -31,7 +31,15 @@ module.exports = {
         {
           test: /\.(scss|css)$/, 
           use: [
-            MiniCssExtractPlugin.loader,
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                // This ensures the outputted CSS file is in the same folder as the SCSS file
+                publicPath: (resourcePath, context) => {
+                  return path.relative(path.dirname(resourcePath), context) + '/';
+                },
+              },
+            },
             'css-loader',
             'sass-loader',
           ],
@@ -40,7 +48,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'main.css',
+      filename: '[name].css',
     }),
   ],
   optimization: {

@@ -6,6 +6,11 @@ import RWSViewComponent from "../_component";
 export class RouterComponent extends RWSViewComponent{
     static autoLoadFastElement = false;
     private routing: RWSRouter;
+
+    static definition = {
+        name: 'rws-router',
+        template: html<RouterComponent>`<div class="placeholder"></div>`            
+    };
     
     @observable childComponents: HTMLElement[] = [];
     placeholder: HTMLElement;
@@ -19,16 +24,8 @@ export class RouterComponent extends RWSViewComponent{
     connectedCallback() {
         super.connectedCallback();
         this.placeholder = this.shadowRoot?.querySelector('.placeholder');
-        const newViewComponent = this.routing.handleCurrentRoute();
-        const newComponent = new newViewComponent();
-        this.placeholder.appendChild(newComponent);
-        
-    }
-
-    static getDefinition(){
-        return {
-            name: 'rws-router',
-            template: html<RouterComponent>`<div class="placeholder"></div>`            
-        }
-    }
+        const childComponent = this.routing.handleCurrentRoute();
+        const newComponent = new childComponent();
+        this.placeholder.appendChild(newComponent);        
+    }  
 }

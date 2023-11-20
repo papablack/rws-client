@@ -26,7 +26,7 @@ class RWSRouter {
     this.baseComponent.append(newComponent);
   }
 
-  public handleRoute(route: IRWSRouteResult): typeof RWSViewComponent 
+  public handleRoute(route: IRWSRouteResult): typeof RWSViewComponent
   {
     return route.handler();
   }
@@ -56,7 +56,7 @@ class RoutingService extends TheService {
     this.routes = routes;
     this.router = new Router(this.routes);
 
-    FASTElement.define(RouterComponent, RouterComponent.getDefinition());
+    RouterComponent.defineComponent();
   }
 
   public apply(comp: RWSViewComponent): RWSRouter
