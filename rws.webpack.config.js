@@ -17,10 +17,10 @@ module.exports = {
     filename: 'rws.client.js',
   },
   resolve: {
-    extensions: ['.ts', '.js'],  
-    alias: {
-      '@App': path.resolve(process.cwd(), 'src'),
-    },  
+    extensions: ['.ts', '.js'],
+    alias: {      
+      '@rws': path.resolve(__dirname),
+    },      
   },
   module: {
     rules: [  
@@ -38,9 +38,9 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: [          
+        use: [
           'css-loader',
-          'sass-loader',
+          'sass-loader'
         ],
       },
       {

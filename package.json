@@ -30,6 +30,7 @@
     "@microsoft/fast-element": "^1.12.0",
     "@microsoft/fast-router": "^0.4.8",
     "reflect-metadata": "^0.1.13",
+    "resolve-url-loader": "^5.0.0",
     "socket.io-client": "^4.7.2",
     "ts-loader": "^9.4.4",
     "tsc-watch": "^6.0.4",

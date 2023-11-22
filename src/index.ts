@@ -9,13 +9,21 @@ import RWSViewComponent from './components/_component';
 import ApiService, { IBackendRoute } from './services/ApiService';
 import rwsConfig from './services/ConfigService';
 import { RouterComponent } from './components/router/component';
+
+import { 
+    allComponents, 
+    provideFASTDesignSystem 
+} from "@microsoft/fast-components";
+
 class RWSClient {   
     private config: IRWSConfig = { backendUrl: '', routes: {} };
 
     async start(config: IRWSConfig): Promise<boolean> {    
         this.config = {...this.config, ...config};                    
 
-        rwsConfig(this.config);        
+        rwsConfig(this.config);  
+        
+        provideFASTDesignSystem().register(allComponents);
 
         await startClient();
     

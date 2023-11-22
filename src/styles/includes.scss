@@ -1,0 +1,23 @@
+@function px-to-em($pixels, $base-font-size: 16) {
+    @return #{calc($pixels / $base-font-size)}em;
+  }
+  
+// Mixin for the grid container
+@mixin grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -#{px-to-em(15)}; // Adjust as needed
+    margin-left: -#{px-to-em(15)}; // Adjust as needed
+}
+
+// Mixin for grid columns
+@mixin grid-column($columns: 12) {
+    flex: 0 0 calc(100% / 12 * $columns);
+    max-width: calc(100% / 12 * $columns);
+    padding-right: #{px-to-em(15)}; // Adjust as needed
+    padding-left: #{px-to-em(15)}; // Adjust as needed
+}
+
+* {
+	box-sizing: border-box;
+}
