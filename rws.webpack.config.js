@@ -25,6 +25,12 @@ module.exports = {
   module: {
     rules: [  
       {
+        test: /\.html$/,
+        use: [          
+          path.resolve(__dirname, './webpack/rws_fast_html_loader.js')
+        ],
+      },
+      {
         test: /\.css$/,
         use: [          
           path.resolve(__dirname, './webpack/rws_fast_css_loader.js')

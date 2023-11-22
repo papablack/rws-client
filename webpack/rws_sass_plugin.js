@@ -49,15 +49,13 @@ class RWSSassPlugin {
             let finalCss = result.css;
 
             // Check for CSS imports
-            const [cssImports] = this.extractCssImports(module.resource);
-            
-            console.log(module.resource, cssImports);            
+            const [cssImports] = this.extractCssImports(module.resource);                        
 
             cssImports.forEach(originalImportPath => {
               let importPath = originalImportPath;
 
               if(!fs.existsSync(importPath)){
-                console.warn(`RWS Sass compiler did not find '${importPath}' from '${module.resource}' looking inside node_modules...`);
+                //console.warn(`RWS Sass compiler did not find '${importPath}' from '${module.resource}' looking inside node_modules...`);
                 importPath = process.cwd() + '/node_modules/' + importPath;
 
                 if(!fs.existsSync(importPath)){
