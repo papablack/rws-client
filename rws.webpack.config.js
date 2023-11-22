@@ -5,6 +5,7 @@ const JsMinimizerPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
+const RWSSassPlugin = require('./webpack/rws_sass_plugin');
 
 module.exports = {
   entry: `${process.cwd()}/src/index.ts`,
@@ -22,34 +23,29 @@ module.exports = {
     },  
   },
   module: {
-    rules: [
-        {
-          test: /\.(js|ts)$/,
-          exclude: /node_modules/,        
-          use: `${process.cwd()}/node_modules/ts-loader/dist/index.js`        
-        },
-        {
-          test: /\.(scss|css)$/, 
-          use: [
-            {
-              loader: MiniCssExtractPlugin.loader,
-              options: {
-                // This ensures the outputted CSS file is in the same folder as the SCSS file
-                publicPath: (resourcePath, context) => {
-                  return path.relative(path.dirname(resourcePath), context) + '/';
-                },
-              },
-            },
-            'css-loader',
-            'sass-loader',
-          ],
-        }       
-      ],
+    rules: [  
+      {
+        test: /\.css$/,
+        use: [          
+          path.resolve(__dirname, './webpack/rws_fast_css_loader.js')
+        ],
+      },
+      {
+        test: /\.scss$/,
+        use: [          
+          'css-loader',
+          'sass-loader',
+        ],
+      },
+      {
+        test: /\.(ts|js)$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      }
+    ],
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-    }),
+    new RWSSassPlugin()
   ],
   optimization: {
     minimizer: [
