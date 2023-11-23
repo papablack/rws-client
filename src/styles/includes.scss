@@ -6,16 +6,26 @@
 @mixin grid-container {
     display: flex;
     flex-wrap: wrap;
-    margin-right: -#{px-to-em(15)}; // Adjust as needed
-    margin-left: -#{px-to-em(15)}; // Adjust as needed
+    // gap: px-to-em(15);
+    // margin-right: -#{px-to-em(15)}; // Adjust as needed
+    // margin-left: -#{px-to-em(15)}; // Adjust as needed
 }
 
 // Mixin for grid columns
 @mixin grid-column($columns: 12) {
     flex: 0 0 calc(100% / 12 * $columns);
     max-width: calc(100% / 12 * $columns);
-    padding-right: #{px-to-em(15)}; // Adjust as needed
-    padding-left: #{px-to-em(15)}; // Adjust as needed
+    // padding-right: #{px-to-em(15)}; // Adjust as needed
+    // padding-left: #{px-to-em(15)}; // Adjust as needed
+}
+
+@mixin grid-align-item($alignment) {
+    align-self: $alignment;
+}
+
+@mixin grid-set-align($horizontal, $vertical: top) {
+    justify-content: $horizontal;
+    align-items: $vertical;
 }
 
 * {

@@ -18,7 +18,7 @@ export class RouterComponent extends RWSViewComponent{
     constructor(){
         super();                
 
-        this.routing = RoutingService.apply(this);                          
+        this.routing = RoutingService.apply(this);
     }
 
     connectedCallback() {

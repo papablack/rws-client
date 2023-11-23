@@ -1,5 +1,12 @@
-import { FASTElement } from "@microsoft/fast-element";
+import { FASTElement, ViewTemplate, ElementStyles } from "@microsoft/fast-element";
 import config from "../services/ConfigService";
+
+interface IFastDefinition {
+    name: string;
+    template: ViewTemplate;
+    styles?: ElementStyles;
+}
+
 class RWSViewComponent extends FASTElement {
     static autoLoadFastElement = true;
 
@@ -20,6 +27,28 @@ class RWSViewComponent extends FASTElement {
         }
 
         this.define(this, def);
+    }
+
+    static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null){                    
+        const def: IFastDefinition = {
+            name: tagName,
+            template: htmlTemplate
+        }
+
+        if(styles){
+            def.styles = styles;
+        }
+
+        return def;
+    }
+    
+
+    on<T>(eventName: string, callback: (callbackEvent: CustomEvent<T>) => void)
+    {
+        this.addEventListener(eventName, (event: Event) => {
+            const customEvent = event as CustomEvent<T>;           
+            callback(customEvent);
+        });
     }
 }
 
