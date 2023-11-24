@@ -7,6 +7,8 @@ interface IFastDefinition {
     styles?: ElementStyles;
 }
 
+type $OutputType<T extends Element> = NodeListOf<T> | T | null;
+
 class RWSViewComponent extends FASTElement {
     static autoLoadFastElement = true;
 
@@ -41,14 +43,36 @@ class RWSViewComponent extends FASTElement {
 
         return def;
     }
-    
 
-    on<T>(eventName: string, callback: (callbackEvent: CustomEvent<T>) => void)
+    on<T>(type: string, listener: (event: CustomEvent<T>) => any)
     {
-        this.addEventListener(eventName, (event: Event) => {
-            const customEvent = event as CustomEvent<T>;           
-            callback(customEvent);
+        this.addEventListener(type, (baseEvent: Event) => {
+            listener(baseEvent as CustomEvent<T>);
         });
+    }
+
+    $emitDown<T>(eventName: string, payload: T){
+        this.$emit(eventName, payload, { 
+            bubbles: true,
+            composed:true
+        });
+    }
+
+    parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): $OutputType<T> {    
+        if(input.length > 1 || directReturn) {
+            return input;
+        }
+    
+        if(input.length === 1) {
+            return input[0];
+        }
+    
+        return null;
+    }
+
+    $<T extends Element>(selectors: string, directReturn: boolean = false): $OutputType<T> {
+        const elements = this.shadowRoot?.querySelectorAll<T>(selectors);
+        return elements ? this.parse$<T>(elements, directReturn) : null;    
     }
 }
 

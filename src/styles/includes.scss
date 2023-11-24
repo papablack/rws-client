@@ -19,13 +19,26 @@
     // padding-left: #{px-to-em(15)}; // Adjust as needed
 }
 
-@mixin grid-align-item($alignment) {
+@mixin grid-flex-self-align($alignment) {
     align-self: $alignment;
 }
 
-@mixin grid-set-align($horizontal, $vertical: top) {
+@mixin grid-flex-align-items($horizontal, $vertical: top) {
     justify-content: $horizontal;
     align-items: $vertical;
+}
+
+@mixin auto-left() {
+    margin-left: auto;
+}
+
+@mixin auto-right() {
+    margin-right: auto;
+}
+
+@mixin center-container() {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 * {
