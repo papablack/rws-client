@@ -9,7 +9,10 @@ interface RequestOptions {
 }
 
 interface IAPIOptions {
-    headers?: Headers    
+    headers?: Headers,
+    routeParams?: {
+        [key: string]: string
+    }, 
 }
 
 interface  IBackendRoute
@@ -110,7 +113,7 @@ class ApiService extends TheService {
         }
     }
 
-    private getBackendUrl(routeName: string)
+    private getBackendUrl(routeName: string, params: {[key:string]: string} = {})
     {
         type BackendRoute = {
             name: string,
@@ -123,16 +126,22 @@ class ApiService extends TheService {
             throw new Error(`Backend route '${routeName}' does not exist.`);
         }
 
-        const apiPath = route.path;
+        let apiPath = route.path;
+
+        Object.keys(params).forEach((paramKey: string) => {
+            const paramValue = params[paramKey];
+
+            apiPath = apiPath.replace(`:${paramKey}`, paramValue);
+        })
 
         return `${config().get('backendUrl')}${config().get('apiPrefix') || ''}${apiPath}`;
     }
 
     public back = {
-        get: (routeName: string, options: IAPIOptions = {}) => this.get(this.getBackendUrl(routeName), options),
-        post: (routeName: string, payload: any = {}, options: IAPIOptions = {}) => this.post(this.getBackendUrl(routeName), payload, options),
-        put: (routeName: string, payload: any = {}, options: IAPIOptions = {}) => this.put(this.getBackendUrl(routeName), payload, options),
-        delete: (routeName: string, options: IAPIOptions = {}) => this.delete(this.getBackendUrl(routeName), options),
+        get: (routeName: string, options: IAPIOptions = {}) => this.get(this.getBackendUrl(routeName, options.routeParams), options),
+        post: (routeName: string, payload: any = {}, options: IAPIOptions = {}) => this.post(this.getBackendUrl(routeName, options.routeParams), payload, options),
+        put: (routeName: string, payload: any = {}, options: IAPIOptions = {}) => this.put(this.getBackendUrl(routeName, options.routeParams), payload, options),
+        delete: (routeName: string, options: IAPIOptions = {}) => this.delete(this.getBackendUrl(routeName, options.routeParams), options),
     };
 }
 
