@@ -60,7 +60,7 @@ class ApiService extends TheService {
         this.token = token;
     }
 
-    public async get(url: string, options: IAPIOptions = {}): Promise<any> {
+    public async get<T>(url: string, options: IAPIOptions = {}): Promise<T> {
         try {
             const response = await fetch(url, {
                 headers: this.getHeaders(options.headers),
@@ -72,12 +72,12 @@ class ApiService extends TheService {
         }
     }
     
-    public async post(url: string, payload: any = {}, options: IAPIOptions = {}): Promise<any> {
+    public async post<T, P>(url: string, payload?: P, options: IAPIOptions = {}): Promise<T> {
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: this.getHeaders(options.headers),
-                body: JSON.stringify(payload),
+                body: payload ? JSON.stringify(payload) : null,
             });
             return await response.json();
         } catch (error) {
@@ -86,12 +86,12 @@ class ApiService extends TheService {
         }
     }
     
-    public async put(url: string, payload: any = {}, options: IAPIOptions = {}): Promise<any> {
+    public async put<T, P>(url: string, payload?: P, options: IAPIOptions = {}): Promise<T> {
         try {
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: this.getHeaders(options.headers),
-                body: JSON.stringify(payload),
+                body: payload ? JSON.stringify(payload) : null,
             });
             return await response.json();
         } catch (error) {
@@ -100,7 +100,7 @@ class ApiService extends TheService {
         }
     }
     
-    public async delete(url: string, options: IAPIOptions = {}): Promise<any> {
+    public async delete<T>(url: string, options: IAPIOptions = {}): Promise<T> {
         try {
             const response = await fetch(url, {
                 method: 'DELETE',
@@ -138,10 +138,10 @@ class ApiService extends TheService {
     }
 
     public back = {
-        get: (routeName: string, options: IAPIOptions = {}) => this.get(this.getBackendUrl(routeName, options.routeParams), options),
-        post: (routeName: string, payload: any = {}, options: IAPIOptions = {}) => this.post(this.getBackendUrl(routeName, options.routeParams), payload, options),
-        put: (routeName: string, payload: any = {}, options: IAPIOptions = {}) => this.put(this.getBackendUrl(routeName, options.routeParams), payload, options),
-        delete: (routeName: string, options: IAPIOptions = {}) => this.delete(this.getBackendUrl(routeName, options.routeParams), options),
+        get: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.get(this.getBackendUrl(routeName, options?.routeParams), options),
+        post: <T, P>(routeName: string, payload?: P, options?: IAPIOptions): Promise<T> => this.post(this.getBackendUrl(routeName, options?.routeParams), payload, options),
+        put: <T, P>(routeName: string, payload: P, options?: IAPIOptions): Promise<T> => this.put(this.getBackendUrl(routeName, options?.routeParams), payload, options),
+        delete: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.delete(this.getBackendUrl(routeName, options?.routeParams), options),
     };
 }
 

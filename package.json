@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/papablack/rws-client#readme",
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.454.0",
     "@microsoft/fast-components": "^2.30.6",
     "@microsoft/fast-element": "^1.12.0",
     "@microsoft/fast-router": "^0.4.8",

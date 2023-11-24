@@ -28,7 +28,7 @@ class RWSViewComponent extends FASTElement {
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
 
-        this.define(this, def);
+        FASTElement.define(this, def);
     }
 
     static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null){                    
