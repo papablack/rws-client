@@ -8,9 +8,7 @@ class ConfigService extends TheService {
   
     constructor(cfg: IRWSConfig) {
       super();    
-      this.data = cfg;    
-      
-      RoutingService.initRouting(this.data.routes);
+      this.data = cfg;              
     }    
   
     public get(key: keyof IRWSConfig): any
@@ -34,7 +32,7 @@ class ConfigService extends TheService {
       if (cfg) {                
           TheService._instances[className] = new this(cfg);        
       }else if(!instanceExists && !cfg){
-          TheService._instances[className] = new this({});           
+          throw new Error('no-cfg');
       }
   
       return TheService._instances[className] as ConfigService;

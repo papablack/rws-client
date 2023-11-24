@@ -74,5 +74,7 @@ class RoutingService extends TheService {
   }
 }
 
+const renderRouteComponent = (cmp: typeof RWSViewComponent) => (): typeof RWSViewComponent => cmp;
+
 export default RoutingService.getSingleton();
-export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult }
+export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent }

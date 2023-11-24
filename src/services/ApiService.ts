@@ -1,5 +1,6 @@
 import TheService from "./_service";
 import config from '../services/ConfigService';
+import ConfigService from "../services/ConfigService";
 
 interface RequestOptions {
     method?: string;
@@ -20,8 +21,7 @@ interface  IBackendRoute
 const _DEFAULT_CONTENT_TYPE = 'application/json';
 
 class ApiService extends TheService {
-    private token?: string;
-    private backendRoutes: IBackendRoute[]
+    private token?: string;    
 
     constructor() {
         super();        
@@ -112,7 +112,12 @@ class ApiService extends TheService {
 
     private getBackendUrl(routeName: string)
     {
-        const route = this.backendRoutes.find((item) => item.name === routeName)
+        type BackendRoute = {
+            name: string,
+            path: string
+        }
+
+        const route = ConfigService().get('backendRoutes').find((item: BackendRoute) => item.name === routeName)        
 
         if(!route){
             throw new Error(`Backend route '${routeName}' does not exist.`);
@@ -120,7 +125,7 @@ class ApiService extends TheService {
 
         const apiPath = route.path;
 
-        return `${config().get('backendUrl')}/${config().get('apiPrefix') || ''}${apiPath}`;
+        return `${config().get('backendUrl')}${config().get('apiPrefix') || ''}${apiPath}`;
     }
 
     public back = {

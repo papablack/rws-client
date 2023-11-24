@@ -3,11 +3,10 @@ import startClient from './run';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
 
 import NotifyService from './services/NotifyService';
-import RoutingService, { IFrontRoutes } from './services/RoutingService';
+import RoutingService, { IFrontRoutes, renderRouteComponent } from './services/RoutingService';
 
 import RWSViewComponent from './components/_component';
 import ApiService, { IBackendRoute } from './services/ApiService';
-import rwsConfig from './services/ConfigService';
 import { RouterComponent } from './components/router/component';
 
 import { 
@@ -19,13 +18,12 @@ class RWSClient {
     private config: IRWSConfig = { backendUrl: '', routes: {} };
 
     async start(config: IRWSConfig): Promise<boolean> {    
-        this.config = {...this.config, ...config};                    
-
-        rwsConfig(this.config);  
-        
+        this.config = {...this.config, ...config};                              
         provideFASTDesignSystem().register(allComponents);
+        
+        await startClient(this.config);
 
-        await startClient();
+        
     
         return true;
     }
@@ -54,4 +52,4 @@ class RWSClient {
 }
 
 export default RWSClient;
-export { NotifyUiType, NotifyLogType, RoutingService, NotifyService, RWSViewComponent, ApiService,  RouterComponent}
+export { NotifyUiType, NotifyLogType, RoutingService, NotifyService, RWSViewComponent, ApiService,  RouterComponent, renderRouteComponent}
