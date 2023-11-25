@@ -75,6 +75,54 @@ class RWSViewComponent extends FASTElement {
         return elements ? this.parse$<T>(elements, directReturn) : null;    
     }
 
+    async scrollToBottom(chatContainer: HTMLDivElement) {
+        if (chatContainer) {
+            await this.onDOMLoad();
+            const scrollContent = chatContainer.querySelector('.scroll-content') as HTMLElement;
+
+            if (scrollContent) {
+              chatContainer.scrollTop = (scrollContent.scrollHeight - chatContainer.clientHeight) + 150;              
+            }
+        }        
+    }
+
+    async loadingString<T>(item: T, addContent: (cnt: string) => void, shouldStop: (stopItem: T) => Promise<boolean>) {
+        let dots = 1;
+        const maxDots = 3; // Maximum number of dots
+        const interval = setInterval(async () => {
+          const dotsString = '. '.repeat(dots);
+          addContent(`${dotsString}`);
+          dots = (dots % (maxDots)) + 1;
+
+          if(await shouldStop(item)){
+            clearInterval(interval)
+          }
+        }, 500); // Interval in milliseconds
+            
+        // setTimeout(() => {
+        //   clearInterval(interval);          
+        // }, 5000);
+    }
+
+    async onDOMLoad(): Promise<void>
+    {
+        return new Promise<void>((resolve) => {
+            if (this.getShadowRoot() !== null && this.getShadowRoot() !== undefined) {              
+              resolve();
+            } else {
+              // If shadowRoot is not yet available, use MutationObserver to wait for it
+              const observer = new MutationObserver(() => {
+                if (this.getShadowRoot() !== null && this.getShadowRoot() !== undefined) {
+                  observer.disconnect();
+                  resolve();
+                }
+              });
+              observer.observe(this, { childList: true, subtree: true });
+            }
+        });
+    }
+   
+
     protected getShadowRoot(): ShadowRoot
     {        
         const shRoot: ShadowRoot | null = this.shadowRoot;

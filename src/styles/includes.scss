@@ -41,6 +41,47 @@
     margin-right: auto;
 }
 
+@mixin customScrollbars($width: 10px, $trackColor: #f1f1f1, $thumbColor: #888) {
+    /* WebKit (Safari/Chrome) */
+    &::-webkit-scrollbar {
+      width: $width;
+    }
+  
+    &::-webkit-scrollbar-track {
+      background: $trackColor;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background: $thumbColor;
+    }
+  
+    /* Firefox */
+    &::-moz-scrollbar {
+      width: $width;
+    }
+  
+    &::-moz-scrollbar-track {
+      background: $trackColor;
+    }
+  
+    &::-moz-scrollbar-thumb {
+      background: $thumbColor;
+    }
+  
+    /* IE/Edge */
+    &::-ms-scrollbar {
+      width: $width;
+    }
+  
+    &::-ms-scrollbar-track {
+      background: $trackColor;
+    }
+  
+    &::-ms-scrollbar-thumb {
+      background: $thumbColor;
+    }
+  }
+
 * {
 	box-sizing: border-box;
 }
