@@ -9,11 +9,11 @@ export class RouterComponent extends RWSViewComponent{
 
     static definition = {
         name: 'rws-router',
-        template: html<RouterComponent>`<div class="placeholder"></div>`            
+        template: html<RouterComponent>`<div class="placeholder"></slot>`            
     };
     
-    @observable childComponents: HTMLElement[] = [];
-    placeholder: HTMLElement;
+    @observable childComponents: HTMLElement[] = [];    
+    slotEl: HTMLElement;
 
     constructor(){
         super();                
@@ -22,10 +22,19 @@ export class RouterComponent extends RWSViewComponent{
     }
 
     connectedCallback() {
-        super.connectedCallback();
-        this.placeholder = this.shadowRoot?.querySelector('.placeholder');
+        super.connectedCallback();            
+        
         const childComponent = this.routing.handleCurrentRoute();
-        const newComponent = new childComponent();
-        this.placeholder.appendChild(newComponent);        
+        const newComponent: RWSViewComponent = new childComponent();        
+
+
+        this.slotEl = this.getShadowRoot().querySelector('.placeholder') as HTMLElement;
+
+        this.addComponent(newComponent)
     }  
+
+    addComponent(component: any) {
+        
+        this.slotEl.appendChild(component);
+    }
 }

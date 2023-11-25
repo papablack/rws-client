@@ -70,9 +70,20 @@ class RWSViewComponent extends FASTElement {
         return null;
     }
 
-    $<T extends Element>(selectors: string, directReturn: boolean = false): $OutputType<T> {
-        const elements = this.shadowRoot?.querySelectorAll<T>(selectors);
+    $<T extends Element>(selectors: string, directReturn: boolean = false): $OutputType<T> {        
+        const elements = this.getShadowRoot().querySelectorAll<T>(selectors);
         return elements ? this.parse$<T>(elements, directReturn) : null;    
+    }
+
+    protected getShadowRoot(): ShadowRoot
+    {        
+        const shRoot: ShadowRoot = this.shadowRoot;
+
+        if(!shRoot){
+            throw new Error(`Component ${(this.constructor as any).definition.name} lacks shadow root. If you wish to have component without shadow root extend your class with FASTElement`)
+        }
+
+        return shRoot;
     }
 }
 
