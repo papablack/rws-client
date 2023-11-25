@@ -77,7 +77,7 @@ class RWSViewComponent extends FASTElement {
 
     protected getShadowRoot(): ShadowRoot
     {        
-        const shRoot: ShadowRoot = this.shadowRoot;
+        const shRoot: ShadowRoot | null = this.shadowRoot;
 
         if(!shRoot){
             throw new Error(`Component ${(this.constructor as any).definition.name} lacks shadow root. If you wish to have component without shadow root extend your class with FASTElement`)

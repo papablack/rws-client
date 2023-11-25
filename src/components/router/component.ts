@@ -1,4 +1,4 @@
-import { customElement, FASTElement, observable, html, ref  } from "@microsoft/fast-element";
+import { customElement, FASTElement, observable, html, ref, when  } from "@microsoft/fast-element";
 import RoutingService, { RWSRouter } from "../../services/RoutingService";
 import RWSViewComponent from "../_component";
 
@@ -9,11 +9,13 @@ export class RouterComponent extends RWSViewComponent{
 
     static definition = {
         name: 'rws-router',
-        template: html<RouterComponent>`<div class="placeholder"></slot>`            
+        template: html<RouterComponent>`
+        <div class="placeholder" ${ref('slotEl')}></div>        
+    `    
     };
     
     @observable childComponents: HTMLElement[] = [];    
-    slotEl: HTMLElement;
+    slotEl: HTMLElement = null;
 
     constructor(){
         super();                
@@ -25,16 +27,13 @@ export class RouterComponent extends RWSViewComponent{
         super.connectedCallback();            
         
         const childComponent = this.routing.handleCurrentRoute();
-        const newComponent: RWSViewComponent = new childComponent();        
+        const newComponent: RWSViewComponent = new childComponent();                
 
-
-        this.slotEl = this.getShadowRoot().querySelector('.placeholder') as HTMLElement;
-
-        this.addComponent(newComponent)
+        this.getShadowRoot().appendChild(newComponent);
     }  
 
     addComponent(component: any) {
         
-        this.slotEl.appendChild(component);
+        this.slotEl = component;
     }
 }
