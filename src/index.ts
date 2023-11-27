@@ -51,5 +51,8 @@ class RWSClient {
     }
 }
 
+function RWSView(name: string ): (type: Function) => void{
+    return () => {}
+}
 export default RWSClient;
-export { NotifyUiType, NotifyLogType, RoutingService, NotifyService, RWSViewComponent, ApiService,  RouterComponent, renderRouteComponent}
+export { NotifyUiType, NotifyLogType, RoutingService, NotifyService, RWSViewComponent, ApiService,  RouterComponent, renderRouteComponent, RWSView }

@@ -40,18 +40,21 @@ module.exports = {
         test: /\.scss$/,
         use: [
           'css-loader',
-          'sass-loader'
+          path.resolve(__dirname, './webpack/rws_fast_scss_loader.js')
         ],
       },
       {
         test: /\.(ts|js)$/,
-        use: 'ts-loader',
+        use: [
+          'ts-loader',
+          path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),          
+        ],
         exclude: /node_modules/,
       }
     ],
   },
   plugins: [
-    new RWSSassPlugin()
+    
   ],
   optimization: {
     minimizer: [

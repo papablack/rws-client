@@ -1,4 +1,4 @@
-import { FASTElement, ViewTemplate, ElementStyles } from "@microsoft/fast-element";
+import { FASTElement, ViewTemplate, ElementStyles, customElement } from "@microsoft/fast-element";
 import config from "../services/ConfigService";
 
 interface IFastDefinition {
