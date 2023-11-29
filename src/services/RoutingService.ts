@@ -6,9 +6,10 @@ import { RouterComponent } from "../components/router/component";
 import { FASTElement } from "@microsoft/fast-element";
 
 type IFrontRoutes = Record<string, unknown>; 
+type RouteReturn = [string, typeof RWSViewComponent];
 
 type IRWSRouteResult = {
-  handler: () => typeof RWSViewComponent;
+  handler: () => RouteReturn;
   params: Record<string, string>;
 }
 
@@ -26,12 +27,12 @@ class RWSRouter {
     this.baseComponent.append(newComponent);
   }
 
-  public handleRoute(route: IRWSRouteResult): typeof RWSViewComponent
+  public handleRoute(route: IRWSRouteResult): RouteReturn
   {
     return route.handler();
   }
 
-  public handleCurrentRoute(): typeof RWSViewComponent
+  public handleCurrentRoute(): RouteReturn
   {
     const currentRoute = this.find(window.location.pathname);
     return this.handleRoute(currentRoute);
@@ -74,7 +75,13 @@ class RoutingService extends TheService {
   }
 }
 
-const renderRouteComponent = (cmp: any) => (): any => cmp;
+const renderRouteComponent = (routeName: string, cmp: typeof RWSViewComponent) => (): RouteReturn => [routeName, cmp];
+
+const _ROUTING_EVENT_NAME = 'routing.route.change';
+interface IRoutingEvent {
+  routeName: string,
+  component: typeof RWSViewComponent
+}
 
 export default RoutingService.getSingleton();
-export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent }
+export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent }

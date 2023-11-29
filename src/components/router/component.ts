@@ -1,16 +1,16 @@
 import { customElement, FASTElement, observable, html, ref, when  } from "@microsoft/fast-element";
-import RoutingService, { RWSRouter } from "../../services/RoutingService";
+import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME } from "../../services/RoutingService";
 import RWSViewComponent from "../_component";
 
 
-export class RouterComponent extends RWSViewComponent{
+export class RouterComponent extends RWSViewComponent {    
     static autoLoadFastElement = false;
     private routing: RWSRouter;
 
     static definition = {
         name: 'rws-router',
         template: html<RouterComponent>`
-        <div class="placeholder" ${ref('slotEl')}></div>        
+        <div class="placeholder" ${ref('slotEl')}></div>
     `    
     };
     
@@ -26,14 +26,21 @@ export class RouterComponent extends RWSViewComponent{
     connectedCallback() {
         super.connectedCallback();            
         
-        const childComponent = this.routing.handleCurrentRoute();
+        const [routeName, childComponent] = this.routing.handleCurrentRoute();
+
+        this.$emit(_ROUTING_EVENT_NAME, {
+            routeName,
+            component: childComponent
+        });
+
         const newComponent: RWSViewComponent = new childComponent();                
 
         this.getShadowRoot().appendChild(newComponent);
-    }  
+    }
 
     addComponent(component: any) {
         
         this.slotEl = component;
     }
 }
+

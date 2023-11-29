@@ -1,9 +1,9 @@
 import IRWSConfig from './interfaces/IRWSConfig';
 import startClient from './run';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
-
+import { observable } from '@microsoft/fast-element';
 import NotifyService from './services/NotifyService';
-import RoutingService, { IFrontRoutes, renderRouteComponent } from './services/RoutingService';
+import RoutingService, { IFrontRoutes, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent } from './services/RoutingService';
 
 import RWSViewComponent from './components/_component';
 import ApiService, { IBackendRoute } from './services/ApiService';
@@ -21,9 +21,7 @@ class RWSClient {
         this.config = {...this.config, ...config};                              
         provideFASTDesignSystem().register(allComponents);
         
-        await startClient(this.config);
-
-        
+        await startClient(this.config);        
     
         return true;
     }
@@ -55,4 +53,19 @@ function RWSView(name: string ): (type: Function) => void{
     return () => {}
 }
 export default RWSClient;
-export { NotifyUiType, NotifyLogType, RoutingService, NotifyService, RWSViewComponent, ApiService,  RouterComponent, renderRouteComponent, RWSView }
+export { 
+    NotifyUiType,
+    NotifyLogType,
+
+    RouterComponent,
+    RoutingService,
+    RouteReturn,
+    _ROUTING_EVENT_NAME, NotifyService,
+    IRoutingEvent,
+
+    RWSViewComponent,
+    ApiService,    
+    renderRouteComponent,
+    RWSView,
+    observable 
+}

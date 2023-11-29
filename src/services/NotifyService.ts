@@ -1,6 +1,9 @@
 import RWSNotify, { NotifyUiType, NotifyLogType } from "../types/RWSNotify";
 import TheService from "./_service";
-
+/**
+ * @class
+ * @extends TheService
+ */
 class NotifyService extends TheService {
     private notifier: RWSNotify
 
@@ -41,3 +44,9 @@ class NotifyService extends TheService {
 }
 
 export default NotifyService.getSingleton();
+
+/**
+ * NotifyService - Handles the notification logic in the application.
+ * It includes methods to alert, notify, and silently log messages.
+ */
+export { NotifyService }

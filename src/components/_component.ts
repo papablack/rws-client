@@ -86,7 +86,7 @@ class RWSViewComponent extends FASTElement {
         }        
     }
 
-    async loadingString<T>(item: T, addContent: (cnt: string) => void, shouldStop: (stopItem: T) => Promise<boolean>) {
+    async loadingString<T>(item: T, addContent: (cnt: string) => void, shouldStop: (stopItem: T, addContent: (cnt: string) => void) => Promise<boolean>) {
         let dots = 1;
         const maxDots = 3; // Maximum number of dots
         const interval = setInterval(async () => {
@@ -94,14 +94,10 @@ class RWSViewComponent extends FASTElement {
           addContent(`${dotsString}`);
           dots = (dots % (maxDots)) + 1;
 
-          if(await shouldStop(item)){
+          if(await shouldStop(item, addContent)){
             clearInterval(interval)
           }
-        }, 500); // Interval in milliseconds
-            
-        // setTimeout(() => {
-        //   clearInterval(interval);          
-        // }, 5000);
+        }, 500);
     }
 
     async onDOMLoad(): Promise<void>

@@ -1,6 +1,6 @@
 {
     "out": "docs",
-    "exclude": ["**/node_modules/**", "**/*.spec.ts"],
+    "exclude": ["**/node_modules/**", "**/*.spec.ts"],       
     "plugin": ["typedoc-theme-hierarchy", "typedoc-plugin-rename-defaults"],
     "theme": "hierarchy",
     "readme": "./README.md",    

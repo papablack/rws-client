@@ -44,9 +44,7 @@ module.exports = function(content) {
 
         const styles = fs.existsSync(path.dirname(filePath) + '/styles') ? 'import "./styles/layout.scss";\nimport styles from "./styles/inc/layout.css";' : 'const styles = null;';
 
-        processedContent = `
-        import { customElement } from '@microsoft/fast-element';\n
-
+        processedContent = `        
         import template from "./template.html";\n        
         ${styles}\n\n      
       ` + replaced;          
