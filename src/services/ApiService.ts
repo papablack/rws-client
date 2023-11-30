@@ -1,6 +1,7 @@
 import TheService from "./_service";
 import config from '../services/ConfigService';
 import ConfigService from "../services/ConfigService";
+import UtilsService from "./UtilsService";
 
 interface RequestOptions {
     method?: string;
@@ -15,11 +16,19 @@ interface IAPIOptions {
     }, 
 }
 
-interface  IBackendRoute
-{
-    path: string;
+interface IHTTProute {
     name: string;
+    path: string;    
 }
+
+
+interface IPrefixedHTTProutes {
+    prefix: string;
+    routes: IHTTProute[];
+}
+
+type IBackendRoute = IHTTProute | IPrefixedHTTProutes;
+
 
 const _DEFAULT_CONTENT_TYPE = 'application/json';
 
@@ -115,12 +124,52 @@ class ApiService extends TheService {
 
     private getBackendUrl(routeName: string, params: {[key:string]: string} = {})
     {
-        type BackendRoute = {
-            name: string,
-            path: string
-        }
+       
 
-        const route = ConfigService().get('backendRoutes').find((item: BackendRoute) => item.name === routeName)        
+        const routesPackage = ConfigService().get('backendRoutes');
+
+        let routes: IHTTProute[] = [];       
+
+        routesPackage.forEach((item: IBackendRoute) => {
+            // Check if item is an instance of IPrefixedHTTProutes
+            if ('prefix' in item && 'routes' in item && Array.isArray(item.routes)) {
+                // Handle the case where item is of type IPrefixedHTTProutes
+                routes = [...routes, ...item.routes.map((subRouteItem: IHTTProute): IHTTProute => {
+                    const subRoute: IHTTProute = {
+                        path: item.prefix + subRouteItem.path,
+                        name: subRouteItem.name
+                    };
+            
+                    return subRoute;
+                })];
+            } else {
+                // Handle the case where item is of type IHTTProute
+                routes.push(item as IHTTProute);
+            }          
+        });
+
+        console.log(routes)
+
+    //     routesPackage.forEach((item: IBackendRoute) => {          
+            
+    //         if(Object.keys(IPrefixedHTTProutesTypeInfo).every((key: keyof IPrefixedHTTProutesTypeInfoType) => 
+    //             key in item && (typeof item[key]) === IPrefixedHTTProutesTypeInfo[key]
+    //         )){       
+    //             routes = [...routes, ...item.routes.map((subRouteItem: IHTTProute): IHTTProute => {
+    //                 const subRoute: IHTTProute = {
+    //                     path: item.prefix + subRouteItem.path,
+    //                     name: subRouteItem.name
+    //                 }      
+            
+    //                 return subRoute;
+    //             })];    
+
+    //         } else {
+    //             routes.push(item as IHTTProute);
+    //         }          
+    //    });
+
+        const route = routes.find((item: IHTTProute) => item.name === routeName)        
 
         if(!route){
             throw new Error(`Backend route '${routeName}' does not exist.`);

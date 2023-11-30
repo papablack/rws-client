@@ -234,8 +234,7 @@ class RWSSassPlugin {
 
       let dotest = false;
 
-      if(fileRootDir.indexOf('chat-message') > -1){
-        console.log('YOMAN 1 \n', scssImports);
+      if(fileRootDir.indexOf('chat-message') > -1){        
         dotest = true;
       }
 

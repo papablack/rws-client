@@ -16,9 +16,10 @@ class ConfigService extends TheService {
       return this.data[key as keyof IRWSConfig];
     }
   
-    public reloadConfig(cfgString: string): ConfigService 
+    public async reloadConfig(cfgString: string): Promise<ConfigService> 
     {
-      const cfg: () => IRWSConfig = (require(cfgString)).defaults; 
+      const module = await import(/* webpackIgnore: true */ cfgString);
+      const cfg: () => IRWSConfig = module.defaults;      
       this.data = cfg();
   
       return this;

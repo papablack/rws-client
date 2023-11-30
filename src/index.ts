@@ -14,12 +14,29 @@ import {
     provideFASTDesignSystem 
 } from "@microsoft/fast-components";
 
+interface IHotModule extends NodeModule {
+    hot?: {
+        accept(dependencies: string[], callback?: (updatedDependencies: string[]) => void): void;
+        accept(dependency: string, callback?: () => void): void;
+        accept(errHandler?: (err: Error) => void): void;
+        dispose(callback: (data: any) => void): void;
+    }
+}
+
 class RWSClient {   
     private config: IRWSConfig = { backendUrl: '', routes: {} };
 
     async start(config: IRWSConfig): Promise<boolean> {    
         this.config = {...this.config, ...config};                              
         provideFASTDesignSystem().register(allComponents);
+
+        const hotModule:IHotModule = (module as IHotModule);
+
+        if (hotModule.hot) {
+            hotModule.hot.accept('./print.js', function() {
+              console.log('Accepting the updated module!');              
+            })
+        }
         
         await startClient(this.config);        
     

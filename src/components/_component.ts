@@ -1,4 +1,4 @@
-import { FASTElement, ViewTemplate, ElementStyles, customElement } from "@microsoft/fast-element";
+import { FASTElement, ViewTemplate, ElementStyles, customElement, observable } from "@microsoft/fast-element";
 import config from "../services/ConfigService";
 
 interface IFastDefinition {
@@ -9,8 +9,14 @@ interface IFastDefinition {
 
 type $OutputType<T extends Element> = NodeListOf<T> | T | null;
 
+
+
 class RWSViewComponent extends FASTElement {
+    private static instances: RWSViewComponent[] = [];
+
     static autoLoadFastElement = true;
+
+    @observable trashIterator: number = 0;
 
     connectedCallback() {
         super.connectedCallback();    
@@ -18,11 +24,18 @@ class RWSViewComponent extends FASTElement {
         if(!(this.constructor as any).definition && (this.constructor as any).autoLoadFastElement){
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
+        
+        RWSViewComponent.instances.push(this);
     } 
+
+    private static getInstances(): RWSViewComponent[]
+    {
+        return RWSViewComponent.instances;
+    }
 
     static defineComponent()
     {
-        const def = (this as any).definition;
+        const def = (this as any).definition;        
 
         if(!def){
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
@@ -128,6 +141,18 @@ class RWSViewComponent extends FASTElement {
         }
 
         return shRoot;
+    }
+
+    static hotReplacedCallback() {
+        this.getInstances().forEach(instance => instance.forceReload());
+      }
+    
+    forceReload() {
+        this.trashIterator += 1;
+    }
+
+    hotReplacedCallback() {
+        this.forceReload();    
     }
 }
 
