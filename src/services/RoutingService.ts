@@ -20,6 +20,11 @@ class RWSRouter {
   constructor(routerComponent: RWSViewComponent, urlRouter: Router<any>){
     this.baseComponent = routerComponent;
     this.urlRouter = urlRouter;
+
+    window.addEventListener('popstate', (event: Event) => {
+      console.log('pop', event);
+    });
+
   }
 
   public routeComponent(newComponent: RWSViewComponent)
@@ -27,15 +32,27 @@ class RWSRouter {
     this.baseComponent.append(newComponent);
   }
 
-  public handleRoute(route: IRWSRouteResult): RouteReturn
-  {
+  public fireHandler(route: IRWSRouteResult): RouteReturn
+  {     
     return route.handler();
+  }
+
+  public handleRoute(url: string): RouteReturn
+  {
+    const currentRoute = this.find(url);    
+
+    if (history.pushState) {
+      window.history.pushState({ path: url }, '', url);
+    }
+
+    return this.fireHandler(currentRoute);
   }
 
   public handleCurrentRoute(): RouteReturn
   {
-    const currentRoute = this.find(window.location.pathname);
-    return this.handleRoute(currentRoute);
+    const currentRoute = this.find(window.location.pathname);    
+
+    return this.fireHandler(currentRoute);
   }
 
   public find(url: string): IRWSRouteResult
@@ -84,4 +101,4 @@ interface IRoutingEvent {
 }
 
 export default RoutingService.getSingleton();
-export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent }
+export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent, }

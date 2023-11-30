@@ -1,17 +1,19 @@
 import { customElement, FASTElement, observable, html, ref, when  } from "@microsoft/fast-element";
-import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME } from "../../services/RoutingService";
+import { isConstructorDeclaration } from "typescript";
+
+import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from "../../services/RoutingService";
 import RWSViewComponent from "../_component";
 
 
 export class RouterComponent extends RWSViewComponent {    
     static autoLoadFastElement = false;
     private routing: RWSRouter;
+    private currentComponent: RWSViewComponent;
+
+    @observable currentUrl: string;
 
     static definition = {
-        name: 'rws-router',
-        template: html<RouterComponent>`
-        <div class="placeholder" ${ref('slotEl')}></div>
-    `    
+        name: 'rws-router',         
     };
     
     @observable childComponents: HTMLElement[] = [];    
@@ -26,14 +28,30 @@ export class RouterComponent extends RWSViewComponent {
     connectedCallback() {
         super.connectedCallback();            
         
-        const [routeName, childComponent] = this.routing.handleCurrentRoute();
+        this.handleRoute(this.routing.handleRoute(this.currentUrl));        
+    }
+
+    currentUrlChanged(oldValue: string, newValue: string){
+        
+        this.handleRoute(this.routing.handleRoute(this.currentUrl));
+    }
+
+    private handleRoute(route: RouteReturn){
+        const [routeName, childComponent] = route;
 
         this.$emit(_ROUTING_EVENT_NAME, {
             routeName,
             component: childComponent
         });
 
-        const newComponent: RWSViewComponent = new childComponent();                
+        const newComponent: RWSViewComponent = new childComponent();   
+
+        if(this.currentComponent){
+            this.getShadowRoot().removeChild(this.currentComponent)
+            
+        }
+        
+        this.currentComponent = newComponent;
 
         this.getShadowRoot().appendChild(newComponent);
     }
