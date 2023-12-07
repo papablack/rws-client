@@ -1,7 +1,7 @@
 import IRWSConfig from './interfaces/IRWSConfig';
 import startClient from './run';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
-import { observable } from '@microsoft/fast-element';
+import { observable, attr } from '@microsoft/fast-element';
 import NotifyService from './services/NotifyService';
 import RoutingService, { IFrontRoutes, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent } from './services/RoutingService';
 
@@ -84,5 +84,7 @@ export {
     ApiService,    
     renderRouteComponent,
     RWSView,
-    observable 
+
+    observable,
+    attr 
 }

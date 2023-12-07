@@ -47,7 +47,8 @@ module.exports = function(content) {
         processedContent = `        
         import template from "./template.html";\n        
         ${styles}\n\n      
-      ` + replaced;          
+      ` + replaced;        
+             
     }
     
     return processedContent;

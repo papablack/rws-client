@@ -2,6 +2,8 @@ import TheService from "./_service";
 import config from '../services/ConfigService';
 import ConfigService from "../services/ConfigService";
 import UtilsService from "./UtilsService";
+import { upload, UploadResponse } from 'upload';
+
 
 interface RequestOptions {
     method?: string;
@@ -146,28 +148,7 @@ class ApiService extends TheService {
                 // Handle the case where item is of type IHTTProute
                 routes.push(item as IHTTProute);
             }          
-        });
-
-        console.log(routes)
-
-    //     routesPackage.forEach((item: IBackendRoute) => {          
-            
-    //         if(Object.keys(IPrefixedHTTProutesTypeInfo).every((key: keyof IPrefixedHTTProutesTypeInfoType) => 
-    //             key in item && (typeof item[key]) === IPrefixedHTTProutesTypeInfo[key]
-    //         )){       
-    //             routes = [...routes, ...item.routes.map((subRouteItem: IHTTProute): IHTTProute => {
-    //                 const subRoute: IHTTProute = {
-    //                     path: item.prefix + subRouteItem.path,
-    //                     name: subRouteItem.name
-    //                 }      
-            
-    //                 return subRoute;
-    //             })];    
-
-    //         } else {
-    //             routes.push(item as IHTTProute);
-    //         }          
-    //    });
+        });        
 
         const route = routes.find((item: IHTTProute) => item.name === routeName)        
 
@@ -186,11 +167,25 @@ class ApiService extends TheService {
         return `${config().get('backendUrl')}${config().get('apiPrefix') || ''}${apiPath}`;
     }
 
+    async uploadFile(url:string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse>
+    {
+        return await upload(
+            url,
+            {
+              file,
+            },
+            {
+              onProgress
+            }
+        );
+    }
+
     public back = {
         get: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.get(this.getBackendUrl(routeName, options?.routeParams), options),
         post: <T, P>(routeName: string, payload?: P, options?: IAPIOptions): Promise<T> => this.post(this.getBackendUrl(routeName, options?.routeParams), payload, options),
         put: <T, P>(routeName: string, payload: P, options?: IAPIOptions): Promise<T> => this.put(this.getBackendUrl(routeName, options?.routeParams), payload, options),
         delete: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.delete(this.getBackendUrl(routeName, options?.routeParams), options),
+        uploadFile: (routeName:string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse> => this.uploadFile(this.getBackendUrl(routeName, options?.routeParams), file, onProgress),
     };
 }
 
