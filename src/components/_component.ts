@@ -14,9 +14,18 @@ type $OutputType<T extends Element> = NodeListOf<T> | T | null;
 class RWSViewComponent extends FASTElement {
     private static instances: RWSViewComponent[] = [];
 
+    public routeParams: Record<string, string> = {};
+
     static autoLoadFastElement = true;
 
     @observable trashIterator: number = 0;
+
+    constructor(routeParams: Record<string, string> =  null) {
+        super();
+        if(routeParams){
+            this.routeParams = routeParams;
+        }
+    }
 
     connectedCallback() {
         super.connectedCallback();    

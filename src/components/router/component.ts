@@ -37,14 +37,14 @@ export class RouterComponent extends RWSViewComponent {
     }
 
     private handleRoute(route: RouteReturn){
-        const [routeName, childComponent] = route;
+        const [routeName, childComponent, routeParams] = route;
 
         this.$emit(_ROUTING_EVENT_NAME, {
             routeName,
             component: childComponent
         });
 
-        const newComponent: RWSViewComponent = new childComponent();   
+        const newComponent: RWSViewComponent = new childComponent(routeParams);   
 
         if(this.currentComponent){
             this.getShadowRoot().removeChild(this.currentComponent)

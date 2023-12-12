@@ -6,7 +6,7 @@ import { RouterComponent } from "../components/router/component";
 import { FASTElement } from "@microsoft/fast-element";
 
 type IFrontRoutes = Record<string, unknown>; 
-type RouteReturn = [string, typeof RWSViewComponent];
+type RouteReturn = [string, typeof RWSViewComponent, Record<string, string>];
 
 type IRWSRouteResult = {
   handler: () => RouteReturn;
@@ -34,7 +34,8 @@ class RWSRouter {
 
   public fireHandler(route: IRWSRouteResult): RouteReturn
   {     
-    return route.handler();
+    const handler = route.handler();
+    return [handler[0], handler[1], route.params];
   }
 
   public handleRoute(url: string): RouteReturn
@@ -92,7 +93,7 @@ class RoutingService extends TheService {
   }
 }
 
-const renderRouteComponent = (routeName: string, cmp: typeof RWSViewComponent) => (): RouteReturn => [routeName, cmp];
+const renderRouteComponent = (routeName: string, cmp: typeof RWSViewComponent) => (): [string, typeof RWSViewComponent] => [routeName, cmp];
 
 const _ROUTING_EVENT_NAME = 'routing.route.change';
 interface IRoutingEvent {
