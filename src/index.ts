@@ -7,6 +7,7 @@ import RoutingService, { IFrontRoutes, renderRouteComponent, RouteReturn, _ROUTI
 
 import RWSViewComponent from './components/_component';
 import ApiService, { IBackendRoute } from './services/ApiService';
+import RWSService from './services/_service';
 import { RouterComponent } from './components/router/component';
 
 import { 
@@ -84,6 +85,7 @@ export {
     ApiService,    
     renderRouteComponent,
     RWSView,
+    RWSService,
 
     observable,
     attr 
