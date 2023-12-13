@@ -6,7 +6,7 @@ import { ping, disconnect as disconnectWs, reconnect as reconnectWs } from './_w
 import WSEventHandler from './_ws_handlers/EventHandler';
 import WSMessageHandler from './_ws_handlers/MessageHandler';
 
-type WSEvent = 'ws:status_change' | 'ws:connected' | 'ws:disconnected' | 'ws:reconnect' | 'ws:message_received' | 'ws:message_sent';
+type WSEvent = string;
 type WSStatus = 'WS_OPEN' | 'WS_CLOSED' | 'WS_CONNECTING';
 
 class WSService extends TheService {

@@ -8,6 +8,7 @@ import RoutingService, { IFrontRoutes, renderRouteComponent, RouteReturn, _ROUTI
 import RWSViewComponent from './components/_component';
 import ApiService, { IBackendRoute } from './services/ApiService';
 import RWSService from './services/_service';
+import WSService from './services/WSService';
 import { RouterComponent } from './components/router/component';
 
 import { 
@@ -75,17 +76,19 @@ export {
     NotifyUiType,
     NotifyLogType,
 
-    RouterComponent,
-    RoutingService,
     RouteReturn,
     _ROUTING_EVENT_NAME, NotifyService,
     IRoutingEvent,
 
-    RWSViewComponent,
     ApiService,    
+    WSService,
+    RoutingService,
+
+    RWSViewComponent,    
     renderRouteComponent,
     RWSView,
     RWSService,
+    RouterComponent,
 
     observable,
     attr 

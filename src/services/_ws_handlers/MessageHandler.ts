@@ -6,7 +6,7 @@ function listenForMessage(instance: WSInstance, callback: (data: any, isJson?: b
     }
 
     instance.socket().on(method || 'message', (data: any) => {
-        try {
+        try {            
             const parsedData = JSON.parse(data);
             if (!!method && parsedData.method === method) {
                 callback(parsedData, true);
@@ -37,7 +37,7 @@ function sendMessage(instance: WSInstance, method: string, msg: any): void {
           method: method,
           msg: msg
         }
-
+    
         instance.socket().emit(method, JSON.stringify(the_message));
 
         instance.executeEventListener('ws:message_sent', { message: the_message });
