@@ -1,14 +1,13 @@
 import { FASTElement, ViewTemplate, ElementStyles, customElement, observable } from "@microsoft/fast-element";
 import config from "../services/ConfigService";
 
+import DOMService, { DOMOutputType } from '../services/DOMService';
+
 interface IFastDefinition {
     name: string;
     template: ViewTemplate;
     styles?: ElementStyles;
 }
-
-type $OutputType<T extends Element> = NodeListOf<T> | T | null;
-
 
 
 class RWSViewComponent extends FASTElement {
@@ -80,33 +79,13 @@ class RWSViewComponent extends FASTElement {
         });
     }
 
-    parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): $OutputType<T> {    
-        if(input.length > 1 || directReturn) {
-            return input;
-        }
-    
-        if(input.length === 1) {
-            return input[0];
-        }
-    
-        return null;
+    parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): DOMOutputType<T> {           
+        return DOMService.parse$<T>(input, directReturn);
     }
 
-    $<T extends Element>(selectors: string, directReturn: boolean = false): $OutputType<T> {        
-        const elements = this.getShadowRoot().querySelectorAll<T>(selectors);
-        return elements ? this.parse$<T>(elements, directReturn) : null;    
-    }
-
-    async scrollToBottom(chatContainer: HTMLDivElement) {
-        if (chatContainer) {
-            await this.onDOMLoad();
-            const scrollContent = chatContainer.querySelector('.scroll-content') as HTMLElement;
-
-            if (scrollContent) {
-              chatContainer.scrollTop = (scrollContent.scrollHeight - chatContainer.clientHeight) + 150;              
-            }
-        }        
-    }
+    $<T extends Element>(selectors: string, directReturn: boolean = false): DOMOutputType<T> {                
+        return DOMService.$<T>(this.getShadowRoot(), selectors, directReturn);
+    }   
 
     async loadingString<T>(item: T, addContent: (cnt: string) => void, shouldStop: (stopItem: T, addContent: (cnt: string) => void) => Promise<boolean>) {
         let dots = 1;

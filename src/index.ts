@@ -4,7 +4,7 @@ import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
 import { observable, attr } from '@microsoft/fast-element';
 import NotifyService from './services/NotifyService';
 import RoutingService, { IFrontRoutes, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent } from './services/RoutingService';
-
+import DOMService, { DOMOutputType }  from './services/DOMService';
 import RWSViewComponent from './components/_component';
 import ApiService, { IBackendRoute } from './services/ApiService';
 import RWSService from './services/_service';
@@ -83,6 +83,8 @@ export {
     ApiService,    
     WSService,
     RoutingService,
+    DOMService,
+    DOMOutputType,
 
     RWSViewComponent,    
     renderRouteComponent,
