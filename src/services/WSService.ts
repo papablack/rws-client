@@ -41,7 +41,7 @@ class WSService extends TheService {
       } : {};
 
       try {
-          this._ws = io(this.url, { extraHeaders: headers });
+          this._ws = io(this.url, { extraHeaders: headers, transports:  ['websocket'] });
 
           if (this.user?.mongoId) {
               this._wsId = this.user.mongoId;
