@@ -6,7 +6,7 @@ module.exports = function(content) {
     const plugin = new RWSSassPlugin();
     const filePath = this.resourcePath;
 
-    const saveFile = true;//content.indexOf('@save') > -1;   
+    const saveFile = content.indexOf('@save') > -1;   
     
 
     try{

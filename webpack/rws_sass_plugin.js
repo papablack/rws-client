@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { getTokenSourceMapRange } = require('typescript');
 
-const _COMPILE_DIR_NAME = 'inc';
+const _COMPILE_DIR_NAME = 'compiled';
 
 const FONT_REGEX = /url\(['"]?(.+?\.(woff|woff2|eot|ttf|otf))['"]?\)/g;
 
