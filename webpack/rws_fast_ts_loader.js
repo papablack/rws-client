@@ -2,7 +2,7 @@
 const ts = require('typescript');
 const path = require('path');
 const fs = require('fs');
-
+const RWSSassPlugin = require("./rws_sass_plugin");
 module.exports = function(content) { 
     let processedContent = content;
     const filePath = this.resourcePath;
@@ -39,13 +39,23 @@ module.exports = function(content) {
 
             replaced = modifiedContent;
             replaced = replaced.replace(`@RWSView('${tagName}')`, '');
+            const plugin = new RWSSassPlugin();
+            let styles = 'const styles = null;'
 
-            const styles = fs.existsSync(path.dirname(filePath) + '/styles') ? 'import styles from "./styles/layout.scss";\n' : 'const styles = null;';
+            if(fs.existsSync(path.dirname(filePath) + '/styles')){
+                const scssCode = fs.readFileSync(path.dirname(filePath) + '/styles/layout.scss', 'utf-8');
+                styles = 'const styles = T.css`' + plugin.compileCode(scssCode, path.dirname(filePath) + '/styles') + '`;'
+            }
+            
+            // const htmlCode = fs.readFileSync(path.dirname(filePath) + '/template.html', 'utf-8');                   
 
-            processedContent = `        
-            import template from "./template.html";\n        
+            let template = `import template from './template.html'`;
+
+            processedContent = ` 
+            import * as T from '@microsoft/fast-element';\n           
+            ${template}\n
             ${styles}\n\n      
-        ` + replaced;        
+        ` + replaced;          
         }
         
   
