@@ -49,7 +49,7 @@ const RWSWebpackWrapper = (config) => {
         ...aliases
       },      
       plugins: [
-        new TsconfigPathsPlugin({configFile: './tsconfig.json'})
+        new TsconfigPathsPlugin({configFile: executionDir + './tsconfig.json'})
       ]
     },
     module: {
@@ -80,8 +80,7 @@ const RWSWebpackWrapper = (config) => {
           use: [
             'ts-loader',
             path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),          
-          ],
-          exclude: /node_modules/,
+          ],          
         }
       ],
     },
