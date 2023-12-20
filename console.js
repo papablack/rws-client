@@ -101,6 +101,10 @@ const rwsPackageSetup = async () => {
     const executionDir = process.cwd();    
     const moduleCfgDir = `${executionDir}/node_modules/.rws`;
 
+    if(!fs.existsSync(moduleCfgDir)){
+      fs.mkdirSync(moduleCfgDir);
+    }
+
     try{
       return fs.readFileSync(`${moduleCfgDir}/${fileName}`, 'utf-8');
     } catch (e){
@@ -112,6 +116,10 @@ const rwsPackageSetup = async () => {
   {
     const executionDir = process.cwd();    
     const moduleCfgDir = `${executionDir}/node_modules/.rws`;
+
+    if(!fs.existsSync(moduleCfgDir)){
+      fs.mkdirSync(moduleCfgDir);
+    }
 
     fs.writeFileSync(`${moduleCfgDir}/${fileName}`, value);
   }  
