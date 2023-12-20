@@ -16,15 +16,13 @@ module.exports = function(content) {
         if(saveFile && code){
             plugin.writeCssFile(filePath, code);        
         }else{         
-        }        
+        }
 
-        return `import { css } from '@microsoft/fast-element';\nexport default css\`${code}\`;`;
-
+        return code;
 
     }catch(e){
         console.error(e);
-        return `import { css } from '@microsoft/fast-element';\nexport default css\`\`;`;
-
+        return '';
     }
         
 };
