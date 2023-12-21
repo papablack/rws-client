@@ -17,21 +17,29 @@ const main = async () => {
 }
 
 async function installDeps(){
-    log('Installing RWS client TS dependencies...')
+    log('[RWS] Installing RWS client TS dependencies...')
 
-    if(!fs.existsSync(`${process.cwd() + '/node_modules/ts-transformer-keys'}`)){        
-        await runShellCommand(`npm install ts-transformer-keys`);
-    }
+    // if(!fs.existsSync(`${process.cwd() + '/node_modules/ts-transformer-keys'}`)){        
+    //     await runShellCommand(`npm install ts-transformer-keys`);
+    // }
 
     // await rwsPackageSetup();
-    await runShellCommand(`npm install`, __dirname);
+    await runShellCommand(`npm install`, __dirname);    
     
-    log('Installed RWS client TS dependencies.')
+    log('[RWS] Installed RWS client TS dependencies.');
+
+    log('[RWS] Building RWS client TS dependencies...')
+
+    await runShellCommand(`npm run build`, __dirname);
+
+    log('[RWS] Built RWS client TS dependencies.');
+
+    await runShellCommand(`npm run build`);
 }
 
 const rwsPackageSetup = async () => {    
     if(getRWSVar('_rws_deps_installed') === 'True'){
-        console.log('Deps are installed.');
+        console.log('[RWS] Deps are already installed.');
 
         return;
     }
@@ -68,13 +76,13 @@ const rwsPackageSetup = async () => {
             setRWSVar('_rws_deps_installed', 'True');
 
         } else {
-            console.warn('No package.json found in the current working directory.');
+            console.warn('[RWS] No package.json found in the current working directory.');
             return;
         }
   
      
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.error('[RWS] An error occurred:', error);
     }
   };
 
@@ -90,7 +98,7 @@ const rwsPackageSetup = async () => {
 
       spawned.on('exit', (code) => {
         if (code !== 0) {
-          return reject(new Error(`Command failed with exit code ${code}`));
+          return reject(new Error(`[RWS] Command failed with exit code ${code}`));
         }
         resolve();
       });
