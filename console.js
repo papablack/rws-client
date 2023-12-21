@@ -23,7 +23,8 @@ async function installDeps(){
         await ProcessService.runShellCommand(`npm install ts-transformer-keys`);
     }
 
-    await rwsPackageSetup();
+    // await rwsPackageSetup();
+    await runShellCommand(`npm install`, __dirname);
     
     log('Installed RWS client TS dependencies.')
 }
@@ -77,11 +78,15 @@ const rwsPackageSetup = async () => {
     }
   };
 
-   async function runShellCommand(command, silent = false) {
+   async function runShellCommand(command, cwd = null, silent = false) {
+    if(!cwd){
+      cwd = process.cwd();
+    }
+    
     return new Promise((resolve, reject) => {
       const [cmd, ...args] = command.split(' ');
       
-      const spawned = spawn(cmd, args, { stdio: silent ? 'ignore' : 'inherit' });
+      const spawned = spawn(cmd, args, { stdio: silent ? 'ignore' : 'inherit', cwd });
 
       spawned.on('exit', (code) => {
         if (code !== 0) {

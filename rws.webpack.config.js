@@ -54,7 +54,7 @@ const RWSWebpackWrapper = (config) => {
         ...aliases
       },      
       plugins: [
-        new TsconfigPathsPlugin({configFile: config.tsConfigPath})
+        // new TsconfigPathsPlugin({configFile: config.tsConfigPath})
       ]
     },
     module: {
@@ -93,7 +93,8 @@ const RWSWebpackWrapper = (config) => {
               loader: path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),        
             }  
           ],
-          exclude: [path.resolve(__dirname, 'node_modules')]                    
+          exclude: /node_modules\/(?!rws-js-client)/,
+
         }
       ],
     },
@@ -113,7 +114,8 @@ const RWSWebpackWrapper = (config) => {
     }
   }
 
-  // return;
+  console.log(cfgExport);
+  
   return cfgExport;
 }
 

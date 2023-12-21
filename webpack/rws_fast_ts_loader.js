@@ -59,10 +59,6 @@ module.exports = function(content) {
             ${styles}\n\n      
         ` + replaced;                     
         }
-
-        if(filePath.indexOf('chat-models-list/component.ts')>-1){
-            console.log(processedContent);
-        }
       
         return processedContent;
 
