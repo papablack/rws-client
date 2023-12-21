@@ -113,8 +113,6 @@ const RWSWebpackWrapper = (config) => {
       static: publicDir  
     }
   }
-
-  console.log(cfgExport);
   
   return cfgExport;
 }
