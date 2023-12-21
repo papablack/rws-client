@@ -1,24 +1,32 @@
 // custom-css-loader.js
-const RWSSassPlugin = require("./rws_sass_plugin");
+const RWSPlugin = require("./rws_plugin");
 const path = require('path');
 
 module.exports = function(content) { 
-    const plugin = new RWSSassPlugin();
+    const plugin = new RWSPlugin();
     const filePath = this.resourcePath;
 
-    const saveFile = content.indexOf('@save') > -1;   
-    
+    const saveFile = content.indexOf('@save') > -1;  
+    let fromTs = false;
 
+    if(plugin.checkForImporterType('ts')){
+       fromTs = true;
+    }
+    
     try{
 
-        const code = plugin.compileCode(content, path.dirname(filePath));
+        // if(fromTs){
+            const code = plugin.compileScssCode(content, path.dirname(filePath));
 
-        if(saveFile && code){
-            plugin.writeCssFile(filePath, code);        
-        }else{         
-        }
+            if(saveFile && code){
+                plugin.writeCssFile(filePath, code);        
+            }else{         
+            }
 
-        return code;
+            return code;
+        // }else{
+        //     return content;
+        // }        
 
     }catch(e){
         console.error(e);

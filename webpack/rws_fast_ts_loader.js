@@ -1,14 +1,16 @@
 // custom-html-loader.js
-const ts = require('typescript');
 const path = require('path');
 const fs = require('fs');
-const RWSSassPlugin = require("./rws_sass_plugin");
+
+const RWSPlugin = require("./rws_plugin");
+
 module.exports = function(content) { 
     let processedContent = content;
     const filePath = this.resourcePath;
-
+    const options = this.getOptions() || {};
+    const tsConfigPath = options.tsConfigPath || path.resolve(process.cwd(), 'tsconfig.json');
     const regex = /@RWSView\(['"]([^'"]+)['"]\)/;
-
+    
     try { 
         if(regex.test(content)){
             let tagName = null;        
@@ -39,12 +41,12 @@ module.exports = function(content) {
 
             replaced = modifiedContent;
             replaced = replaced.replace(`@RWSView('${tagName}')`, '');
-            const plugin = new RWSSassPlugin();
+            const plugin = new RWSPlugin();
             let styles = 'const styles = null;'
 
             if(fs.existsSync(path.dirname(filePath) + '/styles')){
                 const scssCode = fs.readFileSync(path.dirname(filePath) + '/styles/layout.scss', 'utf-8');
-                styles = 'const styles = T.css`' + plugin.compileCode(scssCode, path.dirname(filePath) + '/styles') + '`;'
+                styles = 'const styles = T.css`' + plugin.compileScssCode(scssCode, path.dirname(filePath) + '/styles') + '`;'
             }
             
             // const htmlCode = fs.readFileSync(path.dirname(filePath) + '/template.html', 'utf-8');                   
@@ -55,10 +57,13 @@ module.exports = function(content) {
             import * as T from '@microsoft/fast-element';\n           
             ${template}\n
             ${styles}\n\n      
-        ` + replaced;          
+        ` + replaced;                     
         }
-        
-  
+
+        if(filePath.indexOf('chat-models-list/component.ts')>-1){
+            console.log(processedContent);
+        }
+      
         return processedContent;
 
     }catch(e){

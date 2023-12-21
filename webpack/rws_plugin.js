@@ -14,7 +14,7 @@ const log = (args) => {
     console.log(args);
   }
 }
-class RWSSassPlugin {
+class RWSPlugin {
   autoCompile = [];
   node_modules_dir = (fileDir) => path.relative(fileDir, process.cwd()) + '/node_modules/'
 
@@ -166,7 +166,7 @@ class RWSSassPlugin {
     }
 
     let scssCode = this.getCodeFromFile(scssPath);  
-    return this.compileCode(scssCode, path.dirname(scssPath));
+    return this.compileScssCode(scssCode, path.dirname(scssPath));
   }
 
   processImports(imports, fileRootDir, importStorage = {}, sub = false){
@@ -224,7 +224,7 @@ class RWSSassPlugin {
     return code.replace(delregex, '');
   }
 
-  compileCode(scssCode, fileRootDir, createFile = false){    
+  compileScssCode(scssCode, fileRootDir, createFile = false){    
     const _self = this;        
     
       // scssCode = this.replaceNodeModulesImport(scssCode, fileRootDir);  
@@ -304,6 +304,22 @@ class RWSSassPlugin {
         return '';
       };    
   }
+
+  checkForImporterType(checkTypeExt){
+    let importingFileExtension = '';
+
+    if (this._module && this._module.issuer && this._module.issuer.resource) {
+        importingFileExtension = path.extname(this._module.issuer.resource);
+
+        if(importingFileExtension === ('.' + checkTypeExt)){
+            return true;
+        }
+    }else{
+        return false;
+    }
+
+    return false
+  }
 }
 
-module.exports = RWSSassPlugin;
+module.exports = RWSPlugin;

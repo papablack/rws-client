@@ -16,7 +16,11 @@
       "declaration": true,     
     },
     "include": [
-      "src",      
+      "src/**/*", 
+      "declarations.d.ts"
     ],
-    "exclude": []
+    "exclude": [
+      "node_modules",
+      "**/*.spec.ts"
+    ]
   }

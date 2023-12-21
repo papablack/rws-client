@@ -17,17 +17,22 @@ const RWSWebpackWrapper = (config) => {
   const isDev = config.dev;
   const isHotReload = config.hot;
 
-  const publicDir = config.publicDir || path.resolve(executionDir, 'public');
+  const publicDir = config.publicDir || null;
   const publicIndex = config.publicIndex || 'index.html';
   
   const aliases = config.aliases = {};
 
+  const modules_setup = [path.resolve(__dirname, 'node_modules'), 'node_modules'];
+
   const overridePlugins = config.plugins || []
 
   if (isHotReload){
+    if(!publicDir){
+      throw new Error('No public dir set')
+    }
+    
     WEBPACK_PLUGINS.push(new HtmlWebpackPlugin({
-      template: publicDir + '/' + publicIndex,
-      // filename: publicIndex
+      template: publicDir + '/' + publicIndex,      
     }));
   }
 
@@ -44,12 +49,12 @@ const RWSWebpackWrapper = (config) => {
     },
     resolve: {
       extensions: ['.ts', '.js'],
-      alias: {      
-        '@rws': path.resolve(__dirname),
+      modules: modules_setup,
+      alias: {              
         ...aliases
       },      
       plugins: [
-        new TsconfigPathsPlugin({configFile: executionDir + './tsconfig.json'})
+        new TsconfigPathsPlugin({configFile: config.tsConfigPath})
       ]
     },
     module: {
@@ -76,11 +81,19 @@ const RWSWebpackWrapper = (config) => {
           ],
         },
         {
-          test: /\.(ts|js)$/,
-          use: [
-            'ts-loader',
-            path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),          
-          ],          
+          test: /\.(ts)$/,
+          use: [                       
+            {
+              loader: 'ts-loader',
+              options: {
+                configFile: path.resolve(config.tsConfigPath)
+              }
+            },
+            {
+              loader: path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),        
+            }  
+          ],
+          exclude: [path.resolve(__dirname, 'node_modules')]                    
         }
       ],
     },
@@ -96,10 +109,11 @@ const RWSWebpackWrapper = (config) => {
   if(isHotReload){
     cfgExport.devServer = {
       hot: true,      
-      static: executionDir + '/public'  
+      static: publicDir  
     }
   }
 
+  // return;
   return cfgExport;
 }
 
