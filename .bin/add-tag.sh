@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=$1
+export VERSION=$1
 
 git add .
 git commit -m "v$VERSION"
