@@ -20,7 +20,7 @@ async function installDeps(){
     log('Installing RWS client TS dependencies...')
 
     if(!fs.existsSync(`${process.cwd() + '/node_modules/ts-transformer-keys'}`)){        
-        await ProcessService.runShellCommand(`npm install ts-transformer-keys`);
+        await runShellCommand(`npm install ts-transformer-keys`);
     }
 
     // await rwsPackageSetup();
