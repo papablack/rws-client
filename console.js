@@ -118,6 +118,10 @@ const rwsPackageSetup = async () => {
       fs.mkdirSync(moduleCfgDir);
     }
 
+    if(!fs.existsSync(`${moduleCfgDir}/${fileName}`)){
+      return null;
+    }
+
     try{
       return fs.readFileSync(`${moduleCfgDir}/${fileName}`, 'utf-8');
     } catch (e){
