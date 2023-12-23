@@ -1,6 +1,6 @@
 {
   "name": "rws-js-client",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "client for RWS frontend",
   "main": "src/index.ts",
   "types": "dist/src/index.d.ts",
@@ -9,9 +9,6 @@
     "docs": "typedoc --tsconfig ./tsconfig.json",
     "build": "npx tsc",
     "package": "webpack --config package.webpack.config.js"    
-  },
-  "bin": {
-    "rws-client": "./console.js"
   },
   "repository": {
     "type": "git",
@@ -75,7 +72,7 @@
     "typedoc-theme-hierarchy": "^4.1.2",
     "typescript": "^5.1.6",
     "url-loader": "^4.1.1",
-    "webpack": "^5.81.0",
+    "webpack": "^5.75.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "webpack-node-externals": "^3.0.0"
