@@ -3,6 +3,9 @@
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
+
+const utils = require('./_tools');
+
 const log = console.log;
 
 
@@ -16,25 +19,29 @@ const main = async () => {
     return;
 }
 
+const executionDir = process.cwd();
+
+const rootPackageDir = utils.findRootWorkspacePath(executionDir);
+
 async function installDeps(){
-    log('[RWS] Installing RWS client TS dependencies...')
+    // log('[RWS] Installing RWS client TS dependencies...', rootPackageDir);
 
     // if(!fs.existsSync(`${process.cwd() + '/node_modules/ts-transformer-keys'}`)){        
     //     await runShellCommand(`npm install ts-transformer-keys`);
     // }
 
     // await rwsPackageSetup();
-    await runShellCommand(`npm install`, __dirname);    
+    // await runShellCommand(`yarn`, __dirname);    
     
-    log('[RWS] Installed RWS client TS dependencies.');
+    // log('[RWS] Installed RWS client TS dependencies.');
 
     log('[RWS] Building RWS client TS dependencies...')
 
-    await runShellCommand(`npm run build`, __dirname);
+    await runShellCommand(`yarn build`, __dirname);
 
     log('[RWS] Built RWS client TS dependencies.');
 
-    await runShellCommand(`npm run build`);
+    await runShellCommand(`yarn build`);
 }
 
 const rwsPackageSetup = async () => {    
@@ -70,7 +77,7 @@ const rwsPackageSetup = async () => {
         if (fs.existsSync(originalPackageJsonPath)) {
             fs.renameSync(originalPackageJsonPath, backupPackageJsonPath);
             fs.writeFileSync(originalPackageJsonPath, JSON.stringify(cwdPackage, null, 2));
-            await runShellCommand(`npm install`);
+            await runShellCommand(`yarn install`);
             fs.unlinkSync(originalPackageJsonPath);
             fs.renameSync(backupPackageJsonPath, originalPackageJsonPath);
             setRWSVar('_rws_deps_installed', 'True');
@@ -110,9 +117,8 @@ const rwsPackageSetup = async () => {
   }
 
   function getRWSVar(fileName)
-  {
-    const executionDir = process.cwd();    
-    const moduleCfgDir = `${executionDir}/node_modules/.rws`;
+  {    
+    const moduleCfgDir = `${rootPackageDir}/node_modules/.rws`;
 
     if(!fs.existsSync(moduleCfgDir)){
       fs.mkdirSync(moduleCfgDir);
@@ -130,16 +136,16 @@ const rwsPackageSetup = async () => {
   }   
   
   function setRWSVar(fileName, value)
-  {
-    const executionDir = process.cwd();    
-    const moduleCfgDir = `${executionDir}/node_modules/.rws`;
+  {     
+    const moduleCfgDir = `${rootPackageDir}/node_modules/.rws`;
 
     if(!fs.existsSync(moduleCfgDir)){
       fs.mkdirSync(moduleCfgDir);
     }
 
     fs.writeFileSync(`${moduleCfgDir}/${fileName}`, value);
-  }  
+  }
+
 
 
 main().then(() => {
