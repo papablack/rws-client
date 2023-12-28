@@ -15,6 +15,8 @@ declare module '*.html' {
     export default content;
 }
 
-export default RWSClient;
+declare module 'rws-js-client' {
+    export default RWSClient;
 
-export { NotifyUiType, NotifyLogType, RouteReturn, _ROUTING_EVENT_NAME, NotifyService, IRoutingEvent, ApiService, WSService, RoutingService, DOMService, DOMOutputType, RWSViewComponent, renderRouteComponent, RWSView, RWSService, RouterComponent, observable, attr };
+    export { NotifyUiType, NotifyLogType, RouteReturn, _ROUTING_EVENT_NAME, NotifyService, IRoutingEvent, ApiService, WSService, RoutingService, DOMService, DOMOutputType, RWSViewComponent, renderRouteComponent, RWSView, RWSService, RouterComponent, observable, attr };
+}
