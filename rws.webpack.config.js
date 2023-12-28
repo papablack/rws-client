@@ -87,11 +87,7 @@ const RWSWebpackWrapper = (config) => {
               loader: 'ts-loader',
               options: {
                 allowTsInNodeModules: true,
-                configFile: path.resolve(config.tsConfigPath),
-                include: [
-                  "src",
-                  `${__dirname}/declarations.d.ts`
-                ]
+                configFile: path.resolve(config.tsConfigPath)            
               }
             },
             {
