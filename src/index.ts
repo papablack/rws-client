@@ -11,10 +11,6 @@ import RWSService from './services/_service';
 import WSService from './services/WSService';
 import { RouterComponent } from './components/router/component';
 
-import { 
-    allComponents, 
-    provideFASTDesignSystem 
-} from "@microsoft/fast-components";
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -29,8 +25,9 @@ class RWSClient {
     private config: IRWSConfig = { backendUrl: '', routes: {} };
 
     async start(config: IRWSConfig): Promise<boolean> {    
-        this.config = {...this.config, ...config};                              
-        provideFASTDesignSystem().register(allComponents);
+        this.config = {...this.config, ...config};      
+        // const fastComponents = await import('@microsoft/fast-components');                        
+        
 
         const hotModule:IHotModule = (module as IHotModule);
 
@@ -39,6 +36,8 @@ class RWSClient {
               console.log('Accepting the updated module!');              
             })
         }
+
+        const packageInfo = "";
         
         await startClient(this.config);        
     

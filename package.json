@@ -31,6 +31,8 @@
     "@microsoft/fast-components": "^2.30.6",
     "@microsoft/fast-element": "^1.12.0",
     "@microsoft/fast-router": "^0.4.8",
+    "partial-json-parser": "^1.0.0",
+    "sass": "^1.69.7",
     "@types/moment": "^2.13.0",
     "dragula": "^3.7.3",
     "lodash": "^4.17.21",

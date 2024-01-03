@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-
+const fs = require('fs');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const JsMinimizerPlugin = require('terser-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
@@ -36,10 +36,30 @@ const RWSWebpackWrapper = (config) => {
     }));
   }
 
-  WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, ...overridePlugins];
+  WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, new webpack.optimize.ModuleConcatenationPlugin(), ...overridePlugins];
+
+  const splitInfoJson = config.outputDir + '/rws_chunks_info.json'
+  const automatedEntries = {};
+
+  const foundRWSUserClasses = findFilesWithText(executionDir, 'extends RWSViewComponent', ['dist', 'node_modules', '@rws-js-client']);
+  const foundRWSClientClasses = findFilesWithText(__dirname, 'extends RWSViewComponent', ['dist', 'node_modules']);
+
+  const RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
+
+  RWSComponents.forEach((file) => {
+    const fileParts = file.split('/');
+
+    const componentName = fileParts[fileParts.length-2].replace(/-/g, '_');
+    automatedEntries[componentName] = file;
+  });
+
+  fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
 
   const cfgExport = {
-    entry: config.entry,
+    entry: {
+      ...automatedEntries,
+      main_rws: config.entry
+    },
     mode: isDev ? 'development' : 'production',
     target: 'web',
     devtool: config.devtool || 'inline-source-map',
@@ -95,7 +115,6 @@ const RWSWebpackWrapper = (config) => {
             }  
           ],
           exclude: /node_modules\/(?!rws-js-client)/,
-
         }
       ],
     },
@@ -104,8 +123,23 @@ const RWSWebpackWrapper = (config) => {
       minimizer: [
         new JsMinimizerPlugin(),
         new CssMinimizerPlugin()
-      ]
-    }    
+      ],
+      splitChunks: {
+        cacheGroups: {
+          fast: {
+            test: /[\\/]node_modules[\\/]@microsoft[\\/](fast-components)[\\/]/,
+            name: 'fast',
+            chunks: 'all',
+            enforce: true
+          },
+          vendor: {
+            test: /[\\/]node_modules[\\/](?!@microsoft[\\/]fast-components[\\/])/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+        },
+      },
+    },    
   }
 
   if(isHotReload){
@@ -116,6 +150,28 @@ const RWSWebpackWrapper = (config) => {
   }
   
   return cfgExport;
+}
+
+function findFilesWithText(dir, text, ignored = [], fileList = []) {
+  const files = fs.readdirSync(dir);
+
+  files.forEach(file => {
+      const filePath = path.join(dir, file);
+      const fileStat = fs.statSync(filePath);
+
+      if (fileStat.isDirectory() && !ignored.includes(file)) {
+          // Recursively search this directory
+          findFilesWithText(filePath, text, ignored, fileList);
+      } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
+          // Read file content and check for text
+          const content = fs.readFileSync(filePath, 'utf8');
+          if (content.includes(text)) {
+              fileList.push(filePath);
+          }
+      }
+  });
+
+  return fileList;
 }
 
 module.exports = RWSWebpackWrapper;
