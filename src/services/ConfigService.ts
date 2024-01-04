@@ -29,11 +29,17 @@ class ConfigService extends TheService {
     {
       const className = this.name;
       const instanceExists = TheService._instances[className];
-      
+      console.log(cfg);
       if (cfg) {                
           TheService._instances[className] = new this(cfg);        
       }else if(!instanceExists && !cfg){
-          throw new Error('no-cfg');
+        console.log(window);
+         const globalCFG = (window as any).RWSClient.config;
+          if(!globalCFG){
+            throw new Error('no-cfg');
+          }else{
+            TheService._instances[className] = new this(globalCFG);
+          }
       }
   
       return TheService._instances[className] as ConfigService;

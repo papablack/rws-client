@@ -2,9 +2,21 @@ import appConfig from "./services/ConfigService";
 import NotifyService from "./services/NotifyService";
 import WSService from "./services/WSService";
 import RoutingService from "./services/RoutingService";
+import ApiService from "./services/ApiService";
 const main = async (cfg) => {
     //First config run for setting up data. Later just use appConfig().get() to obtain data.
     const config = appConfig(cfg);
+    if (cfg.parted) {
+        const componentParts = await ApiService.get('/js/build/rws_chunks_info.json');
+        componentParts.forEach((componentName) => {
+            const script = document.createElement('script');
+            script.src = `/js/build/rws.${componentName}.js`; // Replace with the path to your script file
+            script.async = true;
+            script.type = 'text/javascript';
+            console.log(`Appended ${componentName} component`);
+            document.body.appendChild(script);
+        });
+    }
     RoutingService.initRouting(config.get('routes'));
     if (cfg.backendUrl) {
         WSService.on('ws:disconnected', (instance, params) => {

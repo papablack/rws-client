@@ -55,6 +55,31 @@ const RWSWebpackWrapper = (config) => {
 
   fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
 
+  const optimConfig = {
+    minimizer: [
+      new JsMinimizerPlugin(),
+      new CssMinimizerPlugin()
+    ],    
+  };
+
+  if(config.parted){
+    optimConfig['splitChunks'] = {
+      cacheGroups: {
+        fast: {
+          test: /fast-components/,
+          name: 'fast',
+          chunks: 'all',
+          enforce: true
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/](?!@microsoft[\\/]fast-components[\\/])/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    };
+  }
+
   const cfgExport = {
     entry: {
       ...automatedEntries,
@@ -65,7 +90,7 @@ const RWSWebpackWrapper = (config) => {
     devtool: config.devtool || 'inline-source-map',
     output: {
       path: config.outputDir,
-      filename: config.outputFileName,
+      filename: config.parted ? 'rws.[name].js' : config.outputFileName,
     },
     resolve: {
       extensions: ['.ts', '.js'],
@@ -119,27 +144,7 @@ const RWSWebpackWrapper = (config) => {
       ],
     },
     plugins: WEBPACK_PLUGINS,
-    optimization: {
-      minimizer: [
-        new JsMinimizerPlugin(),
-        new CssMinimizerPlugin()
-      ],
-      splitChunks: {
-        cacheGroups: {
-          fast: {
-            test: /[\\/]node_modules[\\/]@microsoft[\\/](fast-components)[\\/]/,
-            name: 'fast',
-            chunks: 'all',
-            enforce: true
-          },
-          vendor: {
-            test: /[\\/]node_modules[\\/](?!@microsoft[\\/]fast-components[\\/])/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-        },
-      },
-    },    
+    optimization: optimConfig,    
   }
 
   if(isHotReload){

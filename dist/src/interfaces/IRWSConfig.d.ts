@@ -6,4 +6,5 @@ export default interface IRWSConfig {
     backendRoutes?: any[];
     apiPrefix?: string;
     routes?: IFrontRoutes;
+    parted?: boolean;
 }

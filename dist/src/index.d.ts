@@ -21,3 +21,23 @@ declare class RWSClient {
 declare function RWSView(name: string): (type: Function) => void;
 export default RWSClient;
 export { NotifyUiType, NotifyLogType, RouteReturn, _ROUTING_EVENT_NAME, NotifyService, IRoutingEvent, ApiService, WSService, RoutingService, DOMService, DOMOutputType, RWSViewComponent, renderRouteComponent, RWSView, RWSService, RouterComponent, observable, attr };
+
+// import RWSClient, { NotifyUiType, NotifyLogType, RouteReturn, _ROUTING_EVENT_NAME, NotifyService, IRoutingEvent, ApiService, WSService, RoutingService, DOMService, DOMOutputType, RWSViewComponent, renderRouteComponent, RWSView, RWSService, RouterComponent, observable, attr } from './dist/src/index';
+
+// export default RWSClient;
+// export { NotifyUiType, NotifyLogType, RouteReturn, _ROUTING_EVENT_NAME, NotifyService, IRoutingEvent, ApiService, WSService, RoutingService, DOMService, DOMOutputType, RWSViewComponent, renderRouteComponent, RWSView, RWSService, RouterComponent, observable, attr }
+
+declare module '*.css' {
+    const content: import('@microsoft/fast-element').ElementStyles;
+    export default content;
+}
+
+declare module '*.scss' {
+    const content: import('@microsoft/fast-element').ElementStyles;
+    export default content;
+}
+
+declare module '*.html' {
+    const content: import('@microsoft/fast-element').ViewTemplate;
+    export default content;
+}

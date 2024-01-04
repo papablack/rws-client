@@ -8,20 +8,22 @@ import ApiService from './services/ApiService';
 import RWSService from './services/_service';
 import WSService from './services/WSService';
 import { RouterComponent } from './components/router/component';
-import { allComponents, provideFASTDesignSystem } from "@microsoft/fast-components";
 class RWSClient {
     constructor() {
         this.config = { backendUrl: '', routes: {} };
     }
     async start(config) {
         this.config = { ...this.config, ...config };
-        provideFASTDesignSystem().register(allComponents);
+        console.log('cfg', this.config);
+        const fastComponents = await import('@microsoft/fast-components');
+        fastComponents.provideFASTDesignSystem().register(fastComponents.allComponents);
         const hotModule = module;
         if (hotModule.hot) {
             hotModule.hot.accept('./print.js', function () {
                 console.log('Accepting the updated module!');
             });
         }
+        const packageInfo = "";
         await startClient(this.config);
         return true;
     }

@@ -4,10 +4,24 @@ import NotifyService from "./services/NotifyService";
 import WSService from "./services/WSService";
 
 import RoutingService from "./services/RoutingService";
+import ApiService from "./services/ApiService";
 
 const main = async (cfg: IRWSConfig): Promise<boolean> => {    
     //First config run for setting up data. Later just use appConfig().get() to obtain data.
     const config = appConfig(cfg);
+    if(cfg.parted){
+        const componentParts: string[] = await ApiService.get<string[]>('/js/build/rws_chunks_info.json');
+
+        componentParts.forEach((componentName) => {
+            const script: HTMLScriptElement = document.createElement('script');        
+            script.src = `/js/build/rws.${componentName}.js`;  // Replace with the path to your script file
+            script.async = true;        
+            script.type = 'text/javascript';
+
+            console.log(`Appended ${componentName} component`);
+            document.body.appendChild(script);
+        });
+    }
 
     RoutingService.initRouting(config.get('routes'));
 

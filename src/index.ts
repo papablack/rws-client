@@ -26,7 +26,10 @@ class RWSClient {
 
     async start(config: IRWSConfig): Promise<boolean> {    
         this.config = {...this.config, ...config};      
-        // const fastComponents = await import('@microsoft/fast-components');                        
+        console.log('cfg', this.config);
+        const fastComponents = await import('@microsoft/fast-components');                        
+
+        fastComponents.provideFASTDesignSystem().register(fastComponents.allComponents);
         
 
         const hotModule:IHotModule = (module as IHotModule);
