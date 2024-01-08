@@ -38,23 +38,6 @@ const RWSWebpackWrapper = (config) => {
 
   WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, new webpack.optimize.ModuleConcatenationPlugin(), ...overridePlugins];
 
-  const splitInfoJson = config.outputDir + '/rws_chunks_info.json'
-  const automatedEntries = {};
-
-  const foundRWSUserClasses = findFilesWithText(executionDir, 'extends RWSViewComponent', ['dist', 'node_modules', '@rws-js-client']);
-  const foundRWSClientClasses = findFilesWithText(__dirname, 'extends RWSViewComponent', ['dist', 'node_modules']);
-
-  const RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
-
-  RWSComponents.forEach((file) => {
-    const fileParts = file.split('/');
-
-    const componentName = fileParts[fileParts.length-2].replace(/-/g, '_');
-    automatedEntries[componentName] = file;
-  });
-
-  fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
-
   if(isDev){
     WEBPACK_PLUGINS.push(new BundleAnalyzerPlugin({
       analyzerMode: 'static', // The report outputs to an HTML file in the dist directory
@@ -64,8 +47,7 @@ const RWSWebpackWrapper = (config) => {
   }
 
   const cfgExport = {
-    entry: {
-      ...automatedEntries,
+    entry: {      
       main_rws: config.entry
     },
     mode: isDev ? 'development' : 'production',
@@ -131,22 +113,7 @@ const RWSWebpackWrapper = (config) => {
       minimizer: [
         new JsMinimizerPlugin(),
         new CssMinimizerPlugin()
-      ],
-      splitChunks: {
-        cacheGroups: {
-          fast: {
-            test: /[\\/]node_modules[\\/]@microsoft[\\/](fast-components)[\\/]/,
-            name: 'fast',
-            chunks: 'all',
-            enforce: true
-          },
-          vendor: {
-            test: /[\\/]node_modules[\\/](?!@microsoft[\\/]fast-components[\\/])/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-        },
-      },
+      ]
     },    
   }
 
