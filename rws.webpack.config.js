@@ -5,7 +5,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const JsMinimizerPlugin = require('terser-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 let WEBPACK_PLUGINS = [
   
@@ -54,6 +54,14 @@ const RWSWebpackWrapper = (config) => {
   });
 
   fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
+
+  if(isDev){
+    WEBPACK_PLUGINS.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static', // The report outputs to an HTML file in the dist directory
+      openAnalyzer: true,    // Set to false if you don't want to open automatically
+      // other options...
+    }));
+  }
 
   const cfgExport = {
     entry: {
