@@ -305,12 +305,11 @@ class RWSPlugin {
       };    
   }
 
-  checkForImporterType(checkTypeExt){
+  checkForImporterType(_module, checkTypeExt){
     let importingFileExtension = '';
 
-    if (this._module && this._module.issuer && this._module.issuer.resource) {
-        importingFileExtension = path.extname(this._module.issuer.resource);
-
+    if (_module && _module.issuer && _module.issuer.resource) {
+        importingFileExtension = path.extname(_module.issuer.resource);
         if(importingFileExtension === ('.' + checkTypeExt)){
             return true;
         }

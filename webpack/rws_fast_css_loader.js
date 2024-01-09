@@ -4,7 +4,11 @@ const plugin = new RWSPlugin();
 
 module.exports = function(content) {  
 
-    if(!plugin.checkForImporterType('ts')){
+    if(this.resourcePath == '/app/frontend/src/styles/main.scss'){
+        console.log('zzzzz',content, plugin.checkForImporterType(this._module, 'ts'));
+    }
+
+    if(!plugin.checkForImporterType(this._module, 'ts')){
         return content;
     }
     

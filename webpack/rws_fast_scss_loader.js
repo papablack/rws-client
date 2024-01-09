@@ -1,37 +1,50 @@
-// custom-css-loader.js
 const RWSPlugin = require("./rws_plugin");
 const path = require('path');
+const cssLoader = require('css-loader');
 
-module.exports = function(content) { 
+module.exports = function(content) {
+    const callback = this.async();
     const plugin = new RWSPlugin();
     const filePath = this.resourcePath;
 
     const saveFile = content.indexOf('@save') > -1;  
     let fromTs = false;
 
-    if(plugin.checkForImporterType('ts')){
-       fromTs = true;
+    if (plugin.checkForImporterType(this._module, 'ts')) {
+        fromTs = true;
     }
-    
-    try{
 
-        if(fromTs){
-            const code = plugin.compileScssCode(content, path.dirname(filePath));
+    try {
+        const code = plugin.compileScssCode(content, path.dirname(filePath));        
 
-            if(saveFile && code){
+        if (fromTs) {
+            if (saveFile && code) {
                 plugin.writeCssFile(filePath, code);        
-            }else{         
+
+                // Properly setup the context for css-loader
+                const loaderContext = {
+                    ...this,
+                    query: { sourceMap: true }, // Assuming you want source maps
+                    async: () => (err, output) => {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        callback(null, output);
+                    }
+                };
+
+                // Execute css-loader
+                cssLoader.call(loaderContext, code);
+            } else {
+                const tsCode = `import { css } from '@microsoft/fast-element';\nexport default css\`${code}\`;`;
+                callback(null, tsCode);
             }
-
-            return code;
-        }else{
-            const code = plugin.compileScssCode(content, path.dirname(filePath));
-            return code;
-        }        
-
-    }catch(e){
+        } else {
+            callback(null, code);
+        }
+    } catch (e) {
         console.error(e);
-        return '';
+        callback(e);
     }
-        
 };
