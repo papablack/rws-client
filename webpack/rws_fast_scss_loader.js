@@ -15,7 +15,7 @@ module.exports = function(content) {
     
     try{
 
-        // if(fromTs){
+        if(fromTs){
             const code = plugin.compileScssCode(content, path.dirname(filePath));
 
             if(saveFile && code){
@@ -24,9 +24,10 @@ module.exports = function(content) {
             }
 
             return code;
-        // }else{
-        //     return content;
-        // }        
+        }else{
+            const code = plugin.compileScssCode(content, path.dirname(filePath));
+            return code;
+        }        
 
     }catch(e){
         console.error(e);

@@ -84,10 +84,9 @@ const RWSWebpackWrapper = (config) => {
         {
           test: /\.scss$/,
           use: [                 
-            'css-loader',
-            // 'sass-loader',       
+            'css-loader',                   
             path.resolve(__dirname, './webpack/rws_fast_scss_loader.js'),            
-            
+            path.resolve(__dirname, './webpack/rws_fast_css_loader.js')
           ],
         },
         {
