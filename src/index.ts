@@ -10,7 +10,7 @@ import ApiService, { IBackendRoute } from './services/ApiService';
 import RWSService from './services/_service';
 import WSService from './services/WSService';
 import { RouterComponent } from './components/router/component';
-
+import { provideFASTDesignSystem, allComponents } from '@microsoft/fast-components';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -25,10 +25,9 @@ class RWSClient {
     private config: IRWSConfig = { backendUrl: '', routes: {} };
 
     async start(config: IRWSConfig): Promise<boolean> {    
-        this.config = {...this.config, ...config};      
-        const fastComponents = await import('@microsoft/fast-components');                        
+        this.config = {...this.config, ...config};                         
         
-        fastComponents.provideFASTDesignSystem().register(fastComponents.allComponents);
+        provideFASTDesignSystem().register(allComponents);
         
 
         const hotModule:IHotModule = (module as IHotModule);
