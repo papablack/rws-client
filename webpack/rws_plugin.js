@@ -2,7 +2,7 @@ const sass = require('sass');
 const fs = require('fs');
 const path = require('path');
 const { getTokenSourceMapRange } = require('typescript');
-
+const _tools = require('../_tools');
 const _COMPILE_DIR_NAME = 'compiled';
 
 const FONT_REGEX = /url\(['"]?(.+?\.(woff|woff2|eot|ttf|otf))['"]?\)/g;
@@ -16,9 +16,10 @@ const log = (args) => {
 }
 class RWSPlugin {
   autoCompile = [];
-  node_modules_dir = (fileDir) => path.relative(fileDir, process.cwd()) + '/node_modules/'
 
   constructor(params){
+    this.node_modules_dir = (fileDir) => path.relative(fileDir, _tools.findRootWorkspacePath(process.cwd())) + '/node_modules/'
+    
     if(!params){
       params = {};
     }
@@ -157,7 +158,7 @@ class RWSPlugin {
   }
 
   replaceWithNodeModules(input, fileDir, absolute = false, token = '~'){
-    return input.replace(token, absolute ? `${path.resolve(process.cwd(), 'node_modules')}/` : this.node_modules_dir(fileDir));
+    return input.replace(token, absolute ? `${path.resolve(_tools.findRootWorkspacePath(process.cwd()), 'node_modules')}/` : this.node_modules_dir(fileDir));
   }
 
   compileFile(scssPath){

@@ -8,7 +8,7 @@ import ApiService from './services/ApiService';
 import RWSService from './services/_service';
 import WSService from './services/WSService';
 import { RouterComponent } from './components/router/component';
-import { allComponents, provideFASTDesignSystem } from "@microsoft/fast-components";
+import { provideFASTDesignSystem, allComponents } from '@microsoft/fast-components';
 class RWSClient {
     constructor() {
         this.config = { backendUrl: '', routes: {} };
@@ -22,6 +22,7 @@ class RWSClient {
                 console.log('Accepting the updated module!');
             });
         }
+        const packageInfo = "";
         await startClient(this.config);
         return true;
     }
