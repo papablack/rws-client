@@ -178,7 +178,7 @@ class ApiService extends TheService {
 
     async uploadFile(url:string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse>
     {
-        return await upload(
+        return upload(
             url,
             {
               file,

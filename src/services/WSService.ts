@@ -85,7 +85,7 @@ class WSService extends TheService {
           
           this._ws.on('__PONG__', async (data: any) => {              
             if (data === '__PONG__') {
-                wsLog(new Error(), 'Recieveing valid ping callback from server', socketId);                                                           
+                wsLog(new Error(), 'Recieving valid ping callback from server', socketId);                                                           
                 return;
             }
           });
@@ -154,16 +154,8 @@ class WSService extends TheService {
       });
   }
 
-  public async sendMessage<T>(method: string, msg: T): Promise<void> {       
-    //await this.waitForStatus();    
-    const the_message = {
-      user_id: this._wsId,
-      method: method,
-      msg: msg
-    }
-
-    this.socket().emit(method, JSON.stringify(the_message));
-    //WSMessageHandler.sendMessage(this, method, msg);
+  public sendMessage<T>(method: string, msg: T): void {                
+    WSMessageHandler.sendMessage<T>(this, method, msg);
   }
 
   public statusChange(): void {
