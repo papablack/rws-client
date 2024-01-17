@@ -1,5 +1,5 @@
-import TheService from "./_service";
-declare class UtilsService extends TheService {
-}
-declare const _default: UtilsService;
+declare function getCurrentLineNumber(error?: Error): Promise<number>;
+declare const _default: {
+    getCurrentLineNumber: typeof getCurrentLineNumber;
+};
 export default _default;

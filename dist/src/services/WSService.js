@@ -1,9 +1,18 @@
 import TheService from "./_service";
 import { io } from 'socket.io-client';
 import { v4 as uuid } from 'uuid';
-import { ping, disconnect as disconnectWs, reconnect as reconnectWs } from './_ws_handlers/ConnectionHandler';
+import { disconnect as disconnectWs, reconnect as reconnectWs } from './_ws_handlers/ConnectionHandler';
 import WSEventHandler from './_ws_handlers/EventHandler';
 import WSMessageHandler from './_ws_handlers/MessageHandler';
+import UtilsService from "./UtilsService";
+function logClickableLink(text, url) {
+    console.log('[', url, ']:', text);
+}
+const getCurrentLineNumber = UtilsService.getCurrentLineNumber;
+const wsLog = async (fakeError, text, socketId = null, isError = false) => {
+    const logit = isError ? console.error : console.log;
+    logit(`[webpack://junction_ai_trainer_ui/${module.id.replace('./', '')}:${await getCurrentLineNumber(fakeError)}]:`, `<WS-CLIENT>${socketId ? `(${socketId})` : ''}`, text);
+};
 class WSService extends TheService {
     constructor() {
         super(...arguments);
@@ -12,17 +21,16 @@ class WSService extends TheService {
         this.url = null;
         this._status_string = 'WS_CLOSED';
         this._wsId = null;
-        this._timeout = null;
         this._interval = null;
         this._connecting = false;
         this._shut_down = false;
         this.reconnects = 0;
         this.eventListeners = new Map();
     }
-    init(url, user) {
+    async init(url, user) {
         var _a, _b, _c, _d;
         this._connecting = true;
-        console.info('WS CONNECTING');
+        wsLog(new Error(), 'Connecting to: ' + url);
         this.url = url;
         this.user = user;
         const _self = this;
@@ -30,35 +38,45 @@ class WSService extends TheService {
             Authorization: 'Bearer ' + ((_b = this.user) === null || _b === void 0 ? void 0 : _b.jwt_token),
         } : {};
         try {
+            if (!WSService.websocket_instance) {
+                WSService.websocket_instance = io(this.url, { extraHeaders: headers, transports: ['websocket'] });
+            }
             //, transports:  ['websocket']
-            this._ws = io(this.url, { extraHeaders: headers });
+            this._ws = WSService.websocket_instance;
             if ((_c = this.user) === null || _c === void 0 ? void 0 : _c.mongoId) {
                 this._wsId = this.user.mongoId;
             }
             else {
                 this._wsId = uuid();
             }
-            this._ws.on('__PONG__', (data) => {
+            this._ws.on('__PONG__', async (data) => {
                 if (data === '__PONG__') {
-                    if (this._connecting) {
-                        console.info('[WS] SOCKET CONNECTED');
-                        this.executeEventListener('ws:connected');
-                    }
-                    this._connecting = false;
-                    this._ws.connected = true;
-                    clearTimeout(this._timeout);
+                    wsLog(new Error(), 'got pong', this.socket().id);
                     return;
                 }
             });
-            this._ws.on('disconnect', () => {
-                console.log('[WS] Disconnected from the server');
+            let socketId = null;
+            this._ws.on('connect', async () => {
+                socketId = this.socket().id;
+                wsLog(new Error(), 'SOCKET CONNECTED', socketId);
+                this._connecting = false;
+                this._ws.connected = true;
+                this.executeEventListener('ws:connected');
             });
-            this._ws.on('error', (error) => {
-                console.error('[WS] WebSocket error:', error);
+            this._ws.on('disconnect', async (e) => {
+                console.error(e);
+                wsLog(new Error(), 'Disconnected from the server:', socketId);
+                socketId = null;
+                this.executeEventListener('ws:disconnected', { socketId: socketId, error: e });
             });
-            this._interval = setInterval(() => {
-                ping(_self);
-            }, 3000);
+            this._ws.on('error', async (error) => {
+                wsLog(error, 'Socket error:', socketId, true);
+                console.error(error);
+                this.executeEventListener('ws:error', { socketId: socketId, error: error });
+            });
+            // this._interval = setInterval(() => {
+            //     ping(_self);
+            // }, 3000);
             this.reconnects = 0;
             if ((_d = this._ws) === null || _d === void 0 ? void 0 : _d.connected) {
                 this._connecting = false;
@@ -80,8 +98,31 @@ class WSService extends TheService {
     listenForMessage(callback, method) {
         return WSMessageHandler.listenForMessage(this, callback, method);
     }
-    sendMessage(method, msg) {
-        WSMessageHandler.sendMessage(this, method, msg);
+    async waitForStatus() {
+        return new Promise((resolve, reject) => {
+            let iteration = 0;
+            const t = setInterval(() => {
+                if (iteration > 4) {
+                    clearInterval(t);
+                    reject('Websocket did not connect!');
+                }
+                if (this.isActive()) {
+                    clearInterval(t);
+                    resolve();
+                }
+                iteration++;
+            }, 1000);
+        });
+    }
+    async sendMessage(method, msg) {
+        //await this.waitForStatus();    
+        const the_message = {
+            user_id: this._wsId,
+            method: method,
+            msg: msg
+        };
+        this.socket().emit(method, JSON.stringify(the_message));
+        //WSMessageHandler.sendMessage(this, method, msg);
     }
     statusChange() {
         let status = 'WS_CLOSED';

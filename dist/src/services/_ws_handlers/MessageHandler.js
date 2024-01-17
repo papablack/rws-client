@@ -1,6 +1,6 @@
 function listenForMessage(instance, callback, method) {
     if (!instance.socket()) {
-        instance.init(instance.getUrl(), instance.getUser());
+        throw new Error('socket is not active');
     }
     instance.socket().on(method || 'message', (data) => {
         try {
@@ -25,7 +25,7 @@ function listenForMessage(instance, callback, method) {
 function sendMessage(instance, method, msg) {
     try {
         if (!instance.socket()) {
-            instance.init(instance.getUrl(), instance.getUser());
+            throw new Error('socket is not active');
         }
         const the_message = {
             user_id: instance._wsId,

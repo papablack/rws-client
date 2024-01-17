@@ -1,8 +1,8 @@
 function ping(instance) {
     instance.socket().emit('__PING__');
-    instance._timeout = setTimeout(() => {
-        reconnect(instance);
-    }, 3000);
+    // instance._timeout = setTimeout(() => {
+    //     reconnect(instance);
+    // }, 3000);
 }
 function reconnect(instance) {
     disconnect(instance, true);
@@ -26,10 +26,9 @@ function disconnect(instance, noEvent = false) {
         instance.socket().disconnect();
     }
     if (!noEvent) {
-        console.info('WS DISCONNECTED');
+        console.log(`{WS}${instance.socket() ? `(${instance.socket().id}):` : ''} Disconnected from WS`);
         instance.executeEventListener('ws:disconnected');
     }
-    clearTimeout(instance._timeout);
     clearInterval(instance._interval);
     instance._connecting = false;
     instance._shut_down = true;

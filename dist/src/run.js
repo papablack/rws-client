@@ -11,13 +11,13 @@ const main = async (cfg) => {
             NotifyService.notify('Your websocket client disconnected from the server.', 'error');
         });
         WSService.on('ws:connected', (instance, params) => {
-            NotifyService.notify('You are connected to websocket.', 'info');
+            NotifyService.notify('You are connected to websocket. Your id is: ' + instance.socket().id, 'info');
         });
         WSService.on('ws:reconnect', (instance, params) => {
             console.info('WS RECONNECTION ' + (params.reconnects + 1));
             NotifyService.notify('Your websocket client has tried to reconnect to server. Attempt #' + (params.reconnects + 1), 'warning');
         });
-        WSService.init(config.get('backendUrl'));
+        WSService.init(config.get('wsUrl'));
     }
     return true;
 };

@@ -34,6 +34,15 @@ class ApiService extends TheService {
         if (this.token) {
             this.addHeader(headers, 'Authorization', `Bearer ${this.token}`);
         }
+        if (headers['Content-Type'] === 'application/json') {
+            this.addHeader(headers, 'Accept', 'application/json');
+        }
+        else if (headers['Content-Type'] === 'text/html') {
+            this.addHeader(headers, 'Accept', 'text/html');
+        }
+        else {
+            this.addHeader(headers, 'Accept', '*/*');
+        }
         return headers;
     }
     setToken(token) {

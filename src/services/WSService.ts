@@ -17,10 +17,9 @@ function logClickableLink(text: string, url: string) {
 const getCurrentLineNumber = UtilsService.getCurrentLineNumber;
 
 
-const  wsLog = async (fakeError: Error, text: any, instance: WSService, isError: boolean = false): Promise<void> => {
-  const socket: Socket = instance.socket();  
+const  wsLog = async (fakeError: Error, text: any, socketId: string = null, isError: boolean = false): Promise<void> => {  
   const logit = isError ? console.error : console.log;
-  logit(`[webpack://junction_ai_trainer_ui/${module.id.replace('./', '')}:${await getCurrentLineNumber(fakeError)}]:`, `<WS-CLIENT>${socket ? `(${socket.id})` : ''}`, text);
+  logit(`[webpack://junction_ai_trainer_ui/${module.id.replace('./', '')}:${await getCurrentLineNumber(fakeError)}]:`, `<WS-CLIENT>${socketId ? `(${socketId})` : ''}`, text);
 }
 
 class WSService extends TheService {
@@ -45,7 +44,7 @@ class WSService extends TheService {
 
   public async init(url: string, user?: ITheUser): Promise<WSService> {
       this._connecting = true;
-      wsLog(new Error(), 'Connecting to: ' + url, this);
+      wsLog(new Error(), 'Connecting to: ' + url);
       this.url = url;
       this.user = user;     
       
@@ -70,27 +69,32 @@ class WSService extends TheService {
 
           this._ws.on('__PONG__', async (data: any) => {              
               if (data === '__PONG__') {
-                  wsLog(new Error(), 'got pong', this);                                                                        
+                  wsLog(new Error(), 'got pong', this.socket().id);                                                                        
                   return;
               }
           });
 
+          let socketId: string = null;
+
           this._ws.on('connect', async () => {
-            wsLog(new Error(), 'SOCKET CONNECTED', this);
+            socketId = this.socket().id;
+            wsLog(new Error(), 'SOCKET CONNECTED', socketId);
             this._connecting = false;
             this._ws.connected = true;  
             this.executeEventListener('ws:connected');    
           });
 
-          this._ws.on('disconnect', async (e) => {
-              console.error(e);
-              wsLog(new Error(), 'Disconnected from the server:', this);
+          this._ws.on('disconnect', async (e) => {              
+              wsLog(new Error(), `Disconnected from the server`, socketId);              
+              this.executeEventListener('ws:disconnected', { socketId: socketId, error: e });
+              socketId = null;
           });
 
           this._ws.on('error', async (error: Error) => {
-              wsLog(error, 'Socket error:', this);
-
+              wsLog(error, 'Socket error:', socketId, true);
               console.error(error);
+              this.executeEventListener('ws:error', { socketId: socketId, error: error });
+
           });
           
 
