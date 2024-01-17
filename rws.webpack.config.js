@@ -6,11 +6,39 @@ const JsMinimizerPlugin = require('terser-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 let WEBPACK_PLUGINS = [
   
 ];
 
+
+/**
+ *  The RWS webpack configurator.
+ * 
+ *  Example usage in importing file:
+ * 
+ *  RWSWebpackWrapper({
+    dev: true,
+    hot: false,
+    tsConfigPath: executionDir + '/tsconfig.json',
+    entry: `${executionDir}/src/index.ts`,
+    executionDir: executionDir,
+    publicDir:  path.resolve(executionDir, 'public'),
+    outputDir:  path.resolve(executionDir, 'build'),
+    outputFileName: 'jtrainer.client.js',
+    copyToDir: {
+      '../public/js/' : [
+        './build/jtrainer.client.js',
+        './build/jtrainer.client.js.map',
+        './src/styles/compiled/main.css'
+      ]
+    },
+    plugins: [
+    
+    ],
+  });
+ */
 const RWSWebpackWrapper = (config) => {
   const executionDir = config.executionDir || process.cwd();
 
@@ -38,6 +66,24 @@ const RWSWebpackWrapper = (config) => {
 
   WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, new webpack.optimize.ModuleConcatenationPlugin(), ...overridePlugins];
 
+  if(!!config.copyToDir){
+    Object.keys(config.copyToDir).forEach((targetPath) => {
+
+      const sources = config.copyToDir[targetPath];
+      
+      sources.forEach((sourcePath) => {
+        const fileName = path.basename(sourcePath);
+        console.log(`[RWS] Copying "${sourcePath}" to "${targetPath + '/' + fileName}"`);
+        WEBPACK_PLUGINS.push(new CopyWebpackPlugin({
+          patterns: [
+            { from: sourcePath, to: targetPath + '/' + fileName }
+          ]
+        }))
+      })
+
+    });
+  }
+
   if(isDev){
     WEBPACK_PLUGINS.push(new BundleAnalyzerPlugin({
       analyzerMode: 'static', // The report outputs to an HTML file in the dist directory
@@ -52,10 +98,11 @@ const RWSWebpackWrapper = (config) => {
     },
     mode: isDev ? 'development' : 'production',
     target: 'web',
-    devtool: config.devtool || 'inline-source-map',
+    devtool: config.devtool || 'source-map',
     output: {
       path: config.outputDir,
       filename: config.outputFileName,
+      sourceMapFilename: '[file].map',
     },
     resolve: {
       extensions: ['.ts', '.js'],

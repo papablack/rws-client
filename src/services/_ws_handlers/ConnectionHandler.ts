@@ -4,10 +4,11 @@ import { WSInstance } from "../WSService";
 
 function ping(instance: WSInstance): void {    
     instance.socket().emit('__PING__');
-    instance._timeout = setTimeout(() => {
-        reconnect(instance);
-    }, 3000);
+    // instance._timeout = setTimeout(() => {
+    //     reconnect(instance);
+    // }, 3000);
 }
+
 
 function reconnect(instance: WSInstance): void {    
     disconnect(instance, true);
@@ -33,11 +34,10 @@ function disconnect(instance: WSInstance, noEvent = false): void {
     }
 
     if(!noEvent){
-        console.info('WS DISCONNECTED');
+        console.log(`{WS}${instance.socket() ? `(${instance.socket().id}):` : ''} Disconnected from WS`);
         instance.executeEventListener('ws:disconnected');
     }
-
-    clearTimeout(instance._timeout);
+    
     clearInterval(instance._interval);
 
     instance._connecting = false;

@@ -2,7 +2,7 @@ import { WSInstance } from "../WSService";
 
 function listenForMessage(instance: WSInstance, callback: (data: any, isJson?: boolean) => void, method?: string): WSInstance {
     if (!instance.socket()) {
-        instance.init(instance.getUrl(), instance.getUser());
+        throw new Error('socket is not active');
     }
 
     instance.socket().on(method || 'message', (data: any) => {
@@ -29,7 +29,7 @@ function listenForMessage(instance: WSInstance, callback: (data: any, isJson?: b
 function sendMessage(instance: WSInstance, method: string, msg: any): void {
     try {
         if (!instance.socket()) {
-            instance.init(instance.getUrl(), instance.getUser());
+            throw new Error('socket is not active');
         }
 
         const the_message = {
