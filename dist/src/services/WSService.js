@@ -1,7 +1,7 @@
 import TheService from "./_service";
 import { io } from 'socket.io-client';
 import { v4 as uuid } from 'uuid';
-import { disconnect as disconnectWs, reconnect as reconnectWs } from './_ws_handlers/ConnectionHandler';
+import { ping, disconnect as disconnectWs, reconnect as reconnectWs } from './_ws_handlers/ConnectionHandler';
 import WSEventHandler from './_ws_handlers/EventHandler';
 import WSMessageHandler from './_ws_handlers/MessageHandler';
 import UtilsService from "./UtilsService";
@@ -49,25 +49,26 @@ class WSService extends TheService {
             else {
                 this._wsId = uuid();
             }
-            this._ws.on('__PONG__', async (data) => {
-                if (data === '__PONG__') {
-                    wsLog(new Error(), 'got pong', this.socket().id);
-                    return;
-                }
-            });
             let socketId = null;
-            this._ws.on('connect', async () => {
+            this._ws.on('connect', () => {
                 socketId = this.socket().id;
-                wsLog(new Error(), 'SOCKET CONNECTED', socketId);
+                wsLog(new Error(), 'Socket connected with ID: ' + socketId, socketId);
                 this._connecting = false;
                 this._ws.connected = true;
                 this.executeEventListener('ws:connected');
+                wsLog(new Error(), 'Emitting ping to server', socketId);
+                ping(this);
+            });
+            this._ws.on('__PONG__', async (data) => {
+                if (data === '__PONG__') {
+                    wsLog(new Error(), 'Recieveing valid ping callback from server', socketId);
+                    return;
+                }
             });
             this._ws.on('disconnect', async (e) => {
-                console.error(e);
-                wsLog(new Error(), 'Disconnected from the server:', socketId);
-                socketId = null;
+                wsLog(new Error(), `Disconnected from the server`, socketId);
                 this.executeEventListener('ws:disconnected', { socketId: socketId, error: e });
+                socketId = null;
             });
             this._ws.on('error', async (error) => {
                 wsLog(error, 'Socket error:', socketId, true);

@@ -8,10 +8,10 @@ const main = async (cfg) => {
     RoutingService.initRouting(config.get('routes'));
     if (cfg.backendUrl) {
         WSService.on('ws:disconnected', (instance, params) => {
-            NotifyService.notify('Your websocket client disconnected from the server.', 'error');
+            NotifyService.notify(`Your websocket client disconnected from the server. Your ID was <strong>${params.socketId}</strong>`, 'error');
         });
         WSService.on('ws:connected', (instance, params) => {
-            NotifyService.notify('You are connected to websocket. Your id is: ' + instance.socket().id, 'info');
+            NotifyService.notify('You are connected to websocket. Your ID is: <strong>' + instance.socket().id + '</strong>', 'info');
         });
         WSService.on('ws:reconnect', (instance, params) => {
             console.info('WS RECONNECTION ' + (params.reconnects + 1));

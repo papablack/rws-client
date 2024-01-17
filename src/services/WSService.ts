@@ -67,21 +67,27 @@ class WSService extends TheService {
             this._wsId = uuid();
           }
 
-          this._ws.on('__PONG__', async (data: any) => {              
-              if (data === '__PONG__') {
-                  wsLog(new Error(), 'got pong', this.socket().id);                                                                        
-                  return;
-              }
-          });
-
           let socketId: string = null;
 
-          this._ws.on('connect', async () => {
+          this._ws.on('connect', () => {
             socketId = this.socket().id;
-            wsLog(new Error(), 'SOCKET CONNECTED', socketId);
+
+            wsLog(new Error(), 'Socket connected with ID: ' + socketId, socketId);
+
             this._connecting = false;
             this._ws.connected = true;  
-            this.executeEventListener('ws:connected');    
+
+            this.executeEventListener('ws:connected');               
+            
+            wsLog(new Error(), 'Emitting ping to server', socketId);
+            ping(this);
+          });
+          
+          this._ws.on('__PONG__', async (data: any) => {              
+            if (data === '__PONG__') {
+                wsLog(new Error(), 'Recieveing valid ping callback from server', socketId);                                                           
+                return;
+            }
           });
 
           this._ws.on('disconnect', async (e) => {              
