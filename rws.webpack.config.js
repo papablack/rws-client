@@ -74,6 +74,7 @@ const RWSWebpackWrapper = (config) => {
       sources.forEach((sourcePath) => {
         const fileName = path.basename(sourcePath);
         console.log(`[RWS] Copying "${sourcePath}" to "${targetPath + '/' + fileName}"`);
+        fs.unlinkSync(targetPath + '/' + fileName);
         WEBPACK_PLUGINS.push(new CopyWebpackPlugin({
           patterns: [
             { from: sourcePath, to: targetPath + '/' + fileName }
