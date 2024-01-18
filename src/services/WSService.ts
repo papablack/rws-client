@@ -42,7 +42,7 @@ class WSService extends TheService {
 
   public eventListeners: Map<string, Array<(instance: WSService, params: any) => any>> = new Map();
 
-  public async init(url: string, user?: ITheUser): Promise<WSService> {
+  public async init(url: string, user?: ITheUser, transports: string[] = null): Promise<WSService> {
       this._connecting = true;
       wsLog(new Error(), 'Connecting to: ' + url);
       this.url = url;
@@ -56,7 +56,7 @@ class WSService extends TheService {
 
       try {
           if(!WSService.websocket_instance){
-            WSService.websocket_instance = io(this.url, { extraHeaders: headers, transports:  ['websocket'] });
+            WSService.websocket_instance = io(this.url, { extraHeaders: headers, transports:  transports || null });
           }          
         //, transports:  ['websocket']
           this._ws = WSService.websocket_instance;
