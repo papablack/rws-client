@@ -14,12 +14,12 @@ function logClickableLink(text: string, url: string) {
   console.log('[', url, ']:', text);  
 }
 
-const getCurrentLineNumber = UtilsService.getCurrentLineNumber;
+// const getCurrentLineNumber = UtilsService.getCurrentLineNumber;
 
 
 const  wsLog = async (fakeError: Error, text: any, socketId: string = null, isError: boolean = false): Promise<void> => {  
   const logit = isError ? console.error : console.log;
-  logit(`[webpack://junction_ai_trainer_ui/${module.id.replace('./', '')}:${await getCurrentLineNumber(fakeError)}]:`, `<WS-CLIENT>${socketId ? `(${socketId})` : ''}`, text);
+  logit(`[webpack://junction_ai_trainer_ui/${module.id.replace('./', '')}:`, `<WS-CLIENT>${socketId ? `(${socketId})` : ''}`, text);
 }
 
 class WSService extends TheService {

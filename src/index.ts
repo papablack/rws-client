@@ -6,6 +6,7 @@ import NotifyService from './services/NotifyService';
 import RoutingService, { IFrontRoutes, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent } from './services/RoutingService';
 import DOMService, { DOMOutputType }  from './services/DOMService';
 import RWSViewComponent from './components/_component';
+import RWSView from './components/_decorator';
 import ApiService, { IBackendRoute } from './services/ApiService';
 import RWSService from './services/_service';
 import WSService from './services/WSService';
@@ -75,10 +76,6 @@ class RWSClient {
     {
         
     }
-}
-
-function RWSView(name: string ): (type: Function) => void{
-    return () => {}
 }
 
 export default RWSClient;
