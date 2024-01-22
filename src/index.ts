@@ -10,7 +10,7 @@ import ApiService, { IBackendRoute } from './services/ApiService';
 import RWSService from './services/_service';
 import WSService from './services/WSService';
 import { RouterComponent } from './components/router/component';
-import { provideFASTDesignSystem, allComponents } from '@microsoft/fast-components';
+import registerRWSComponents from './components/index';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -23,12 +23,10 @@ interface IHotModule extends NodeModule {
 
 class RWSClient {   
     private config: IRWSConfig = { backendUrl: '', routes: {} };
+    protected initCallback: () => Promise<void> = async () => {};
 
     async start(config: IRWSConfig): Promise<boolean> {    
-        this.config = {...this.config, ...config};                         
-        
-        provideFASTDesignSystem().register(allComponents);
-        
+        this.config = {...this.config, ...config};                                 
 
         const hotModule:IHotModule = (module as IHotModule);
 
@@ -40,7 +38,13 @@ class RWSClient {
 
         const packageInfo = "";
         
-        await startClient(this.config);        
+        await startClient(this.config);
+        
+        if(!config.ignoreRWSComponents){
+            registerRWSComponents();
+        }
+        
+        await this.initCallback();
     
         return true;
     }
@@ -62,6 +66,11 @@ class RWSClient {
         this.config.backendRoutes = routes;            
     }
 
+    public async onInit(callback: () => Promise<void>): Promise<void>
+    {
+        this.initCallback = callback;
+    }
+
     private enableRouting(): void
     {
         
@@ -71,6 +80,7 @@ class RWSClient {
 function RWSView(name: string ): (type: Function) => void{
     return () => {}
 }
+
 export default RWSClient;
 export { 
     NotifyUiType,
@@ -86,11 +96,13 @@ export {
     DOMService,
     DOMOutputType,
 
-    RWSViewComponent,    
-    renderRouteComponent,
+    RWSViewComponent,        
     RWSView,
     RWSService,
     RouterComponent,
+
+    renderRouteComponent,
+    registerRWSComponents,
 
     observable,
     attr 
