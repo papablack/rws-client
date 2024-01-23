@@ -1,5 +1,5 @@
 <div class="upload_area">
-    <fast-card>
+    <section>
         <h3>Upload file</h3>
         <fast-progress :value="${x => x.uploadProgress}" max="100"></fast-progress>
         <article>
@@ -9,9 +9,9 @@
                 ${T.when(x => x.chosenFile, T.html`<div class="file-block">${ x => x.chosenFile.name} <span @click="${ x => x.removeFile() }" class="close-btn">X</span></div>`)}
             </div>
             <div class="upl-controls">
-                <fast-button @click="${ x => x.onChoose() }" appearance="outline">Choose book</fast-button>                
+                <button @click="${ x => x.onChoose() }" class="outline">Choose file</fast-button>                
             </div>
         </article>
-        <fast-button @click="${ x => x.onUploadStart() }" :disabled="${ x => x.chosenFile ? false : true }" appearance="accent" class="next">Upload</fast-button>
-    </fast-card>
+        <button @click="${ x => x.onUploadStart() }" :disabled="${ x => x.chosenFile ? false : true }" appearance="accent" class="next">Upload</fast-button>
+    </section>
 </div>

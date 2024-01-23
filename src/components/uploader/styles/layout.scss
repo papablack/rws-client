@@ -1,15 +1,24 @@
 @import "../../../styles/includes.scss";
 
+
+
 .upload_area {    
     padding: 25px;
 
 
-    fast-card{
+    section{
         &::after{
             content: '';
             display: table;
             clear: both;
         }
+
+        display: block;
+        contain: content;
+        box-sizing: border-box;
+        background: #424242;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
 
         .drag-and-drop {
             @include grid-container();
@@ -19,6 +28,8 @@
             width: 100%; // Adjust width as needed
             height: 100%; // Adjust height as needed
             padding: 30px;
+
+            margin-bottom: 30px;
 
             text-align: center;
             cursor: pointer;
@@ -68,7 +79,24 @@
         }
         
 
-        fast-button {
+        button {
+            background: var(--accent-fill-rest);
+            color: var(--foreground-on-accent-rest);
+            font-size: 14px;
+            padding: 10px;        
+            box-shadow: none;
+            border-radius: 5px;
+            border-style: solid;
+            border-color: var(--accent-fill-rest);
+            border-width: 1px;
+
+            fill: currentcolor;
+            cursor: pointer;        
+
+            &.outline{
+                background: none;                
+            }
+
             &.next{
                 float: right;
             }            
