@@ -210,7 +210,7 @@ export default () => {
     ChatNav;
     RWSIcon;
     Loader;
-    registerRWSComponents(); //register rws components like <upload-area> and other comfy components
+    registerRWSComponents(); //register rws components like <rws-uploader> and other comfy components
 }
 
 ```
