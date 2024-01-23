@@ -27,7 +27,7 @@ from your project dir do:
 yarn
 ```
 
-to install once and then to build:
+to install once and then to build after preparing compionents:
 
 ```bash
 yarn build
@@ -36,6 +36,34 @@ or to watch for dev
 
 ```bash
 yarn watch
+```
+then start engine in the site javascript (can be inline):
+
+```javascript
+window.RWSClient.start(CFG);
+```
+
+example config with interface:
+
+```javascript
+const CFG = {
+    backendUrl: 'http://localhost:1337',
+    wsUrl: 'http://localhost:1338'
+}
+```
+
+```typescript
+export default interface IRWSConfig {
+    defaultLayout?: typeof RWSViewComponent;
+    backendUrl?: string,
+    wsUrl?: string,
+    backendRoutes?: any[] // routes from backend
+    apiPrefix?: string // f.e /api after host
+    routes?: IFrontRoutes, //override front routes
+    transports?: string[], //ws transports setup
+    user?: any, //user data if logged
+    ignoreRWSComponents?: boolean //do not register base RWS components
+}
 ```
 
 ## Key Components
@@ -55,113 +83,68 @@ Implementing the Framework
 
 The main file (`index.ts`) is where you initialize the RWSClient. Here, you configure your routes, backend routes, and component initializations.
 
+Following is example of full usage of the framework
+
 ```typescript
-import IRWSConfig from './interfaces/IRWSConfig';
-import startClient from './run';
-import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
-import { observable, attr } from '@microsoft/fast-element';
-import NotifyService from './services/NotifyService';
-import RoutingService, { IFrontRoutes, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent } from './services/RoutingService';
-import DOMService, { DOMOutputType }  from './services/DOMService';
-import RWSViewComponent from './components/_component';
-import RWSView from './components/_decorator';
-import ApiService, { IBackendRoute } from './services/ApiService';
-import RWSService from './services/_service';
-import WSService from './services/WSService';
-import { RouterComponent } from './components/router/component';
-import registerRWSComponents from './components/index';
+import RWSClient, { NotifyUiType, NotifyLogType } from 'rws-js-client';
+//@ts-ignore
+import alertify from 'alertifyjs';
 
-interface IHotModule extends NodeModule {
-    hot?: {
-        accept(dependencies: string[], callback?: (updatedDependencies: string[]) => void): void;
-        accept(dependency: string, callback?: () => void): void;
-        accept(errHandler?: (err: Error) => void): void;
-        dispose(callback: (data: any) => void): void;
-    }
-}
+import './styles/main.scss';
 
-class RWSClient {   
-    private config: IRWSConfig = { backendUrl: '', routes: {} };
-    protected initCallback: () => Promise<void> = async () => {};
+import routes from './routing/routes';
 
-    async start(config: IRWSConfig): Promise<boolean> {    
-        this.config = {...this.config, ...config};                                 
+import { backendRoutes } from './backendImport';
 
-        const hotModule:IHotModule = (module as IHotModule);
+import initComponents from './application/_initComponents';
+import { provideFASTDesignSystem, allComponents } from '@microsoft/fast-components';
 
-        if (hotModule.hot) {
-            hotModule.hot.accept('./print.js', function() {
-              console.log('Accepting the updated module!');              
-            })
-        }
+async function initializeApp() {    
+    const theClient = new RWSClient();
 
-        const packageInfo = "";
-        
-        await startClient(this.config);
-        
-        if(!this.config.ignoreRWSComponents){
-            registerRWSComponents();
-        }
-        
-        await this.initCallback();
+    theClient.setBackendRoutes(backendRoutes());
+    theClient.addRoutes(routes);    
     
-        return true;
-    }
+    theClient.onInit(async () => {
+        initComponents();
+        provideFASTDesignSystem().register(allComponents);
+    });    
 
-    public addRoutes(routes: IFrontRoutes){
-        this.config.routes = routes;
-    }
 
-    public setNotifier(notifier: RWSNotify)
-    {
-        NotifyService.setNotifier(notifier);
-    }
+    theClient.setNotifier((message: string, logType: NotifyLogType, uiType: NotifyUiType = 'notification', onConfirm: (params: any) => void) => {
+        switch(uiType){
+            case 'notification':
+                let notifType = 'success';
 
-    public setDefaultLayout(DefaultLayout: any) {
-        this.config.defaultLayout = DefaultLayout;
-    }
+                if(logType === 'error'){
+                    notifType = 'error';
+                }
 
-    public setBackendRoutes(routes: IBackendRoute[]) {
-        this.config.backendRoutes = routes;            
-    }
+                if(logType === 'warning'){
+                    notifType = 'warning';
+                }
 
-    public async onInit(callback: () => Promise<void>): Promise<void>
-    {
-        this.initCallback = callback;
-    }
-
-    private enableRouting(): void
-    {
-        
-    }
+                alertify.notify(message, notifType, 5, onConfirm);
+                return;
+            case 'alert':
+                alertify.alert('Junction AI Notification', message, onConfirm);
+                return;    
+            case 'silent':
+                if(logType == 'warning'){
+                    console.warn(message);
+                }else if(logType == 'error'){
+                    console.error(message);
+                }else{
+                    console.log(message);
+                }            
+                return;    
+        }
+    });
+    (window as any).RWSClient = theClient;    
 }
 
-export default RWSClient;
-export { 
-    NotifyUiType,
-    NotifyLogType,
+initializeApp().catch(console.error);
 
-    RouteReturn,
-    _ROUTING_EVENT_NAME, NotifyService,
-    IRoutingEvent,
-
-    ApiService,    
-    WSService,
-    RoutingService,
-    DOMService,
-    DOMOutputType,
-
-    RWSViewComponent,        
-    RWSView,
-    RWSService,
-    RouterComponent,
-
-    renderRouteComponent,
-    registerRWSComponents,
-
-    observable,
-    attr 
-}
 ```
 
 ## Component Initialization
@@ -277,6 +260,14 @@ export default {
     '/': renderRouteComponent('Home page', WebChat),    
     '/the/path': renderRouteComponent('Component title', ComponentClassName),   
 }
+```
+
+Router tag:
+
+```html
+    <section>
+        <rws-router></rws-router>
+    </section>
 ```
 
 ## Backend Imports
