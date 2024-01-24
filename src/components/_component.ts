@@ -87,7 +87,7 @@ class RWSViewComponent extends FASTElement {
         return DOMService.$<T>(this.getShadowRoot(), selectors, directReturn);
     }   
 
-    async loadingString<T>(item: T, addContent: (cnt: string) => void, shouldStop: (stopItem: T, addContent: (cnt: string) => void) => Promise<boolean>) {
+    async loadingString<T>(item: T, addContent: (cnt: string, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: string, error?: boolean) => void) => Promise<boolean>) {
         let dots = 1;
         const maxDots = 3; // Maximum number of dots
         const interval = setInterval(async () => {

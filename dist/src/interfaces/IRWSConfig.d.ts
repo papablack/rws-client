@@ -7,4 +7,7 @@ export default interface IRWSConfig {
     backendRoutes?: any[];
     apiPrefix?: string;
     routes?: IFrontRoutes;
+    transports?: string[];
+    user?: any;
+    ignoreRWSComponents?: boolean;
 }

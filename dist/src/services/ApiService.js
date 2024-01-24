@@ -133,7 +133,7 @@ class ApiService extends TheService {
         return `${config().get('backendUrl')}${config().get('apiPrefix') || ''}${apiPath}`;
     }
     async uploadFile(url, file, onProgress, options = {}) {
-        return await upload(url, {
+        return upload(url, {
             file,
         }, {
             onProgress

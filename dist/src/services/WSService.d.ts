@@ -15,12 +15,12 @@ declare class WSService extends TheService {
     _shut_down: boolean;
     reconnects: number;
     eventListeners: Map<string, Array<(instance: WSService, params: any) => any>>;
-    init(url: string, user?: ITheUser): Promise<WSService>;
+    init(url: string, user?: ITheUser, transports?: string[]): Promise<WSService>;
     getStatus(): WSStatus;
     isActive(): boolean;
     listenForMessage(callback: (data: any, isJson?: boolean) => void, method?: string): WSService;
     waitForStatus(): Promise<void>;
-    sendMessage<T>(method: string, msg: T): Promise<void>;
+    sendMessage<T>(method: string, msg: T): void;
     statusChange(): void;
     on(event: WSEvent, callback: (wsInstance: WSService, params: any) => any): void;
     executeEventListener(event: WSEvent, params?: any): void;

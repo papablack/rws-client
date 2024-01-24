@@ -1,6 +1,6 @@
 import { WSInstance } from "../WSService";
 declare function listenForMessage(instance: WSInstance, callback: (data: any, isJson?: boolean) => void, method?: string): WSInstance;
-declare function sendMessage(instance: WSInstance, method: string, msg: any): void;
+declare function sendMessage<T>(instance: WSInstance, method: string, msg: T): void;
 declare const _default: {
     listenForMessage: typeof listenForMessage;
     sendMessage: typeof sendMessage;

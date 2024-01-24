@@ -4,14 +4,13 @@ import { v4 as uuid } from 'uuid';
 import { ping, disconnect as disconnectWs, reconnect as reconnectWs } from './_ws_handlers/ConnectionHandler';
 import WSEventHandler from './_ws_handlers/EventHandler';
 import WSMessageHandler from './_ws_handlers/MessageHandler';
-import UtilsService from "./UtilsService";
 function logClickableLink(text, url) {
     console.log('[', url, ']:', text);
 }
-const getCurrentLineNumber = UtilsService.getCurrentLineNumber;
+// const getCurrentLineNumber = UtilsService.getCurrentLineNumber;
 const wsLog = async (fakeError, text, socketId = null, isError = false) => {
     const logit = isError ? console.error : console.log;
-    logit(`[webpack://junction_ai_trainer_ui/${module.id.replace('./', '')}:${await getCurrentLineNumber(fakeError)}]:`, `<WS-CLIENT>${socketId ? `(${socketId})` : ''}`, text);
+    logit(`[webpack://junction_ai_trainer_ui/${module.id.replace('./', '')}:`, `<WS-CLIENT>${socketId ? `(${socketId})` : ''}`, text);
 };
 class WSService extends TheService {
     constructor() {
@@ -27,7 +26,7 @@ class WSService extends TheService {
         this.reconnects = 0;
         this.eventListeners = new Map();
     }
-    async init(url, user) {
+    async init(url, user, transports = null) {
         var _a, _b, _c, _d;
         this._connecting = true;
         wsLog(new Error(), 'Connecting to: ' + url);
@@ -39,7 +38,7 @@ class WSService extends TheService {
         } : {};
         try {
             if (!WSService.websocket_instance) {
-                WSService.websocket_instance = io(this.url, { extraHeaders: headers, transports: ['websocket'] });
+                WSService.websocket_instance = io(this.url, { extraHeaders: headers, transports: transports || null });
             }
             //, transports:  ['websocket']
             this._ws = WSService.websocket_instance;
@@ -61,7 +60,7 @@ class WSService extends TheService {
             });
             this._ws.on('__PONG__', async (data) => {
                 if (data === '__PONG__') {
-                    wsLog(new Error(), 'Recieveing valid ping callback from server', socketId);
+                    wsLog(new Error(), 'Recieving valid ping callback from server', socketId);
                     return;
                 }
             });
@@ -115,15 +114,8 @@ class WSService extends TheService {
             }, 1000);
         });
     }
-    async sendMessage(method, msg) {
-        //await this.waitForStatus();    
-        const the_message = {
-            user_id: this._wsId,
-            method: method,
-            msg: msg
-        };
-        this.socket().emit(method, JSON.stringify(the_message));
-        //WSMessageHandler.sendMessage(this, method, msg);
+    sendMessage(method, msg) {
+        WSMessageHandler.sendMessage(this, method, msg);
     }
     statusChange() {
         let status = 'WS_CLOSED';

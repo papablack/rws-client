@@ -28,7 +28,7 @@ function sendMessage(instance, method, msg) {
             throw new Error('socket is not active');
         }
         const the_message = {
-            user_id: instance._wsId,
+            user_id: instance.socket().id,
             method: method,
             msg: msg
         };

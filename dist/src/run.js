@@ -17,7 +17,8 @@ const main = async (cfg) => {
             console.info('WS RECONNECTION ' + (params.reconnects + 1));
             NotifyService.notify('Your websocket client has tried to reconnect to server. Attempt #' + (params.reconnects + 1), 'warning');
         });
-        WSService.init(config.get('wsUrl'));
+        console.log(cfg.transports);
+        WSService.init(config.get('wsUrl'), cfg.user, cfg.transports);
     }
     return true;
 };
