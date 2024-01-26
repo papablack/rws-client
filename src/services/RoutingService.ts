@@ -34,6 +34,8 @@ class RWSRouter {
 
   public fireHandler(route: IRWSRouteResult): RouteReturn
   {     
+   
+
     const handler = route.handler();
     return [handler[0], handler[1], route.params];
   }
