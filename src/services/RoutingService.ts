@@ -4,6 +4,8 @@ import Router from 'url-router';
 import RWSViewComponent from "../components/_component";
 import { RouterComponent } from "../components/router/component";
 import { FASTElement } from "@microsoft/fast-element";
+import UtilsService from './UtilsService';
+
 
 type IFrontRoutes = Record<string, unknown>; 
 type RouteReturn = [string, typeof RWSViewComponent, Record<string, string>];
@@ -34,10 +36,8 @@ class RWSRouter {
 
   public fireHandler(route: IRWSRouteResult): RouteReturn
   {     
-   
-
     const handler = route.handler();
-    return [handler[0], handler[1], route.params];
+    return [handler[0], handler[1], UtilsService.mergeDeep(route.params, handler[2])];
   }
 
   public handleRoute(url: string): RouteReturn
