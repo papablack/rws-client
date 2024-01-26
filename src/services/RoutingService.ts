@@ -93,7 +93,7 @@ class RoutingService extends TheService {
   }
 }
 
-const renderRouteComponent = (routeName: string, cmp: typeof RWSViewComponent, defaultRouteParams: any) => (): [string, typeof RWSViewComponent, any] => [routeName, cmp, defaultRouteParams];
+const renderRouteComponent = (routeName: string, cmp: typeof RWSViewComponent, defaultRouteParams: any = {}) => (): [string, typeof RWSViewComponent, any] => [routeName, cmp, defaultRouteParams];
 
 const _ROUTING_EVENT_NAME = 'routing.route.change';
 interface IRoutingEvent {
