@@ -9,7 +9,6 @@ interface IFastDefinition {
     styles?: ElementStyles;
 }
 
-
 class RWSViewComponent extends FASTElement {
     private static instances: RWSViewComponent[] = [];
 
@@ -87,12 +86,12 @@ class RWSViewComponent extends FASTElement {
         return DOMService.$<T>(this.getShadowRoot(), selectors, directReturn);
     }   
 
-    async loadingString<T>(item: T, addContent: (cnt: string, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: string, error?: boolean) => void) => Promise<boolean>) {
+    async loadingString<T, C>(item: T, addContent: (cnt: C | { output: string }, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: C | { output: string }, error?: boolean) => void) => Promise<boolean>) {
         let dots = 1;
         const maxDots = 3; // Maximum number of dots
         const interval = setInterval(async () => {
           const dotsString = '. '.repeat(dots);
-          addContent(`${dotsString}`);
+          addContent({ output: `${dotsString}` });
           dots = (dots % (maxDots)) + 1;
 
           if(await shouldStop(item, addContent)){
