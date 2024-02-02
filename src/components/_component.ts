@@ -90,12 +90,15 @@ class RWSViewComponent extends FASTElement {
         let dots = 1;
         const maxDots = 3; // Maximum number of dots
         const interval = setInterval(async () => {
-          const dotsString = '. '.repeat(dots);
-          addContent({ output: `${dotsString}` });
-          dots = (dots % (maxDots)) + 1;
+          const dotsString = '. '.repeat(dots);          
 
-          if(await shouldStop(item, addContent)){
-            clearInterval(interval)
+          const doesItStop = await shouldStop(item, addContent);                
+
+          if(doesItStop){
+            clearInterval(interval);        
+          }else{
+            addContent({ output: `${dotsString}` });
+            dots = (dots % (maxDots)) + 1;
           }
         }, 500);
     }

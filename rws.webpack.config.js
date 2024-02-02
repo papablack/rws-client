@@ -44,6 +44,7 @@ const RWSWebpackWrapper = (config) => {
 
   const isDev = config.dev;
   const isHotReload = config.hot;
+  const isReport = config.report;
 
   const publicDir = config.publicDir || null;
   const publicIndex = config.publicIndex || 'index.html';
@@ -87,11 +88,10 @@ const RWSWebpackWrapper = (config) => {
     });
   }
 
-  if(isDev){
+  if(isDev && isReport){
     WEBPACK_PLUGINS.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static', // The report outputs to an HTML file in the dist directory
-      openAnalyzer: true,    // Set to false if you don't want to open automatically
-      // other options...
+      analyzerMode: 'static',
+      openAnalyzer: false,       
     }));
   }
 

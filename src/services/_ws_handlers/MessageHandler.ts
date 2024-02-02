@@ -8,16 +8,17 @@ function listenForMessage(instance: WSInstance, callback: (data: any, isJson?: b
     instance.socket().on(method || 'message', (data: any) => {
         try {            
             const parsedData = JSON.parse(data);
-            if (!!method && parsedData.method === method) {
+            if (!!method && parsedData.method === method) {                              
                 callback(parsedData, true);
                 instance.executeEventListener('ws:message_received', { message: parsedData });
 
             } else if (!method) {
                 callback(parsedData, true);
-            }
+            }            
         } catch (e) {
-            if (!method) {
-                console.error(e);
+            console.error(e);
+            
+            if (!method) {                
                 callback(data);
             }
         }
