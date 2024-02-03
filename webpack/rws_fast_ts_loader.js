@@ -8,7 +8,7 @@ const RWSPlugin = require("./rws_plugin");
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
     stylesPath: 'styles.scss',
-    fastOptions: {}
+    fastOptions: {  shadowOptions: { mode: 'closed' }  }
 }
 
 function toJsonString(str) {
@@ -74,7 +74,7 @@ module.exports = function(content) {
 
     let templatePath = 'template.html';
     let stylesPath = 'styles/layout.scss';
-    let fastOptions = {}
+    let fastOptions = _defaultRWSLoaderOptions.fastOptions;
     const addedParamDefs = [];
     const addedParams = [];
 
@@ -90,14 +90,13 @@ module.exports = function(content) {
         }
 
         if(decoratorData.options.fastElementOptions){
-            fastOptions = decoratorData.options.fastElementOptions;
-            
-
-            for (const key in fastOptions){                
-                addedParamDefs.push(`const ${key} = ${JSON.stringify(fastOptions[key])};`);
-                addedParams.push(key);
-            }
+            fastOptions = decoratorData.options.fastElementOptions;                   
         }        
+
+        for (const key in fastOptions){                
+            addedParamDefs.push(`const ${key} = ${JSON.stringify(fastOptions[key])};`);
+            addedParams.push(key);
+        }
     }    
 
     const tagName = decoratorData.tagName;
