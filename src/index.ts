@@ -26,7 +26,7 @@ class RWSClient {
     private config: IRWSConfig = { backendUrl: '', routes: {} };
     protected initCallback: () => Promise<void> = async () => {};
 
-    async start(config: IRWSConfig): Promise<boolean> {    
+    async start(config: IRWSConfig = {}): Promise<boolean> {    
         this.config = {...this.config, ...config};                                 
 
         const hotModule:IHotModule = (module as IHotModule);
