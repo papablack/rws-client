@@ -130,8 +130,15 @@ class WSService extends TheService {
       return !this._connecting && this._ws?.connected;
   }
 
-  public listenForMessage(callback: (data: any, isJson?: boolean) => void, method?: string): WSService {
-      return WSMessageHandler.listenForMessage(this, callback, method);
+  public listenForMessage(callback: (data: any, isJson?: boolean) => void, method?: string): () => void 
+  {
+      const disableHandler = () => {
+        this.socket().off(method, callback);
+      }
+
+      WSMessageHandler.listenForMessage(this, callback, method);
+
+      return disableHandler.bind(this)
   }
 
   async waitForStatus(): Promise<void>

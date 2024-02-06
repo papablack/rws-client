@@ -1,3 +1,5 @@
+$mdWidth: 1120px;
+
 @function px-to-em($pixels, $base-font-size: 16) {
     @return #{calc($pixels / $base-font-size)}em;
   }
@@ -12,11 +14,24 @@
 }
 
 // Mixin for grid columns
+
 @mixin grid-column($columns: 12) {
+  flex: 0 0 calc(100% / 12 * $columns);
+  max-width: calc(100% / 12 * $columns);
+  // padding-right: #{px-to-em(15)}; // Adjust as needed
+  // padding-left: #{px-to-em(15)}; // Adjust as needed 
+}
+
+@mixin grid-column($columns: 12, $mdColumns: 12) {
     flex: 0 0 calc(100% / 12 * $columns);
     max-width: calc(100% / 12 * $columns);
     // padding-right: #{px-to-em(15)}; // Adjust as needed
     // padding-left: #{px-to-em(15)}; // Adjust as needed
+
+    @media screen and (max-width: $mdWidth) {
+      flex: 0 0 calc(100% / 12 * $mdColumns);
+      max-width: calc(100% / 12 * $mdColumns);
+    }
 }
 
 @mixin grid-flex-self-align($alignment) {
