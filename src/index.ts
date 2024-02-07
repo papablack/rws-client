@@ -41,7 +41,7 @@ class RWSClient {
         
         await startClient(this.config);
         
-        if(!this.config.ignoreRWSComponents){
+        if(!this.config?.ignoreRWSComponents){
             registerRWSComponents();
         }
         
