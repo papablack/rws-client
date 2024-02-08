@@ -86,7 +86,7 @@ class RWSViewComponent extends FASTElement {
         return DOMService.$<T>(this.getShadowRoot(), selectors, directReturn);
     }   
 
-    async loadingString<T, C>(item: T, addContent: (cnt: C | { output: string }, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: C | { output: string }, error?: boolean) => void) => Promise<boolean>) {
+    async loadingString<T, C>(item: T, addContent: (cnt: C | { output: string }, paste?: boolean, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: C | { output: string }, paste?: boolean,error?: boolean) => void) => Promise<boolean>) {
         let dots = 1;
         const maxDots = 3; // Maximum number of dots
         const interval = setInterval(async () => {
@@ -95,9 +95,11 @@ class RWSViewComponent extends FASTElement {
           const doesItStop = await shouldStop(item, addContent);                
 
           if(doesItStop){
+            addContent({ output: `` }, true);
             clearInterval(interval);        
           }else{
-            addContent({ output: `${dotsString}` });
+            addContent({ output: `${dotsString}` }, true);
+            
             dots = (dots % (maxDots)) + 1;
           }
         }, 500);
