@@ -80,6 +80,18 @@ class ApiService extends TheService {
         this.token = token;
     }
 
+    public async pureGet(url: string, options: IAPIOptions = {}): Promise<string> {
+        try {
+            const response = await fetch(url, {
+                headers: this.getHeaders(options.headers),
+            });
+            return await response.text();
+        } catch (error) {
+            console.error('GET request failed:', error);
+            throw error;
+        }
+    }
+
     public async get<T>(url: string, options: IAPIOptions = {}): Promise<T> {
         try {
             const response = await fetch(url, {

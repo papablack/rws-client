@@ -9,6 +9,7 @@ import RWSViewComponent from './components/_component';
 import RWSView from './components/_decorator';
 import ApiService, { IBackendRoute } from './services/ApiService';
 import RWSService from './services/_service';
+import UtilsService from './services/UtilsService';
 import WSService from './services/WSService';
 import { RouterComponent } from './components/router/component';
 import registerRWSComponents from './components/index';
@@ -89,6 +90,7 @@ export {
 
     ApiService,    
     WSService,
+    UtilsService,
     RoutingService,
     DOMService,
     DOMOutputType,

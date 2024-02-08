@@ -1,6 +1,6 @@
 {
   "name": "rws-js-client",
-  "version": "1.14.6",
+  "version": "1.14.7",
   "description": "client for RWS frontend",
   "main": "src/index.ts",  
   "scripts": {

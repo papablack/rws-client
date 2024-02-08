@@ -1,10 +1,17 @@
 import TheService from "./_service";
+import ApiService from "./ApiService";
 
+import path from 'path';
+import fs from 'fs';
 import { SourceMapConsumer, RawSourceMap  } from 'source-map';
 
 let sourceMap: RawSourceMap = null; 
 
 class UtilsService extends TheService {
+    async getFileContents(filePath: string): Promise<string>
+    {    
+        return await ApiService.pureGet('/' + filePath);
+    }
     mergeDeep<T>(target: T | any, source: T  | any): T 
     {
         const isObject = (obj: any) => obj && typeof obj === 'object';
