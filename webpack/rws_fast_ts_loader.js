@@ -8,7 +8,7 @@ const RWSPlugin = require("./rws_plugin");
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
     stylesPath: 'styles.scss',
-    fastOptions: {  shadowOptions: { mode: 'closed' }  }
+    fastOptions: {  shadowOptions: { mode: 'open' }  }
 }
 
 function toJsonString(str) {

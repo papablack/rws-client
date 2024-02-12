@@ -166,6 +166,12 @@ class RWSPlugin {
       scssPath = _self.replaceWithNodeModules(scssPath, path.dirname(scssPath));
     }
 
+    const cwdRequest = scssPath.indexOf('@cwd');    
+
+    if( cwdRequest > -1){
+      scssPath = process.cwd() + '/' + scssPath.slice(cwdRequest+1);
+    }
+
     let scssCode = this.getCodeFromFile(scssPath);  
     return this.compileScssCode(scssCode, path.dirname(scssPath));
   }
@@ -192,6 +198,12 @@ class RWSPlugin {
       
       if(originalImportPath.split('')[0] === '~'){        
         importPath = this.replaceWithNodeModules(importPath, path.dirname(fileRootDir), true);         
+      }    
+  
+      const cwdRequest = originalImportPath.indexOf('@cwd');    
+  
+      if( cwdRequest > -1){
+        importPath = process.cwd() + '/' + originalImportPath.slice(cwdRequest+4);
       }
 
       // log(`Procesed '${importPath}' import to: ` + importPath);  
