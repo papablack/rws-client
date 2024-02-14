@@ -24,7 +24,7 @@ interface IHotModule extends NodeModule {
 }
 
 class RWSClient {   
-    private config: IRWSConfig = { backendUrl: '', routes: {} };
+    private config: IRWSConfig = { backendUrl: '', routes: {}, pubUrl: '/' };
     protected initCallback: () => Promise<void> = async () => {};
 
     async start(config: IRWSConfig = {}): Promise<boolean> {    

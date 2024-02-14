@@ -10,7 +10,7 @@ let sourceMap: RawSourceMap = null;
 class UtilsService extends TheService {
     async getFileContents(filePath: string): Promise<string>
     {    
-        return await ApiService.pureGet('/' + filePath);
+        return await ApiService.pureGet(filePath);
     }
     mergeDeep<T>(target: T | any, source: T  | any): T 
     {

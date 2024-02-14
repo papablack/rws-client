@@ -10,6 +10,10 @@ interface IFastDefinition {
     styles?: ElementStyles;
 }
 
+interface IAssetShowOptions {
+
+}
+
 class RWSViewComponent extends FASTElement {
     private static instances: RWSViewComponent[] = [];
     static fileList: string[] = [];
@@ -37,11 +41,23 @@ class RWSViewComponent extends FASTElement {
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
 
-        (this.constructor as any).fileList.forEach((file: string) => { 
-            UtilsService.getFileContents(file).then((response: string) => {        
-              this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
-            }); 
-        });
+        // console.log(config().get('pubUrl'), (this.constructor as any).fileList);
+
+        try { 
+            const configData = config();
+
+            (this.constructor as any).fileList.forEach((file: string) => { 
+                if(!!this.fileAssets[file]){
+                    return;
+                }
+                UtilsService.getFileContents(configData.get('pubUrl') + file).then((response: string) => {        
+                this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
+                }); 
+            });      
+
+        }catch(e: Error | any){
+            
+        }
         
         RWSViewComponent.instances.push(this);
     } 
@@ -49,6 +65,17 @@ class RWSViewComponent extends FASTElement {
     private static getInstances(): RWSViewComponent[]
     {
         return RWSViewComponent.instances;
+    }
+
+    showAsset(assetName: string, options: IAssetShowOptions = {}): ViewTemplate<any, any>
+    {        
+
+        if(!this.fileAssets[assetName]){            
+            return html`<span></span>`;
+            throw new Error(`File asset "${assetName}" not declared in component "${(this as any).constructor.definition.name}"`)
+        }
+
+        return this.fileAssets[assetName];
     }
 
     static defineComponent()

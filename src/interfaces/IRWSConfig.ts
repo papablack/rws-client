@@ -11,4 +11,5 @@ export default interface IRWSConfig {
     transports?: string[],
     user?: any,
     ignoreRWSComponents?: boolean
+    pubUrl?: string
 }
