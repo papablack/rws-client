@@ -1,5 +1,6 @@
-import { FASTElement, ViewTemplate, ElementStyles, customElement, observable } from "@microsoft/fast-element";
+import { FASTElement, ViewTemplate, ElementStyles, customElement, observable, html } from "@microsoft/fast-element";
 import config from "../services/ConfigService";
+import UtilsService from "../services/UtilsService";
 
 import DOMService, { DOMOutputType } from '../services/DOMService';
 
@@ -11,12 +12,16 @@ interface IFastDefinition {
 
 class RWSViewComponent extends FASTElement {
     private static instances: RWSViewComponent[] = [];
+    static fileList: string[] = [];
 
     public routeParams: Record<string, string> = {};
 
     static autoLoadFastElement = true;
 
     @observable trashIterator: number = 0;
+    @observable fileAssets: {
+        [key: string]: ViewTemplate
+      } = {}
 
     constructor(routeParams: Record<string, string> =  null) {
         super();
@@ -31,6 +36,12 @@ class RWSViewComponent extends FASTElement {
         if(!(this.constructor as any).definition && (this.constructor as any).autoLoadFastElement){
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
+
+        (this.constructor as any).fileList.forEach((file: string) => { 
+            UtilsService.getFileContents(file).then((response: string) => {        
+              this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
+            }); 
+        });
         
         RWSViewComponent.instances.push(this);
     } 
