@@ -13,6 +13,7 @@ import UtilsService from './services/UtilsService';
 import WSService from './services/WSService';
 import { RouterComponent } from './components/router/component';
 import registerRWSComponents from './components/index';
+import { ngAttr } from './components/_attrs/angular-attr';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -97,6 +98,7 @@ export {
 
     RWSViewComponent,        
     RWSView,
+    ngAttr,
     RWSService,
     RouterComponent,
 

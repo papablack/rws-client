@@ -184,6 +184,11 @@ class RWSViewComponent extends FASTElement {
     hotReplacedCallback() {
         this.forceReload();    
     }
+
+    getState<T extends any>(property: string): T
+    {
+        return (this as any)[property];
+    }
 }
 
 export default RWSViewComponent;
