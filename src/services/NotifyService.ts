@@ -1,4 +1,4 @@
-import RWSNotify, { NotifyUiType, NotifyLogType } from '../types/RWSNotify';
+import RWSNotify, { NotifyLogType } from '../types/RWSNotify';
 import TheService from './_service';
 /**
  * @class

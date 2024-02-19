@@ -1,7 +1,6 @@
 import TheService from './_service';
 import IRWSConfig from '../interfaces/IRWSConfig';
 
-import RoutingService from './RoutingService';
 
 class ConfigService extends TheService {
     private data: IRWSConfig;    

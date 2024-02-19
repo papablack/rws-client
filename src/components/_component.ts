@@ -1,4 +1,4 @@
-import { FASTElement, ViewTemplate, ElementStyles, customElement, observable, html } from '@microsoft/fast-element';
+import { FASTElement, ViewTemplate, ElementStyles, observable, html } from '@microsoft/fast-element';
 import config from '../services/ConfigService';
 import UtilsService from '../services/UtilsService';
 

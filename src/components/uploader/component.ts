@@ -1,4 +1,4 @@
-import { RWSView, RWSViewComponent, observable, ApiService, attr } from '../../index';
+import { RWSView, RWSViewComponent, observable, attr } from '../../index';
 
 @RWSView('rws-uploader')
 class RWSUploader extends RWSViewComponent {

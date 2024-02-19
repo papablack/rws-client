@@ -1,4 +1,3 @@
-import NotifyService from '../NotifyService';
 import { WSInstance } from '../WSService';
 
 

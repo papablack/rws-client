@@ -1,4 +1,4 @@
-import { Observable, AttributeConfiguration, DecoratorAttributeConfiguration, attr } from '@microsoft/fast-element';
+import { Observable, AttributeConfiguration, DecoratorAttributeConfiguration } from '@microsoft/fast-element';
 import RWSViewComponent from '../_component';
 
 type TargetType = {} | RWSViewComponent;  // Use a more generic type for the target to ensure compatibility

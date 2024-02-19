@@ -1,4 +1,3 @@
-import { observable } from '@microsoft/fast-element';
 //@ts-ignore
 import { hmrPlugin, presets } from '@open-wc/dev-server-hmr';
 

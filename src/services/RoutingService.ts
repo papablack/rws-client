@@ -3,7 +3,6 @@ import TheService from './_service';
 import Router from 'url-router';
 import RWSViewComponent from '../components/_component';
 import { RouterComponent } from '../components/router/component';
-import { FASTElement } from '@microsoft/fast-element';
 import UtilsService from './UtilsService';
 
 

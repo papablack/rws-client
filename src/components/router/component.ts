@@ -1,5 +1,4 @@
-import { customElement, FASTElement, observable, html, ref, when  } from '@microsoft/fast-element';
-import { isConstructorDeclaration } from 'typescript';
+import { observable  } from '@microsoft/fast-element';
 
 import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from '../../services/RoutingService';
 import RWSViewComponent from '../_component';
