@@ -28,23 +28,19 @@ function listenForMessage(instance: WSInstance, callback: (data: any, isJson?: b
 }
 
 function sendMessage<T>(instance: WSInstance, method: string, msg: T): void {
-    try {
-        if (!instance.socket()) {
-            throw new Error('socket is not active');
-        }
-
-        const the_message = {
-            user_id: instance.socket().id,
-            method: method,
-            msg: msg
-        };
-    
-        
-        instance.socket().emit(method, JSON.stringify(the_message));
-        instance.executeEventListener('ws:message_sent', { message: the_message });
-    } catch (e) {
-        throw e;
+    if (!instance.socket()) {
+        throw new Error('socket is not active');
     }
+
+    const the_message = {
+        user_id: instance.socket().id,
+        method: method,
+        msg: msg
+    };
+
+    
+    instance.socket().emit(method, JSON.stringify(the_message));
+    instance.executeEventListener('ws:message_sent', { message: the_message });
 } 
 
 export default{

@@ -1,4 +1,4 @@
-//@ts-ignore
+//@ts-expect-error no-types
 import { hmrPlugin, presets } from '@open-wc/dev-server-hmr';
 
 const AUTORELOAD_CFG = {

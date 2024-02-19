@@ -12,7 +12,7 @@ type RouteReturn = [string, typeof RWSViewComponent, Record<string, string>];
 type IRWSRouteResult = {
   handler: () => RouteReturn;
   params: Record<string, string>;
-}
+};
 
 class RWSRouter {
     private baseComponent: RWSViewComponent;

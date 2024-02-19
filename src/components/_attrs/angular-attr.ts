@@ -1,14 +1,14 @@
 import { Observable, AttributeConfiguration, DecoratorAttributeConfiguration } from '@microsoft/fast-element';
 import RWSViewComponent from '../_component';
 
-type TargetType = {} | RWSViewComponent;  // Use a more generic type for the target to ensure compatibility
+type TargetType = RWSViewComponent;  // Use a more generic type for the target to ensure compatibility
 
 function ngAttr(configOrTarget?: DecoratorAttributeConfiguration | TargetType, prop?: string): void | any 
 {    
     if (arguments.length > 1) {
         // Decorator used directly without factory invocation
         // Apply the decorator immediately without returning anything
-        applyDecorator(configOrTarget, prop!);
+        applyDecorator(configOrTarget as RWSViewComponent, prop!);
     } else {
         // Decorator factory invocation
         const config = configOrTarget as AttributeConfiguration;
@@ -54,7 +54,7 @@ function modifyPropertyDescriptor(target: any, propertyKey: string): void {
 
 function isNgValue(input: string): boolean {
     // Regular expression to match AngularJS template variable notation
-    const angularJsVariablePattern = /\{\{([^\}]+)\}\}/;
+    const angularJsVariablePattern = /\{\{([^}]+)\}\}/;
 
     // Test the input string for the pattern and return the result
     return angularJsVariablePattern.test(input);

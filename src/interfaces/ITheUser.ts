@@ -15,9 +15,9 @@ export default interface ITheUser {
     badges: any[];
     description: string;
     email_notifications: boolean;
-    lti_user_id: null | string; // Assuming this could be a string when it's not null
+    lti_user_id: null | string;
     ltinopwd: boolean;
-    phoneNumber: null | string; // Assuming this could be a string when it's not null
+    phoneNumber: null | string;
     sms_notifications: boolean;
     thumbnailUrl: string;
     university: string;

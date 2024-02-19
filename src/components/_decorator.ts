@@ -4,7 +4,7 @@ interface RWSDecoratorOptions{
     fastElementOptions?: any
 }
 
-function RWSView(name: string, data?: RWSDecoratorOptions): (type: Function) => void{
+function RWSView(name: string, data?: RWSDecoratorOptions): (type: any) => void{
     return () => {};
 }
 

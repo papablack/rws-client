@@ -56,7 +56,8 @@ class RWSViewComponent extends FASTElement {
             });      
 
         }catch(e: Error | any){
-            
+            console.error('Error loading file content:', e.message);
+            console.error(e.stack);
         }
         
         RWSViewComponent.instances.push(this);
@@ -185,7 +186,7 @@ class RWSViewComponent extends FASTElement {
         this.forceReload();    
     }
 
-    getState<T extends any>(property: string): T
+    getState<T>(property: string): T
     {
         return (this as any)[property];
     }
