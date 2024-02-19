@@ -27,6 +27,11 @@ from your project dir do:
 yarn
 ```
 
+Initiate cfg files:
+```bash
+rws-client init
+```
+
 to install once and then to build after preparing compionents:
 
 ```bash
