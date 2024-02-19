@@ -16,8 +16,10 @@
     "plugins": ["@typescript-eslint", "unused-imports"],
     "rules": {
         "no-unused-vars": "off",                
+        "no-prototype-builtins": "off",                
         "unused-imports/no-unused-imports": "error",
-        "unused-imports/no-unused-vars": ["warn", { "vars": "all", "args": "none"}],        
+        "unused-imports/no-unused-vars": ["warn", { "vars": "all", "args": "none"}],     
+        "@typescript-eslint/no-var-requires": "off",   
         "@typescript-eslint/semi": ["error", "always"],
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-explicit-any": "off",
