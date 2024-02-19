@@ -1,5 +1,5 @@
-import NotifyService from "../NotifyService";
-import { WSInstance } from "../WSService";
+import NotifyService from '../NotifyService';
+import { WSInstance } from '../WSService';
 
 
 function ping(instance: WSInstance): void {    
@@ -14,7 +14,7 @@ function reconnect(instance: WSInstance): void {
     disconnect(instance, true);
     const rc = instance.reconnects;
     if (rc < 2) {
-        instance.executeEventListener('ws:reconnect', { reconnects: rc + 1 })        
+        instance.executeEventListener('ws:reconnect', { reconnects: rc + 1 });        
         instance._connecting = true;
         instance.reconnects++;
         setTimeout(() => {
@@ -47,7 +47,7 @@ function disconnect(instance: WSInstance, noEvent = false): void {
 }    
 
 export {
-  ping,
-  reconnect,
-  disconnect
-}
+    ping,
+    reconnect,
+    disconnect
+};

@@ -32,4 +32,4 @@ class DOMService extends RWSService {
 
 export default DOMService.getSingleton();
 
-export { DOMOutputType }
+export { DOMOutputType };

@@ -1,7 +1,7 @@
-import TheService from "./_service";
+import TheService from './_service';
 import config from '../services/ConfigService';
-import ConfigService from "../services/ConfigService";
-import UtilsService from "./UtilsService";
+import ConfigService from '../services/ConfigService';
+import UtilsService from './UtilsService';
 import { upload, UploadResponse } from 'upload';
 // import { generateClient } from "aws-amplify/data";
 // import { type Schema } from "";
@@ -59,19 +59,19 @@ class ApiService extends TheService {
         const headers: HeadersInit = { ...optHeaders };
 
         if (!('Content-Type' in headers)) {
-           this.addHeader(headers, 'Content-Type', _DEFAULT_CONTENT_TYPE)
+            this.addHeader(headers, 'Content-Type', _DEFAULT_CONTENT_TYPE);
         }            
 
         if (this.token) {
-            this.addHeader(headers, 'Authorization', `Bearer ${this.token}`)            
+            this.addHeader(headers, 'Authorization', `Bearer ${this.token}`);            
         }        
 
         if((headers as any)['Content-Type'] === 'application/json'){
-            this.addHeader(headers, 'Accept', 'application/json')
+            this.addHeader(headers, 'Accept', 'application/json');
         }else if((headers as any)['Content-Type'] === 'text/html'){
-            this.addHeader(headers, 'Accept', 'text/html')
+            this.addHeader(headers, 'Accept', 'text/html');
         }else{
-            this.addHeader(headers, 'Accept', '*/*')
+            this.addHeader(headers, 'Accept', '*/*');
         }
 
         return headers;
@@ -173,7 +173,7 @@ class ApiService extends TheService {
             }          
         });        
 
-        const route = routes.find((item: IHTTProute) => item.name === routeName)        
+        const route = routes.find((item: IHTTProute) => item.name === routeName);        
 
         if(!route){
             throw new Error(`Backend route '${routeName}' does not exist.`);
@@ -185,7 +185,7 @@ class ApiService extends TheService {
             const paramValue = params[paramKey];
 
             apiPath = apiPath.replace(`:${paramKey}`, paramValue);
-        })
+        });
 
         return `${config().get('backendUrl')}${config().get('apiPrefix') || ''}${apiPath}`;
     }
@@ -196,10 +196,10 @@ class ApiService extends TheService {
             
             url,
             {
-              file,
+                file,
             },
             {
-              onProgress
+                onProgress
             }
         );
     }
@@ -232,4 +232,4 @@ class ApiService extends TheService {
 }
 
 export default ApiService.getSingleton();
-export { IBackendRoute }
+export { IBackendRoute };

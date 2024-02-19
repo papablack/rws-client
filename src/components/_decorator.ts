@@ -5,7 +5,7 @@ interface RWSDecoratorOptions{
 }
 
 function RWSView(name: string, data?: RWSDecoratorOptions): (type: Function) => void{
-    return () => {}
+    return () => {};
 }
 
 export default RWSView;

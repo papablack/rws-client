@@ -9,61 +9,61 @@ class RWSUploader extends RWSViewComponent {
   @observable chosenFile: File;
   @observable uploadParams: any;
 
-  @attr onFinish: (uploadResponse: any) => void
-  @attr onStart: (chosenFile: File, context: any) => void = (chosenFile: File) => null
-  @attr onProgress: (progress: number) => void = (progress: number) => null
+  @attr onFinish: (uploadResponse: any) => void;
+  @attr onStart: (chosenFile: File, context: any) => void = (chosenFile: File) => null;
+  @attr onProgress: (progress: number) => void = (progress: number) => null;
 
 
   async onUploadStart(): Promise<void>
   {    
-    const response = await this.onStart(this.chosenFile, this);
+      const response = await this.onStart(this.chosenFile, this);
    
 
-    this.onFinish(response);
+      this.onFinish(response);
 
-    this.uploadedFile = this.chosenFile;
-    this.chosenFile = null;    
+      this.uploadedFile = this.chosenFile;
+      this.chosenFile = null;    
   }
 
   onChoose(): void
   {
-    const _self = this;
-    const fileInput = this.createFileInput();
+      const _self = this;
+      const fileInput = this.createFileInput();
 
-    this.triggerUpload(fileInput);
+      this.triggerUpload(fileInput);
 
-    fileInput.addEventListener('change', () => {
-      _self.chosenFile = fileInput.files[0]; 
+      fileInput.addEventListener('change', () => {
+          _self.chosenFile = fileInput.files[0]; 
           
-      _self.uploadedFile = null;
+          _self.uploadedFile = null;
 
-      _self.removeFileInput(fileInput);      
-    });
+          _self.removeFileInput(fileInput);      
+      });
   }
 
   removeFile(){
-    this.chosenFile = null;
+      this.chosenFile = null;
   }
 
   private createFileInput(): HTMLInputElement
   {
-    const fileInput: HTMLInputElement = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.style.display = 'none';
+      const fileInput: HTMLInputElement = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.style.display = 'none';
 
 
-    this.shadowRoot.appendChild(fileInput);
-    return fileInput;
+      this.shadowRoot.appendChild(fileInput);
+      return fileInput;
   }
 
   private triggerUpload(fileInput: HTMLInputElement): void
   {
-    fileInput.click();
+      fileInput.click();
   }
 
   private removeFileInput(fileInput: HTMLInputElement): void
   {
-    this.shadowRoot.removeChild(fileInput);
+      this.shadowRoot.removeChild(fileInput);
   }
 
 
@@ -71,4 +71,4 @@ class RWSUploader extends RWSViewComponent {
 
 RWSUploader.defineComponent();
 
-export { RWSUploader }
+export { RWSUploader };

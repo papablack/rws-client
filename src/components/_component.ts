@@ -1,6 +1,6 @@
-import { FASTElement, ViewTemplate, ElementStyles, customElement, observable, html } from "@microsoft/fast-element";
-import config from "../services/ConfigService";
-import UtilsService from "../services/UtilsService";
+import { FASTElement, ViewTemplate, ElementStyles, customElement, observable, html } from '@microsoft/fast-element';
+import config from '../services/ConfigService';
+import UtilsService from '../services/UtilsService';
 
 import DOMService, { DOMOutputType } from '../services/DOMService';
 
@@ -25,7 +25,7 @@ class RWSViewComponent extends FASTElement {
     @observable trashIterator: number = 0;
     @observable fileAssets: {
         [key: string]: ViewTemplate
-      } = {}
+      } = {};
 
     constructor(routeParams: Record<string, string> =  null) {
         super();
@@ -47,11 +47,11 @@ class RWSViewComponent extends FASTElement {
             const configData = config();
 
             (this.constructor as any).fileList.forEach((file: string) => { 
-                if(!!this.fileAssets[file]){
+                if(this.fileAssets[file]){
                     return;
                 }
                 UtilsService.getFileContents(configData.get('pubUrl') + file).then((response: string) => {        
-                this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
+                    this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
                 }); 
             });      
 
@@ -72,7 +72,7 @@ class RWSViewComponent extends FASTElement {
 
         if(!this.fileAssets[assetName]){            
             return html`<span></span>`;
-            throw new Error(`File asset "${assetName}" not declared in component "${(this as any).constructor.definition.name}"`)
+            throw new Error(`File asset "${assetName}" not declared in component "${(this as any).constructor.definition.name}"`);
         }
 
         return this.fileAssets[assetName];
@@ -93,7 +93,7 @@ class RWSViewComponent extends FASTElement {
         const def: IFastDefinition = {
             name: tagName,
             template: htmlTemplate
-        }
+        };
 
         if(styles){
             def.styles = styles;
@@ -128,18 +128,18 @@ class RWSViewComponent extends FASTElement {
         let dots = 1;
         const maxDots = 3; // Maximum number of dots
         const interval = setInterval(async () => {
-          const dotsString = '. '.repeat(dots);          
+            const dotsString = '. '.repeat(dots);          
 
-          const doesItStop = await shouldStop(item, addContent);                
+            const doesItStop = await shouldStop(item, addContent);                
 
-          if(doesItStop){
-            addContent({ output: `` }, true);
-            clearInterval(interval);        
-          }else{
-            addContent({ output: `${dotsString}` }, true);
+            if(doesItStop){
+                addContent({ output: '' }, true);
+                clearInterval(interval);        
+            }else{
+                addContent({ output: `${dotsString}` }, true);
             
-            dots = (dots % (maxDots)) + 1;
-          }
+                dots = (dots % (maxDots)) + 1;
+            }
         }, 500);
     }
 
@@ -147,16 +147,16 @@ class RWSViewComponent extends FASTElement {
     {
         return new Promise<void>((resolve) => {
             if (this.getShadowRoot() !== null && this.getShadowRoot() !== undefined) {              
-              resolve();
+                resolve();
             } else {
-              // If shadowRoot is not yet available, use MutationObserver to wait for it
-              const observer = new MutationObserver(() => {
-                if (this.getShadowRoot() !== null && this.getShadowRoot() !== undefined) {
-                  observer.disconnect();
-                  resolve();
-                }
-              });
-              observer.observe(this, { childList: true, subtree: true });
+                // If shadowRoot is not yet available, use MutationObserver to wait for it
+                const observer = new MutationObserver(() => {
+                    if (this.getShadowRoot() !== null && this.getShadowRoot() !== undefined) {
+                        observer.disconnect();
+                        resolve();
+                    }
+                });
+                observer.observe(this, { childList: true, subtree: true });
             }
         });
     }
@@ -167,7 +167,7 @@ class RWSViewComponent extends FASTElement {
         const shRoot: ShadowRoot | null = this.shadowRoot;
 
         if(!shRoot){
-            throw new Error(`Component ${(this.constructor as any).definition.name} lacks shadow root. If you wish to have component without shadow root extend your class with FASTElement`)
+            throw new Error(`Component ${(this.constructor as any).definition.name} lacks shadow root. If you wish to have component without shadow root extend your class with FASTElement`);
         }
 
         return shRoot;
@@ -175,7 +175,7 @@ class RWSViewComponent extends FASTElement {
 
     static hotReplacedCallback() {
         this.getInstances().forEach(instance => instance.forceReload());
-      }
+    }
     
     forceReload() {
         this.trashIterator += 1;

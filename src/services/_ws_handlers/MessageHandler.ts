@@ -1,4 +1,4 @@
-import { WSInstance } from "../WSService";
+import { WSInstance } from '../WSService';
 
 function listenForMessage(instance: WSInstance, callback: (data: any, isJson?: boolean) => void, method?: string): WSInstance {
     if (!instance.socket()) {
@@ -34,10 +34,10 @@ function sendMessage<T>(instance: WSInstance, method: string, msg: T): void {
         }
 
         const the_message = {
-          user_id: instance.socket().id,
-          method: method,
-          msg: msg
-        }
+            user_id: instance.socket().id,
+            method: method,
+            msg: msg
+        };
     
         
         instance.socket().emit(method, JSON.stringify(the_message));
@@ -50,4 +50,4 @@ function sendMessage<T>(instance: WSInstance, method: string, msg: T): void {
 export default{
     listenForMessage,
     sendMessage
-}
+};

@@ -1,4 +1,4 @@
-import { WSInstance, WSEvent } from "../WSService";
+import { WSInstance, WSEvent } from '../WSService';
 
 function on(instance: WSInstance, event: WSEvent, callback: (wsInstance: WSInstance, params: any) => any): void {
     let listeners = instance.eventListeners.get(event);
@@ -7,7 +7,7 @@ function on(instance: WSInstance, event: WSEvent, callback: (wsInstance: WSInsta
         instance.eventListeners.set(event, listeners);
     }
     listeners.push(callback);
-  }
+}
 
 function executeEventListener(instance: WSInstance, event: WSEvent, params: any = {}): void {    
     const listeners = instance.eventListeners.get(event);
@@ -25,4 +25,4 @@ function executeEventListener(instance: WSInstance, event: WSEvent, params: any 
 export default {
     on,
     executeEventListener
-}
+};

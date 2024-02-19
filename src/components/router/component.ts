@@ -1,8 +1,8 @@
-import { customElement, FASTElement, observable, html, ref, when  } from "@microsoft/fast-element";
-import { isConstructorDeclaration } from "typescript";
+import { customElement, FASTElement, observable, html, ref, when  } from '@microsoft/fast-element';
+import { isConstructorDeclaration } from 'typescript';
 
-import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from "../../services/RoutingService";
-import RWSViewComponent from "../_component";
+import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from '../../services/RoutingService';
+import RWSViewComponent from '../_component';
 
 
 export class RouterComponent extends RWSViewComponent {    
@@ -47,7 +47,7 @@ export class RouterComponent extends RWSViewComponent {
         const newComponent: RWSViewComponent = new childComponent(routeParams);   
 
         if(this.currentComponent){
-            this.getShadowRoot().removeChild(this.currentComponent)
+            this.getShadowRoot().removeChild(this.currentComponent);
             
         }
         

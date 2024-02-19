@@ -35,11 +35,11 @@ class RWSClient {
 
         if (hotModule.hot) {
             hotModule.hot.accept('./print.js', function() {
-              console.log('Accepting the updated module!');              
-            })
+                console.log('Accepting the updated module!');              
+            });
         }
 
-        const packageInfo = "";
+        const packageInfo = '';
         
         await startClient(this.config);
         
@@ -107,4 +107,4 @@ export {
 
     observable,
     attr 
-}
+};

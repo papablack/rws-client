@@ -1,9 +1,9 @@
-import IRWSConfig from "./interfaces/IRWSConfig";
-import appConfig from "./services/ConfigService";
-import NotifyService from "./services/NotifyService";
-import WSService from "./services/WSService";
+import IRWSConfig from './interfaces/IRWSConfig';
+import appConfig from './services/ConfigService';
+import NotifyService from './services/NotifyService';
+import WSService from './services/WSService';
 
-import RoutingService from "./services/RoutingService";
+import RoutingService from './services/RoutingService';
 
 const main = async (cfg: IRWSConfig): Promise<boolean> => {    
     //First config run for setting up data. Later just use appConfig().get() to obtain data.
@@ -25,12 +25,12 @@ const main = async (cfg: IRWSConfig): Promise<boolean> => {
             NotifyService.notify('Your websocket client has tried to reconnect to server. Attempt #' + (params.reconnects+1), 'warning');
         });
 
-        console.log(cfg.transports)
+        console.log(cfg.transports);
 
         WSService.init(config.get('wsUrl'), cfg.user, cfg.transports);
     }
 
     return true;
-}
+};
 
 export default main;
