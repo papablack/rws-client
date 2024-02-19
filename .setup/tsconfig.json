@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+      "baseUrl": "../",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "target": "ES2018",
+      "module": "es2022",       
+      "moduleResolution": "node",     
+      "strict": true,
+      "esModuleInterop": true,
+      "sourceMap": true,
+      "outDir": "dist",
+      "strictNullChecks": false,    
+      "allowSyntheticDefaultImports": true,    
+      "paths": {
+        // "rws-js-client/*": ["./node_modules/rws-js-client/src/*"],
+        // "rws-js-client/tests": ["./node_modules/rws-js-client/dist/src/tests/index"],  
+        // "rws-js-client": ["./node_modules/rws-js-client/dist/src/index"],            
+      }       
+    },
+    "include": [
+      "src",          
+      "../node_modules/rws-js-client/declarations.d.ts",
+    ],  
+    "exclude": [
+      "../node_modules/rws-js-client/src/tests"    
+    ]
+  }

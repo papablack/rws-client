@@ -3,6 +3,8 @@ import config from '../services/ConfigService';
 import ConfigService from "../services/ConfigService";
 import UtilsService from "./UtilsService";
 import { upload, UploadResponse } from 'upload';
+// import { generateClient } from "aws-amplify/data";
+// import { type Schema } from "";
 
 
 interface RequestOptions {
@@ -191,6 +193,7 @@ class ApiService extends TheService {
     async uploadFile(url:string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse>
     {
         return upload(
+            
             url,
             {
               file,
@@ -208,6 +211,24 @@ class ApiService extends TheService {
         delete: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.delete(this.getBackendUrl(routeName, options?.routeParams), options),
         uploadFile: (routeName:string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse> => this.uploadFile(this.getBackendUrl(routeName, options?.routeParams), file, onProgress),
     };
+
+    connectToAmplify()
+    {        
+        // "use client"       
+        // const client = generateClient<Schema>() // use this Data client for CRUDL requests
+        
+
+        // /*== STEP 3 ===============================================================
+        // Fetch records from the database and use them in your frontend component.
+        // (THIS SNIPPET WILL ONLY WORK IN THE FRONTEND CODE FILE.)
+        // =========================================================================*/
+
+        // /* For example, in a React component, you can use this snippet in your
+        // function's RETURN statement */
+        // // const { data: todos } = client.models.Todo.list()
+
+        // // return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
+    }
 }
 
 export default ApiService.getSingleton();
