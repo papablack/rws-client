@@ -14,9 +14,11 @@
         "project": "./tsconfig.json"
     },
     "plugins": ["@typescript-eslint", "unused-imports"],
+    "ignorePatterns": ["*.js"],
     "rules": {
         "no-unused-vars": "off",                
         "no-prototype-builtins": "off",                
+        "no-case-declarations": "off",
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": ["warn", { "vars": "all", "args": "none"}],     
         "@typescript-eslint/no-var-requires": "off",   
@@ -24,6 +26,16 @@
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-this-alias": "off",
+        "@typescript-eslint/type-annotation-spacing": ["error", {
+            "before": false,
+            "after": true,
+            "overrides": {
+              "arrow": {
+                "before": true, // Space before the arrow function's arrow
+                "after": true // Space after the arrow function's arrow
+              }
+            }
+        }],        
         "indent": [
             "error",
             4

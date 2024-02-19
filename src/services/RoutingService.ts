@@ -3,7 +3,7 @@ import TheService from './_service';
 import Router from 'url-router';
 import RWSViewComponent from '../components/_component';
 import { RouterComponent } from '../components/router/component';
-import UtilsService from './UtilsService';
+import {RWSUtilsService as UtilsService} from './UtilsService';
 
 
 type IFrontRoutes = Record<string, unknown>; 
@@ -34,8 +34,7 @@ class RWSRouter {
     }
 
     public fireHandler(route: IRWSRouteResult): RouteReturn
-    {     
-        const handler = route.handler();
+    {     const handler = route.handler();
         return [handler[0], handler[1], UtilsService.mergeDeep(route.params, handler[2])];
     }
 
@@ -102,5 +101,6 @@ interface IRoutingEvent {
   component: typeof RWSViewComponent
 }
 
-export default RoutingService.getSingleton();
-export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent, };
+export default RoutingService;
+const RWSRoutingService: RoutingService = RoutingService.getSingleton();
+export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent, RWSRoutingService};

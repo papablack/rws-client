@@ -1,9 +1,9 @@
 import IRWSConfig from './interfaces/IRWSConfig';
 import appConfig from './services/ConfigService';
-import NotifyService from './services/NotifyService';
-import WSService from './services/WSService';
+import { NotifyService } from './services/NotifyService';
+import { RWSWSService as WSService} from './services/WSService';
 
-import RoutingService from './services/RoutingService';
+import { RWSRoutingService as RoutingService} from './services/RoutingService';
 
 const main = async (cfg: IRWSConfig): Promise<boolean> => {    
     //First config run for setting up data. Later just use appConfig().get() to obtain data.

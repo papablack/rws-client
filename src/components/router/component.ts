@@ -1,6 +1,6 @@
 import { observable  } from '@microsoft/fast-element';
 
-import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from '../../services/RoutingService';
+import { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn, RWSRoutingService as RoutingService } from '../../services/RoutingService';
 import RWSViewComponent from '../_component';
 
 

@@ -35,7 +35,7 @@ type IBackendRoute = IHTTProute | IPrefixedHTTProutes;
 
 const _DEFAULT_CONTENT_TYPE = 'application/json';
 
-class ApiService extends TheService {
+class ApiServiceInstance extends TheService {
     private token?: string;    
 
     constructor() {
@@ -146,7 +146,7 @@ class ApiService extends TheService {
         }
     }
 
-    private getBackendUrl(routeName: string, params: {[key:string]: string} = {})
+    private getBackendUrl(routeName: string, params: {[key: string]: string} = {})
     {
        
 
@@ -189,7 +189,7 @@ class ApiService extends TheService {
         return `${config().get('backendUrl')}${config().get('apiPrefix') || ''}${apiPath}`;
     }
 
-    async uploadFile(url:string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse>
+    async uploadFile(url: string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse>
     {
         return upload(
             
@@ -208,7 +208,7 @@ class ApiService extends TheService {
         post: <T, P>(routeName: string, payload?: P, options?: IAPIOptions): Promise<T> => this.post(this.getBackendUrl(routeName, options?.routeParams), payload, options),
         put: <T, P>(routeName: string, payload: P, options?: IAPIOptions): Promise<T> => this.put(this.getBackendUrl(routeName, options?.routeParams), payload, options),
         delete: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.delete(this.getBackendUrl(routeName, options?.routeParams), options),
-        uploadFile: (routeName:string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse> => this.uploadFile(this.getBackendUrl(routeName, options?.routeParams), file, onProgress),
+        uploadFile: (routeName: string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse> => this.uploadFile(this.getBackendUrl(routeName, options?.routeParams), file, onProgress),
     };
 
     connectToAmplify()
@@ -229,6 +229,6 @@ class ApiService extends TheService {
         // // return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
     }
 }
-
-export default ApiService.getSingleton();
-export { IBackendRoute, RequestOptions };
+const apiService = ApiServiceInstance.getSingleton();
+export default ApiServiceInstance;
+export { IBackendRoute, RequestOptions, apiService as ApiService, IHTTProute, IPrefixedHTTProutes };

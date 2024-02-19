@@ -1,5 +1,5 @@
 import TheService from './_service';
-import ApiService from './ApiService';
+import ApiServiceInstance from './ApiService';
 
 import { SourceMapConsumer, RawSourceMap  } from 'source-map';
 
@@ -8,7 +8,7 @@ let sourceMap: RawSourceMap = null;
 class UtilsService extends TheService {
     async getFileContents(filePath: string): Promise<string>
     {    
-        return await ApiService.pureGet(filePath);
+        return await ApiServiceInstance.getSingleton().pureGet(filePath);
     }
     mergeDeep<T>(target: T | any, source: T  | any): T 
     {
@@ -87,4 +87,6 @@ class UtilsService extends TheService {
     }
 }
 
-export default UtilsService.getSingleton();
+export default UtilsService;
+const RWSUtilsService: UtilsService = UtilsService.getSingleton();
+export { RWSUtilsService }

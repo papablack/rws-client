@@ -4,7 +4,7 @@ import TheService from './_service';
  * @class
  * @extends TheService
  */
-class NotifyService extends TheService {
+class NotifyServiceInstance extends TheService {
     private notifier: RWSNotify;
 
     public setNotifier(notifier: RWSNotify)
@@ -43,10 +43,6 @@ class NotifyService extends TheService {
     }
 }
 
-export default NotifyService.getSingleton();
-
-/**
- * NotifyService - Handles the notification logic in the application.
- * It includes methods to alert, notify, and silently log messages.
- */
+export default NotifyServiceInstance;
+const NotifyService: NotifyServiceInstance = NotifyServiceInstance.getSingleton();
 export { NotifyService };

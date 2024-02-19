@@ -1,8 +1,8 @@
 import { FASTElement, ViewTemplate, ElementStyles, observable, html } from '@microsoft/fast-element';
 import config from '../services/ConfigService';
-import UtilsService from '../services/UtilsService';
+import { RWSUtilsService as UtilsService } from '../services/UtilsService';
 
-import DOMService, { DOMOutputType } from '../services/DOMService';
+import { DOMService, DOMOutputType } from '../services/DOMService';
 
 interface IFastDefinition {
     name: string;
@@ -193,3 +193,5 @@ class RWSViewComponent extends FASTElement {
 }
 
 export default RWSViewComponent;
+
+export { IAssetShowOptions }

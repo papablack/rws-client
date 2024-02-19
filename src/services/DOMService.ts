@@ -1,7 +1,7 @@
 import RWSService from './_service';
 type DOMOutputType<T extends Element> = NodeListOf<T> | T | null;
 
-class DOMService extends RWSService {
+class DOMServiceInstance extends RWSService {
     parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): DOMOutputType<T> {    
         if(input.length > 1 || directReturn) {
             return input;
@@ -30,6 +30,6 @@ class DOMService extends RWSService {
     }
 }
 
-export default DOMService.getSingleton();
-
-export { DOMOutputType };
+export default DOMServiceInstance;
+const DOMService: DOMServiceInstance = DOMServiceInstance.getSingleton();
+export { DOMOutputType, DOMService };

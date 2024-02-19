@@ -9,3 +9,5 @@ function RWSView(name: string, data?: RWSDecoratorOptions): (type: any) => void{
 }
 
 export default RWSView;
+
+export { RWSDecoratorOptions }

@@ -8,5 +8,6 @@
     "entryPointStrategy": "expand",
     "categorizeByGroup": true,
     "name": "Realtime Web Suite Client package",
-    "jsDocCompatibility": true  
+    "jsDocCompatibility": true,
+    "includes": "src/services"
 }

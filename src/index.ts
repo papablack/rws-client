@@ -2,18 +2,24 @@ import IRWSConfig from './interfaces/IRWSConfig';
 import startClient from './run';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
 import { observable, attr } from '@microsoft/fast-element';
-import NotifyService from './services/NotifyService';
-import RoutingService, { IFrontRoutes, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent } from './services/RoutingService';
-import DOMService, { DOMOutputType }  from './services/DOMService';
-import RWSViewComponent from './components/_component';
-import RWSView from './components/_decorator';
-import ApiService, { IBackendRoute } from './services/ApiService';
+import NotifyServiceInstance, {NotifyService} from './services/NotifyService';
+import RoutingServiceInstance, { 
+    IFrontRoutes, renderRouteComponent, RouteReturn, 
+    _ROUTING_EVENT_NAME, IRoutingEvent, RWSRoutingService as RoutingService,
+    RWSRouter, IRWSRouteResult
+} from './services/RoutingService';
+import DOMServiceInstance, { DOMService, DOMOutputType }  from './services/DOMService';
+import RWSViewComponent, { IAssetShowOptions } from './components/_component';
+import RWSView, {RWSDecoratorOptions} from './components/_decorator';
+import ApiServiceInstance,  { IBackendRoute, ApiService, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
 import RWSService from './services/_service';
-import UtilsService from './services/UtilsService';
-import WSService from './services/WSService';
+import UtilsServiceInstance, {RWSUtilsService as UtilsService} from './services/UtilsService';
+import WSServiceInstance, {RWSWSService as WSService, WSStatus} from './services/WSService';
 import { RouterComponent } from './components/router/component';
 import registerRWSComponents from './components/index';
 import { ngAttr } from './components/_attrs/angular-attr';
+
+
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -31,7 +37,7 @@ class RWSClient {
     async start(config: IRWSConfig = {}): Promise<boolean> {    
         this.config = {...this.config, ...config};                                 
 
-        const hotModule:IHotModule = (module as IHotModule);
+        const hotModule: IHotModule = (module as IHotModule);
 
         if (hotModule.hot) {
             hotModule.hot.accept('./print.js', function() {
@@ -84,15 +90,33 @@ export {
     NotifyLogType,
 
     RouteReturn,
-    _ROUTING_EVENT_NAME, NotifyService,
+    _ROUTING_EVENT_NAME,
     IRoutingEvent,
-
-    ApiService,    
-    WSService,
-    UtilsService,
+    RoutingServiceInstance,
     RoutingService,
+    ApiServiceInstance,
+    ApiService,    
+    WSServiceInstance,
+    WSService,
+    UtilsServiceInstance,    
+    UtilsService,    
+    DOMServiceInstance,
     DOMService,
     DOMOutputType,
+    NotifyServiceInstance,
+    NotifyService,
+
+    RWSNotify,
+    RWSRouter,
+    IFrontRoutes as IRWSFrontRoutes,
+    IBackendRoute as IRWSBackendRoute,
+    RWSDecoratorOptions as IRWSDecoratorOptions,
+    IRWSRouteResult,
+    IHTTProute as IRWSHttpRoute,
+    IPrefixedHTTProutes as IRWSPrefixedHTTProutes,
+    WSStatus as IRWSWebsocketStatus,
+    IAssetShowOptions as IRWSAssetShowOptions,
+    IRWSConfig,
 
     RWSViewComponent,        
     RWSView,
