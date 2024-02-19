@@ -1,7 +1,6 @@
 import TheService from './_service';
 import config from '../services/ConfigService';
 import ConfigService from '../services/ConfigService';
-import UtilsService from './UtilsService';
 import { upload, UploadResponse } from 'upload';
 // import { generateClient } from "aws-amplify/data";
 // import { type Schema } from "";
@@ -232,4 +231,4 @@ class ApiService extends TheService {
 }
 
 export default ApiService.getSingleton();
-export { IBackendRoute };
+export { IBackendRoute, RequestOptions };
