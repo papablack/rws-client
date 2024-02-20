@@ -9,7 +9,7 @@ const main = async (cfg: IRWSConfig): Promise<boolean> => {
     //First config run for setting up data. Later just use appConfig().get() to obtain data.
     const config = appConfig(cfg);
 
-    RoutingService.initRouting(config.get('routes'));
+    RoutingService.initRouting(config.get('routes'));    
 
     if(cfg.backendUrl){
         WSService.on('ws:disconnected', (instance, params) => {

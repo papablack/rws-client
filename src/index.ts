@@ -16,9 +16,8 @@ import RWSService from './services/_service';
 import UtilsServiceInstance, {RWSUtilsService as UtilsService} from './services/UtilsService';
 import WSServiceInstance, {RWSWSService as WSService, WSStatus} from './services/WSService';
 import { RouterComponent } from './components/router/component';
-import registerRWSComponents from './components/index';
+import registerRWSComponents, { RWSUploader } from './components';
 import { ngAttr } from './components/_attrs/angular-attr';
-
 
 
 interface IHotModule extends NodeModule {
@@ -122,7 +121,9 @@ export {
     RWSView,
     ngAttr,
     RWSService,
+
     RouterComponent,
+    RWSUploader,
 
     renderRouteComponent,
     registerRWSComponents,
