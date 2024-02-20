@@ -11,6 +11,7 @@
 7. [Utilizing APIService](#utilizing-apiservice)
 8. [Notifier](#notifier)
 9. [Example: WebChat Component](#example-webchat-component)
+10. [Links](#links)
 
 
 ## Overview
@@ -572,3 +573,6 @@ are defined in backend/src/config/config
     }
 ```
 
+## Links
+
+- https://www.webcomponents.org (open-source WebComponents repository)
