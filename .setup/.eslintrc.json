@@ -6,6 +6,6 @@
         "es2021": true
     },        
     "parserOptions": {      
-        "project": "{{frontend_dir}}/tsconfig.json"
+        "project": "./tsconfig.json"
     }
 }
