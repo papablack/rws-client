@@ -14,6 +14,7 @@ import RWSView, {RWSDecoratorOptions} from './components/_decorator';
 import ApiServiceInstance,  { IBackendRoute, ApiService, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
 import RWSService from './services/_service';
 import UtilsServiceInstance, {RWSUtilsService as UtilsService} from './services/UtilsService';
+import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
 import WSServiceInstance, {RWSWSService as WSService, WSStatus} from './services/WSService';
 import { RouterComponent } from './components/router/component';
 import registerRWSComponents, { RWSUploader } from './components';
@@ -104,6 +105,8 @@ export {
     DOMOutputType,
     NotifyServiceInstance,
     NotifyService,
+    ConfigServiceInstance,
+    ConfigService as getRWSConfig,
 
     RWSNotify,
     RWSRouter,

@@ -32,7 +32,9 @@ class ConfigService extends TheService {
         if (cfg) {                
             TheService._instances[className] = new this(cfg);        
         }else if(!instanceExists && !cfg){
-            throw new Error('no-cfg');
+            return new this({}) as ConfigService;
+
+            // throw new Error('no-cfg');
         }
   
         return TheService._instances[className] as ConfigService;
@@ -40,4 +42,4 @@ class ConfigService extends TheService {
 }
 
 export default (cfg?: IRWSConfig): ConfigService => ConfigService.getConfigSingleton(cfg);
-export { ConfigService };
+export { ConfigService as ConfigServiceInstance };
