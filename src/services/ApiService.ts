@@ -93,6 +93,14 @@ class ApiServiceInstance extends TheService {
         }
     }
 
+    public async isGetTargetReachable(url: string, options: IAPIOptions = {}): Promise<boolean> {
+        try {    
+            return !!(await this.pureGet(url, options));
+        } catch (error) {
+            return false;
+        }
+    }
+
     public async get<T>(url: string, options: IAPIOptions = {}): Promise<T> {
         try {
             const response = await fetch(url, {

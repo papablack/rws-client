@@ -205,4 +205,4 @@ class WSService extends TheService {
 
 export default WSService;
 const RWSWSService: WSService = WSService.getSingleton();
-export { RWSWSService, WSEvent, WSService as WSInstance, WSStatus }
+export { RWSWSService, WSEvent, WSService as WSInstance, WSStatus };
