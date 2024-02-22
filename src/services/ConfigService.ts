@@ -32,13 +32,18 @@ class ConfigService extends TheService {
         if (cfg) {                
             TheService._instances[className] = new this(cfg);        
         }else if(!instanceExists && !cfg){
-            return new this({}) as ConfigService;
+            // return new this({}) as ConfigService; // DO NOT USE OR I'LL CUT U!!!!!!
 
-            // throw new Error('no-cfg');
+            throw new Error('[RWS] No frontend configuration passed to RWSClient');
         }
   
         return TheService._instances[className] as ConfigService;
     }  
+
+    getData(): IRWSConfig
+    {
+        return this.data;
+    }
 }
 
 export default (cfg?: IRWSConfig): ConfigService => ConfigService.getConfigSingleton(cfg);
