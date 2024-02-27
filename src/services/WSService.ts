@@ -1,6 +1,6 @@
 import TheService from './_service';
 import { io, Socket } from 'socket.io-client';
-import ITheUser from '../interfaces/ITheUser';
+import ITheUser from '../interfaces/IRWSUser';
 import { v4 as uuid } from 'uuid';
 import { ping, disconnect as disconnectWs, reconnect as reconnectWs } from './_ws_handlers/ConnectionHandler';
 import WSEventHandler from './_ws_handlers/EventHandler';
@@ -122,6 +122,11 @@ class WSService extends TheService {
 
     public isActive(): boolean {
         return !this._connecting && this._ws?.connected;
+    }
+
+    setUser(user: ITheUser): void
+    {
+        this.user = user;
     }
 
     public listenForMessage(callback: (data: any, isJson?: boolean) => void, method?: string): () => void 

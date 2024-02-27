@@ -21,8 +21,8 @@ import { RouterComponent } from './components/router/component';
 import registerRWSComponents, { RWSUploader } from './components';
 import { ngAttr } from './components/_attrs/angular-attr';
 import RWSClient from './client';
-import RWSServiceWorker from './service_worker/src/_service_worker';
-
+import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worker';
+import IRWSUser from './interfaces/IRWSUser';
 
 export default RWSClient;
 export { 
@@ -61,6 +61,7 @@ export {
     WSStatus as IRWSWebsocketStatus,
     IAssetShowOptions as IRWSAssetShowOptions,
     IRWSConfig,
+    IRWSUser,
 
     RWSViewComponent,        
     RWSView,
@@ -76,5 +77,6 @@ export {
     observable,
     attr,
 
-    RWSServiceWorker
+    RWSServiceWorker,
+    SWMsgType
 };
