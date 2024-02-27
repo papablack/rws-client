@@ -66,14 +66,14 @@ export default class RWSClient {
         this.initCallback = callback;
     }
 
-    public sendDataToServiceWorker(type: string, data: any): void
+    public pushDataToServiceWorker(type: string, data: any, asset_type: string = 'data_push'): void
     {
-        ServiceWorkerService.sendDataToServiceWorker(type, data);
+        ServiceWorkerService.sendDataToServiceWorker(type, data, asset_type);
     }
 
-    public pushJWTToServiceWorker(jwtToken: string)
+    public pushUserToServiceWorker(userData: any)
     {
-        this.sendDataToServiceWorker();
+        this.pushDataToServiceWorker('SET_USER', userData, 'logged_user');
     }
 
     private enableRouting(): void

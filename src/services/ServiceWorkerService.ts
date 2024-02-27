@@ -41,12 +41,13 @@ class ServiceWorkerService extends RWSService {
         }
     }
 
-    sendDataToServiceWorker(type: string, data: any)
+    sendDataToServiceWorker(type: string, data: any, asset_type: string = 'data_push')
     {
         if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
-              type,
-              data
+              command: type,
+              asset_type,
+              params: data
             });
           } else {
             throw new Error('Service worker is not available');
