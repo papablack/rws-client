@@ -5,9 +5,12 @@ const path = require('path');
 const fs = require('fs');
 const tools = require('./_tools');
 
+const moduleDir = path.resolve(__dirname);
+const executionDir = path.resolve(process.cwd());
+const workspaceRoot = tools.findRootWorkspacePath(executionDir);
 
 const command2map = process.argv[2];
-let args = process.argv[3] || '';
+const firstArg = process.argv[3] || '';
 
 const extraArgsAggregated = [];
 
@@ -18,13 +21,11 @@ if(process.argv.length > 4){
 }
 
 const CMD_LIST = [
-  'init'
+  'init',
+  'build:sw'
 ]
 
 async function main() {
-    const moduleDir = path.resolve(__dirname);
-    const executionDir = path.resolve(process.cwd());
-
     if(!CMD_LIST.includes(command2map) || command2map === 'help'){
       const helpTxt = `RWS Client CLI. \n\n Main features: \n - framerwork init \n - tests \n\n`;
       const cmdList = `Command list: \n ${CMD_LIST.map((el) => `"rws-client ${el}"`).join('\n')}`;
@@ -32,17 +33,22 @@ async function main() {
 
       if(command2map === 'help'){
         console.log(currentColor(helpTxt));
-      }else{
-        console.log(currentColor('[RWS CLI ERROR]: command not found'))
       }
 
       console.log(currentColor(cmdList))
       return false;
     }
 
-    let workspaced = false;
-    const workspaceRoot = tools.findRootWorkspacePath(executionDir);
-  
+    switch(command2map){
+      case 'init': await initCmd(); break;
+      case 'build:sw': await buildSwCmd(); break;
+    }
+    
+    return true;
+}
+
+async function initCmd(){
+  let workspaced = false;  
     if(workspaceRoot !== executionDir){
       workspaced = true;
     }  
@@ -63,13 +69,19 @@ async function main() {
     if(!fs.existsSync(`${executionDir}/tsconfig.json`)){
       fs.copyFileSync(`${moduleDir}/.setup/tsconfig.json`, `${executionDir}/tsconfig.json`);
       console.log(chalk.green('[RWS Client]'), 'Installed tsconfig.');
-    }    
-    
-    return true;
+    }   
 }
 
-main().then((result) => {    
-    if(result){
-      console.log(chalk.green('[RWS Client]'), ' Frontend install finished')
-    }    
-});
+async function buildSwCmd(){
+  const webpackCmd = `yarn webpack`;
+  
+  try {
+    console.log(chalk.yellow('[RWS Client]'), 'Installing service worker...');
+    await tools.runCommand(`${webpackCmd} --config ${path.resolve(moduleDir,'src','service_worker')}/webpack.config.js`, executionDir, false, { env: { SWPATH: firstArg } });
+    console.log(chalk.green('[RWS Client]'), 'Service worker installed.');
+  }catch(e){
+    console.error('runerror',e);
+  }
+}
+
+main().then((result) => {});

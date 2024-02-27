@@ -10,9 +10,9 @@
 6. [Backend Imports](#backend-imports)
 7. [Utilizing APIService](#utilizing-apiservice)
 8. [Notifier](#notifier)
-9. [Example: WebChat Component](#example-webchat-component)
-10. [Links](#links)
-
+9. [Service Worker](#service-worker)
+10. [Example: WebChat Component](#example-webchat-component)
+11. [Links](#links)
 
 ## Overview
 
@@ -363,6 +363,119 @@ Each method can be configured with a `message`, `logType`, and an optional `onCo
 Note
 
 Ensure that a notifier is set in the RWS Client to use the `NotifyService` effectively. If no notifier is set, it will default to a warning in the console.
+
+## Service Worker
+
+If you pass ```{serviceWorker: 'service_worker_class_path.ts'}``` to RWS Webpack wrapper function param, the code will build ServiceWorker to pubDir.
+
+**Remember to have lib field set in tesconfig.json**
+
+```json
+{
+ "lib": ["DOM", "ESNext", "WebWorker"]
+}
+```
+
+example ServiceWorker class:
+
+```typescript
+import SWService, { ServiceWorkerServiceInstance } from 'rws-js-client/src/services/ServiceWorkerService'
+import {TimeTracker} from '../services/TimeTrackerService';
+import RWSServiceWorker from 'rws-js-client/src/service_worker/src/_service_worker';
+import { RWSWSService as WSService } from 'rws-js-client/src/services/WSService'
+
+declare const self: ServiceWorkerGlobalScope;
+
+class ServiceWorker extends RWSServiceWorker {
+    ignoredUrls = [
+        new RegExp('(.*(?=.[^.]*$).*)/#/login'),
+        new RegExp('(.*(?=.[^.]*$).*)/#/logout'),
+    ];
+
+    protected regExTypes = {
+        FLASHCARDS_VIEW: new RegExp('.*:\\/\\/.*\\/#\\/([a-z0-9].*)\\/reports\\/flashcards$')
+    };
+
+    async onInit(): Promise<void>
+    {        
+        type ITheUser = any;
+
+        let THE_USER: ITheUser | null = null;        
+        const toSync: TimeTracker[] = [];
+
+        let WS_URL: string | null;
+        self.addEventListener('install', () => {
+            console.log('Service Worker: Installed');
+        });
+
+        self.addEventListener('activate', () => {
+            console.log('[SW] Service Worker: Activated'); 
+
+            return self.clients.claim();
+        });
+
+
+        // Send a message to the client page
+        const sendMessageToClient = (clientId: string, payload: any) => {
+            return self.clients.get(clientId)
+                .then((client: any) => {
+                    if (client) {
+                        client.postMessage(payload);
+                    }
+                });
+        };
+
+        interface MSGEvent{
+        data?: {
+            command: string,
+            asset_type?: string,
+            params: any
+        }
+        }
+
+        const checkWs = (): void => {
+            if(!WSService.socket() && WS_URL){
+                WSService.init(WS_URL, THE_USER);
+            }
+        };
+
+        // Listen for messages from the client page
+        self.addEventListener('message', (event: MSGEvent) => {
+            if(!event.data){
+                return;
+            }  
+
+            if (event.data.command){
+                console.log('[SW] OP Message:', event.data);
+            
+                switch (event.data.command) {
+                case 'SET_WS_URL':
+                    WS_URL = event.data.params.url;
+                    break;
+                case 'SET_USER':      
+                    THE_USER = event.data.params;
+                    checkWs();
+                    break;
+                case 'START_TRACKING':
+                    checkWs();
+                    if(!WSService.socket() && THE_USER){
+                        break;
+                    }
+                    SWService.trackActivity(event.data.asset_type, event.data.params.page_location, event.data.params, toSync);
+                    break;
+                case 'TRACKER_SAVED':
+                    const { clientId, tracker } = event.data.params;
+        
+                    sendMessageToClient(clientId, { message: 'TRACKER_SAVED_RESPONSE', data: tracker });
+                    break;  
+                }
+            }
+        });
+    }
+}
+
+ServiceWorker.create();
+```
 
 ## Example: WebChat Component
 

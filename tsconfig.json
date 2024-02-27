@@ -15,8 +15,9 @@
       "sourceMap": true,    
       "declaration": true,     
     },
+    "lib": ["DOM", "ESNext", "WebWorker"],
     "include": [
-      "src/**/*", 
+      "src/**/*", "../src/services/TimeTrackerService.ts", 
       // "declarations.d.ts"
     ],
     "exclude": [

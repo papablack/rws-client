@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 
 function findRootWorkspacePath(currentPath) {        
   const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');        
@@ -66,8 +67,38 @@ function getActiveWorkSpaces(currentPath, mode = 'all') {
   return [currentPath];
 }
 
+async function runCommand(command, cwd = null, silent = false, extraArgs = { env: {}}) {
+  return new Promise((resolve, reject) => {
+    const [cmd, ...args] = command.split(' ');
+    
+    if(!cwd){
+      console.log(`[RWS] Setting default CWD for "${command}"`);
+      cwd = process.cwd();
+    }
+
+    
+    const env = { ...process.env, ...extraArgs.env };
+
+    console.log(`[RWS] Running command "${command}" from "${cwd}"`);
+
+    const spawned = spawn(cmd, args, { stdio: silent ? 'ignore' : 'inherit', cwd, env });
+
+    spawned.on('exit', (code) => {
+      if (code !== 0) {
+        return reject(new Error(`Command failed with exit code ${code}`));
+      }
+      resolve();
+    });
+
+    spawned.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
 module.exports = {
     findRootWorkspacePath,
     findPackageDir,
-    getActiveWorkSpaces
+    getActiveWorkSpaces,
+    runCommand
 }

@@ -23,43 +23,10 @@ const externals = (declaredCodeBase, nodeModules, externalOptions = _defaultOpts
       theOptions = Object.assign(theOptions, externalOptions);
     }
 
-    const codeBase = path.resolve(declaredCodeBase);
+    const codeBase = path.resolve(declaredCodeBase);  
     
-    let mergeTarget = false;
-
-    if(
-      context.indexOf('rws-js-client') > -1 || request.indexOf('rws-js-client') > -1
-      ){      
-      mergeTarget = false;
-    }
-
-    if(
-      context.indexOf(codeBase) === 0 ||
-      request.indexOf('src/services') > -1 
-      || request.indexOf('./_service') > -1 
-      || context.indexOf('./ws_handlers') > -1
-      || request.indexOf('./ws_handlers') > -1
-      || request.indexOf('services/WSService') > -1
-      || context.indexOf('node_modules') > -1
-    )
-    {
-      mergeTarget = true;
-    }
-
-    if(
-      request.indexOf('./services/NotifyService') > -1 || 
-      request.indexOf('./services/RoutingService') > -1 ||
-      request.indexOf('./services/DOMService') > -1      
-      ){      
-      mergeTarget = false;
-    }
-
-    if(mergeTarget){
-      console.log('rEQ', context, request)
-    }else{
-      // console.log('NrEQ', context.indexOf(codeBase) === 0, context, request)
-
-    }
+    let mergeTarget = true;
+    console.log('req', context, request, mergeTarget);
 
     if (mergeTarget) {
       //merging to output

@@ -23,9 +23,7 @@ const main = async (cfg: IRWSConfig): Promise<boolean> => {
         WSService.on('ws:reconnect', (instance, params) => {
             console.info('WS RECONNECTION ' + (params.reconnects + 1));
             NotifyService.notify('Your websocket client has tried to reconnect to server. Attempt #' + (params.reconnects+1), 'warning');
-        });
-
-        console.log(cfg.transports);
+        });  
 
         WSService.init(config.get('wsUrl'), cfg.user, cfg.transports);
     }

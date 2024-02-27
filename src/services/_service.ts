@@ -20,7 +20,8 @@ export default abstract class TheService{
         return (this as any).constructor._RELOADABLE || this._RELOADABLE;
     }
 
-    public reloadService<T extends new (...args: any[]) => TheService>(this: T, ...params: any[]): InstanceType<T> {    
+    public reloadService<T extends new (...args: any[]) => TheService>(this: T, ...params: any[]): InstanceType<T> 
+    {    
         const className = this.name;
         TheService._instances[className] = new this(...params);        
         return TheService._instances[className] as InstanceType<T>;

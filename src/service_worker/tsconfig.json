@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "baseUrl": "../",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "target": "ES2018",
+      "module": "es2022",       
+      "moduleResolution": "node",     
+      "strict": true,
+      "esModuleInterop": true,
+      "sourceMap": true,
+      "outDir": "dist",
+      "strictNullChecks": false,    
+      "allowSyntheticDefaultImports": true,  
+      "lib": ["DOM", "ESNext", "WebWorker"],  
+      "paths": {        
+        //  "rws-js-client/*": ["../*"],      
+        //  "rws-js-client": ["../index"],      
+      }       
+    }
+  }

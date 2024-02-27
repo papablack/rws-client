@@ -6,12 +6,10 @@ const JsMinimizerPlugin = require('terser-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const RWSAfterPlugin = require('./webpack/rws_after_plugin');
+const { Console } = require('console');
 
-let WEBPACK_PLUGINS = [
-  
-];
-
+let WEBPACK_PLUGINS = [];
 
 /**
  *  The RWS webpack configurator.
@@ -39,7 +37,7 @@ let WEBPACK_PLUGINS = [
     ],
   });
  */
-const RWSWebpackWrapper = (config) => {
+const RWSWebpackWrapper = (config) => {  
   const executionDir = config.executionDir || process.cwd();
 
   const isDev = config.dev;
@@ -47,6 +45,10 @@ const RWSWebpackWrapper = (config) => {
   const isReport = config.report;
 
   const publicDir = config.publicDir || null;
+  const serviceWorkerPath = config.serviceWorker || null;
+
+  const WEBPACK_AFTER_ACTIONS = config.actions || [];
+
   const publicIndex = config.publicIndex || 'index.html';
   
   const aliases = config.aliases = {};
@@ -67,32 +69,24 @@ const RWSWebpackWrapper = (config) => {
 
   WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, new webpack.optimize.ModuleConcatenationPlugin(), ...overridePlugins];
 
-  if(!!config.copyToDir){
-    Object.keys(config.copyToDir).forEach((targetPath) => {
-
-      const sources = config.copyToDir[targetPath];
-      
-      sources.forEach((sourcePath) => {
-        const fileName = path.basename(sourcePath);
-        console.log(`[RWS] Copying "${sourcePath}" to "${targetPath + '/' + fileName}"`);
-        if(fs.existsSync(targetPath + '/' + fileName)){
-          fs.unlinkSync(targetPath + '/' + fileName);
-        }
-        WEBPACK_PLUGINS.push(new CopyWebpackPlugin({
-          patterns: [
-            { from: sourcePath, to: targetPath + '/' + fileName }
-          ]
-        }))
-      })
-
-    });
-  }
 
   if(isDev && isReport){
     WEBPACK_PLUGINS.push(new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       openAnalyzer: false,       
     }));
+  }
+
+  if(serviceWorkerPath){
+    WEBPACK_AFTER_ACTIONS.push(['service_worker', serviceWorkerPath]);
+  }
+
+  if(!!config.copyToDir){  
+    WEBPACK_AFTER_ACTIONS.push(['copy', config.copyToDir]);
+  }
+
+  if(WEBPACK_AFTER_ACTIONS.length){    
+    WEBPACK_PLUGINS.push(new RWSAfterPlugin({ actions: WEBPACK_AFTER_ACTIONS }));
   }
 
   const cfgExport = {
