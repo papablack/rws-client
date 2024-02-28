@@ -10,6 +10,7 @@ import registerRWSComponents from './components';
 import ServiceWorkerService from './services/ServiceWorkerService';
 import IRWSUser from './interfaces/IRWSUser';
 import {RWSWSService} from './services/WSService'
+import appConfig from './services/ConfigService';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -25,6 +26,8 @@ export default class RWSClient {
     private config: IRWSConfig = { backendUrl: '', routes: {} };
     protected initCallback: () => Promise<void> = async () => {};
 
+    private isSetup = false;
+
     constructor(){
         this.user = this.getUser();
 
@@ -35,8 +38,10 @@ export default class RWSClient {
         }
     }
 
-    async start(config: IRWSConfig = {}): Promise<boolean> {    
+    async setup(config: IRWSConfig = {}): Promise<IRWSConfig> 
+    {    
         this.config = {...this.config, ...config};                                 
+        appConfig(this.config);
 
         const hotModule: IHotModule = (module as IHotModule);
 
@@ -44,39 +49,63 @@ export default class RWSClient {
             hotModule.hot.accept('./print.js', function() {
                 console.log('Accepting the updated module!');              
             });
-        }        
+        }                 
+    
+        this.isSetup = true;
+        return this.config;
+    }
+
+    async start(config: IRWSConfig = {}): Promise<RWSClient> 
+    {  
+        this.config = {...this.config, ...config};
         
-        await startClient(this.config);
+        if(!this.isSetup){
+            this.config = await this.setup(this.config);
+        }
         
+        if(this.config.user && !this.config.dontPushToSW){            
+            this.pushUserToServiceWorker(this.user);
+        }
+
+        await startClient();
+
         if(!this.config?.ignoreRWSComponents){
             registerRWSComponents();
-        }
+        }        
         
         await this.initCallback();
     
-        return true;
+        return this;
     }
 
     public addRoutes(routes: IFrontRoutes){
         this.config.routes = routes;
     }
 
-    public setNotifier(notifier: RWSNotify)
+    public setNotifier(notifier: RWSNotify): RWSClient
     {
         NotifyService.setNotifier(notifier);
+
+        return this;
     }
 
-    public setDefaultLayout(DefaultLayout: any) {
+    public setDefaultLayout(DefaultLayout: any): RWSClient 
+    {
         this.config.defaultLayout = DefaultLayout;
+
+        return this;
     }
 
-    public setBackendRoutes(routes: IBackendRoute[]) {
+    public setBackendRoutes(routes: IBackendRoute[]): RWSClient
+    {
         this.config.backendRoutes = routes;            
+        return this;
     }
 
-    public async onInit(callback: () => Promise<void>): Promise<void>
+    public async onInit(callback: () => Promise<void>): Promise<RWSClient>
     {
         this.initCallback = callback;
+        return this;
     }
 
     public pushDataToServiceWorker(type: string, data: any, asset_type: string = 'data_push'): void
@@ -117,6 +146,11 @@ export default class RWSClient {
 
     setUser(user: IRWSUser): RWSClient
     {
+        if(!user || !user?.jwt_token){
+            console.warn('[RWS Client Warning]', 'Passed user is not valid', user);
+            return this;
+        }
+
         this.user = user;
 
         ApiService.setToken(this.user.jwt_token);

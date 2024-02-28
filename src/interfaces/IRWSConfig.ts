@@ -13,4 +13,5 @@ export default interface IRWSConfig {
     ignoreRWSComponents?: boolean
     pubUrl?: string
     pubPrefix?: string
+    dontPushToSW?: boolean
 }

@@ -1,4 +1,3 @@
-import RWSService from '../../services/_service';
 import IRWSUser from '../../interfaces/IRWSUser';
 
 type SWMsgType = {
@@ -7,40 +6,43 @@ type SWMsgType = {
     params: any
 };
 
-declare const workerScope: ServiceWorkerGlobalScope;
-
-abstract class RWSServiceWorker<UserType extends IRWSUser> extends RWSService {
+abstract class RWSServiceWorker<UserType extends IRWSUser> {
     protected user: UserType = null;
     protected ignoredUrls: RegExp[] = [];
-    protected regExTypes: { [key: string]: RegExp }    
+    protected regExTypes: { [key: string]: RegExp }  
+
+    public workerScope: ServiceWorkerGlobalScope;
+
+    protected static _instances: { [key: string]: RWSServiceWorker<IRWSUser> } | null = {};
 
     onInit(): Promise<void> { return; }   
 
     onInstall(): Promise<void> { return; }
     onActivate(): Promise<void> { return; }
 
-    constructor(){
-        super();            
+    constructor(workerScope: ServiceWorkerGlobalScope){        
+        
+        this.workerScope = workerScope;
 
         this.onInit().then(() => {
-            this.getWorkerScope().addEventListener('install', () => {
+            this.workerScope.addEventListener('install', () => {
                 console.log('Service Worker: Installed');
     
                 this.onInstall();
             });
     
-            this.getWorkerScope().addEventListener('activate', () => {
+            this.workerScope.addEventListener('activate', () => {
                 console.log('[SW] Service Worker: Activated'); 
                 
                 this.onActivate();
     
-                return this.getWorkerScope().clients.claim();
+                return workerScope.clients.claim();
             });
         });
     }       
 
     sendMessageToClient = (clientId: string, payload: any) => {
-        return this.getWorkerScope().clients.get(clientId)
+        return this.workerScope.clients.get(clientId)
             .then((client: any) => {
                 if (client) {
                     client.postMessage(payload);
@@ -60,20 +62,15 @@ abstract class RWSServiceWorker<UserType extends IRWSUser> extends RWSService {
         return this;
     }
 
-    static create<T extends new (...args: any[]) => RWSService>(this: T): InstanceType<T> {  
-        const go = RWSService.getSingleton.bind(this);                  
-        return go() as InstanceType<T>;
-    }
-
-    getWorkerScope(): ServiceWorkerGlobalScope
+    static create<T extends new (...args: any[]) => RWSServiceWorker<IRWSUser>>(this: T, workerScope: ServiceWorkerGlobalScope): InstanceType<T> 
     {
-        return RWSServiceWorker.getWorkerScope();
-    }
+        const className = this.name;
 
-    static getWorkerScope(): ServiceWorkerGlobalScope
-    {
+        if (!RWSServiceWorker._instances[className]) {
+            RWSServiceWorker._instances[className] = new this(workerScope);
+        }
 
-        return workerScope;
+        return RWSServiceWorker._instances[className] as InstanceType<T>;
     }
 }
 

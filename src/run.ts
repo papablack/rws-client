@@ -1,17 +1,16 @@
 import IRWSConfig from './interfaces/IRWSConfig';
-import appConfig from './services/ConfigService';
+import appConfig, { ConfigServiceInstance } from './services/ConfigService';
 import { NotifyService } from './services/NotifyService';
 import { RWSWSService as WSService} from './services/WSService';
 
 import { RWSRoutingService as RoutingService} from './services/RoutingService';
 
-const main = async (cfg: IRWSConfig): Promise<boolean> => {    
-    //First config run for setting up data. Later just use appConfig().get() to obtain data.
-    const config = appConfig(cfg);
+const main = async (): Promise<boolean> => {        
+    const config: ConfigServiceInstance = appConfig();
 
     RoutingService.initRouting(config.get('routes'));    
 
-    if(cfg.backendUrl){
+    if(config.get('backendUrl')){
         WSService.on('ws:disconnected', (instance, params) => {
             NotifyService.notify(`Your websocket client disconnected from the server. Your ID was <strong>${params.socketId}</strong>`, 'error');
         });
@@ -25,7 +24,7 @@ const main = async (cfg: IRWSConfig): Promise<boolean> => {
             NotifyService.notify('Your websocket client has tried to reconnect to server. Attempt #' + (params.reconnects+1), 'warning');
         });  
 
-        WSService.init(config.get('wsUrl'), cfg.user, cfg.transports);
+        WSService.init(config.get('wsUrl'), config.get('user'), config.get('transports'));
     }
 
     return true;

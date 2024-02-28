@@ -42,7 +42,7 @@ class WSService extends TheService {
     public eventListeners: Map<string, Array<(instance: WSService, params: any) => any>> = new Map();
 
     public async init(url: string, user?: ITheUser, transports: string[] = null): Promise<WSService> {
-        this._connecting = true;
+        this._connecting = true;        
         wsLog(new Error(), 'Connecting to: ' + url);
         this.url = url;
         this.user = user;            
@@ -51,12 +51,18 @@ class WSService extends TheService {
             Authorization: 'Bearer ' + this.user?.jwt_token,
         } : {};
 
- 
         if(!WSService.websocket_instance){
-            WSService.websocket_instance = io(this.url, { extraHeaders: headers, transports:  transports || null });
+            console.log('WSSERVICE', headers);
+            const tokenString = headers.Authorization ? `?token=${this.user.jwt_token}` : '' ;
+            WSService.websocket_instance = io(this.url + tokenString, { 
+                auth: user?.jwt_token ? { token:  user.jwt_token} : {}, 
+                transports:  transports || null 
+            });
         }          
         //, transports:  ['websocket']
         this._ws = WSService.websocket_instance;
+
+  
 
         if (this.user?.mongoId) {
             this._wsId = this.user.mongoId;
@@ -67,7 +73,7 @@ class WSService extends TheService {
         let socketId: string = null;
 
         this._ws.on('connect', () => {
-            socketId = this.socket().id;
+            socketId = this.socket().id;         
 
             wsLog(new Error(), 'Socket connected with ID: ' + socketId, socketId);
 

@@ -55,14 +55,12 @@ class ApiServiceInstance extends TheService {
 
     // Function to get headers
     private getHeaders(optHeaders: HeadersInit = {}): HeadersInit {
-        const headers: HeadersInit = { ...optHeaders };
-
-        console.log(this.token, 'TOKEN');
+        const headers: HeadersInit = { ...optHeaders };                
 
         if (!('Content-Type' in headers)) {
             this.addHeader(headers, 'Content-Type', _DEFAULT_CONTENT_TYPE);
         }            
-
+ 
         if (this.token) {
             this.addHeader(headers, 'Authorization', `Bearer ${this.token}`);            
         }        
