@@ -39,9 +39,7 @@ class RWSViewComponent extends FASTElement {
 
         if(!(this.constructor as any).definition && (this.constructor as any).autoLoadFastElement){
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
-        }
-
-        // console.log(config().get('pubUrl'), (this.constructor as any).fileList);
+        }        
 
         try { 
             const configData = config();
@@ -50,7 +48,7 @@ class RWSViewComponent extends FASTElement {
                 if(this.fileAssets[file]){
                     return;
                 }
-                UtilsService.getFileContents(configData.get('pubUrl') + file).then((response: string) => {        
+                UtilsService.getFileContents(configData.get('pubPrefix') + file).then((response: string) => {        
                     this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
                 }); 
             });      

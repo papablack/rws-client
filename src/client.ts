@@ -22,7 +22,7 @@ interface IHotModule extends NodeModule {
 
 export default class RWSClient {   
     private user: IRWSUser = null;
-    private config: IRWSConfig = { backendUrl: '', routes: {}, pubUrl: '/' };
+    private config: IRWSConfig = { backendUrl: '', routes: {} };
     protected initCallback: () => Promise<void> = async () => {};
 
     constructor(){
