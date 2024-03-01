@@ -14,8 +14,8 @@
       "allowSyntheticDefaultImports": true,  
       "sourceMap": true,    
       "declaration": true,     
+      "lib": ["DOM", "ESNext", "WebWorker"],
     },
-    "lib": ["DOM", "ESNext", "WebWorker"],
     "include": [
       "src/**/*", "../src/services/TimeTrackerService.ts", 
       // "declarations.d.ts"

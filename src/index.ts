@@ -23,6 +23,7 @@ import { ngAttr } from './components/_attrs/angular-attr';
 import RWSClient from './client';
 import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worker';
 import IRWSUser from './interfaces/IRWSUser';
+import { ILineInfo, TagsProcessorType } from './helpers/tags/TagsProcessorHelper';
 
 export default RWSClient;
 export { 
@@ -62,6 +63,8 @@ export {
     IAssetShowOptions as IRWSAssetShowOptions,
     IRWSConfig,
     IRWSUser,
+    ILineInfo, 
+    TagsProcessorType,
 
     RWSViewComponent,        
     RWSView,
