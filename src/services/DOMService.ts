@@ -1,7 +1,8 @@
 import RWSService from './_service';
 import { DOM } from '@microsoft/fast-element';
-import { ILineInfo, tagsProcessor, TagsProcessorType } from '../helpers/tags/TagsProcessorHelper';
+import htmlSanitizer, { Transformer, IOptions } from 'sanitize-html';
 
+type TagsProcessorType = { [tagName: string]: string | Transformer };
 type DOMOutputType<T extends Element> = NodeListOf<T> | T | null;
 
 //@ts-expect-error tsconfig.json problem
@@ -67,20 +68,21 @@ class DOMServiceInstance extends RWSService {
         return sanitizedText;
     }
 
-    sanitizeHTML(line: string, allowedHTMLTags: string[] = [], tagsProcessorElements: TagsProcessorType = null, additionalWork: (preOutput: string) => string)
+    sanitizeHTML(
+        line: string, 
+        allowedHTMLTags: string[] = null,         
+        sanitizeOptions: IOptions = {})
     {
-        let output: string = line.trim();    
-        output = this.enforceAllowedTags(output, allowedHTMLTags);
-        output = output.replace(/\n\n/g, '\n');
-
-        if(tagsProcessorElements){
-            tagsProcessor(output, tagsProcessorElements);
+        let output: string = line.trim(); 
+        
+        if(allowedHTMLTags){
+            sanitizeOptions.allowedTags = allowedHTMLTags;
         }
 
-        return output;
+        return htmlSanitizer(output, sanitizeOptions);
     }
 }
 
 export default DOMServiceInstance;
 const DOMService: DOMServiceInstance = DOMServiceInstance.getSingleton();
-export { DOMOutputType, DOMService, ILineInfo, tagsProcessor };
+export { DOMOutputType, DOMService, TagsProcessorType }; 

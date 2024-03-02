@@ -7,7 +7,7 @@ import RoutingServiceInstance, {
     _ROUTING_EVENT_NAME, IRoutingEvent, RWSRoutingService as RoutingService,
     RWSRouter, IRWSRouteResult
 } from './services/RoutingService';
-import DOMServiceInstance, { DOMService, DOMOutputType }  from './services/DOMService';
+import DOMServiceInstance, { DOMService, DOMOutputType, TagsProcessorType }  from './services/DOMService';
 import RWSViewComponent, { IAssetShowOptions } from './components/_component';
 import RWSView, {RWSDecoratorOptions} from './components/_decorator';
 import ApiServiceInstance,  { IBackendRoute, ApiService, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
@@ -23,7 +23,7 @@ import { ngAttr } from './components/_attrs/angular-attr';
 import RWSClient from './client';
 import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worker';
 import IRWSUser from './interfaces/IRWSUser';
-import { ILineInfo, TagsProcessorType } from './helpers/tags/TagsProcessorHelper';
+import { Transformer as HTMLTagTransformerType, Tag as HTMLTag, Attributes as HTMLAttributes } from 'sanitize-html';
 
 export default RWSClient;
 export { 
@@ -63,8 +63,10 @@ export {
     IAssetShowOptions as IRWSAssetShowOptions,
     IRWSConfig,
     IRWSUser,
-    ILineInfo, 
     TagsProcessorType,
+    HTMLTagTransformerType,
+    HTMLTag,
+    HTMLAttributes,
 
     RWSViewComponent,        
     RWSView,
