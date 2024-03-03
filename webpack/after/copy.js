@@ -2,7 +2,7 @@ const fs = require('fs');
 const chalk = require('chalk');
 const path = require('path');
 
-module.exports = async (copyList = {}) => {
+module.exports = (copyList = {}) => {
     const copyQueue = [];
 
     Object.keys(copyList).forEach((targetPath) => {
@@ -21,12 +21,12 @@ module.exports = async (copyList = {}) => {
     copyQueue.forEach((copyset) => {
         if(fs.existsSync(copyset.to)){
             fs.unlinkSync(copyset.to);
-        }
-
-        console.log(copyset);
+        }        
 
         fs.copyFileSync(copyset.from, copyset.to);
 
         console.log(`${chalk.yellow('[RWS]')} Copied "${chalk.blue(copyset.from)}" to "${chalk.blue(copyset.to)}"`)
     })
+
+    return new Promise((resolve) => resolve());
 }

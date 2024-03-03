@@ -53,6 +53,8 @@ const RWSWebpackWrapper = (config) => {
   
   const aliases = config.aliases = {};
 
+  aliases.fs = false;
+
   const modules_setup = [path.resolve(__dirname, 'node_modules'), 'node_modules'];
 
   const overridePlugins = config.plugins || []
@@ -77,12 +79,18 @@ const RWSWebpackWrapper = (config) => {
     }));
   }
 
-  if(serviceWorkerPath){
-    WEBPACK_AFTER_ACTIONS.push(['service_worker', serviceWorkerPath]);
+  if(serviceWorkerPath){  
+    WEBPACK_AFTER_ACTIONS.push({
+      type: 'service_worker',
+      actionHandler: serviceWorkerPath
+    });      
   }
 
-  if(!!config.copyToDir){  
-    WEBPACK_AFTER_ACTIONS.push(['copy', config.copyToDir]);
+  if(!!config.copyToDir){      
+    WEBPACK_AFTER_ACTIONS.push({
+      type: 'copy',
+      actionHandler: config.copyToDir
+    });  
   }
 
   if(WEBPACK_AFTER_ACTIONS.length){    
