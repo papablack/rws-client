@@ -9,12 +9,12 @@ module.exports = async (copyList = {}) => {
         const sources = copyList[targetPath];
         
         sources.forEach((sourcePath) => {
-          const fileName = path.resolve(process.cwd(), path.basename(sourcePath));          
+          const fileName = path.basename(sourcePath);          
           if(fs.existsSync(targetPath + '/' + fileName)){
             fs.unlinkSync(targetPath + '/' + fileName);
           }           
 
-          copyQueue.push({ from: sourcePath, to: path.resolve(process.cwd(), targetPath + '/' + fileName) });
+          copyQueue.push({ from: path.resolve(process.cwd(), sourcePath), to: path.resolve(process.cwd(), targetPath + '/' + fileName) });
         })  
     });
 
