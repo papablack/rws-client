@@ -1,0 +1,36 @@
+import TheService from './_service';
+import { Socket } from 'socket.io-client';
+import ITheUser from '../interfaces/IRWSUser';
+type WSEvent = string;
+type WSStatus = 'WS_OPEN' | 'WS_CLOSED' | 'WS_CONNECTING';
+declare class WSService extends TheService {
+    static websocket_instance: Socket;
+    private _ws;
+    private user;
+    private url;
+    private _status_string;
+    _wsId: string | null;
+    _interval: any;
+    _connecting: boolean;
+    _shut_down: boolean;
+    reconnects: number;
+    eventListeners: Map<string, Array<(instance: WSService, params: any) => any>>;
+    init(url: string, user?: ITheUser, transports?: string[]): Promise<WSService>;
+    getStatus(): WSStatus;
+    isActive(): boolean;
+    setUser(user: ITheUser): void;
+    listenForMessage(callback: (data: any, isJson?: boolean) => void, method?: string): () => void;
+    waitForStatus(): Promise<void>;
+    sendMessage<T>(method: string, msg: T): void;
+    statusChange(): void;
+    on(event: WSEvent, callback: (wsInstance: WSService, params: any) => any): void;
+    executeEventListener(event: WSEvent, params?: any): void;
+    socket(): Socket;
+    disconnect(): void;
+    reconnect(): void;
+    getUser(): ITheUser;
+    getUrl(): string;
+}
+export default WSService;
+declare const RWSWSService: WSService;
+export { RWSWSService, WSEvent, WSService as WSInstance, WSStatus };

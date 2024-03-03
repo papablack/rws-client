@@ -1,0 +1,20 @@
+import { observable, attr } from '@microsoft/fast-element';
+import NotifyServiceInstance, { NotifyService } from './services/NotifyService';
+import RoutingServiceInstance, { renderRouteComponent, _ROUTING_EVENT_NAME, RWSRoutingService as RoutingService, RWSRouter } from './services/RoutingService';
+import DOMServiceInstance, { DOMService } from './services/DOMService';
+import RWSViewComponent from './components/_component';
+import RWSView from './components/_decorator';
+import ApiServiceInstance, { ApiService } from './services/ApiService';
+import RWSService from './services/_service';
+import UtilsServiceInstance, { RWSUtilsService as UtilsService } from './services/UtilsService';
+import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
+import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
+import WSServiceInstance, { RWSWSService as WSService } from './services/WSService';
+import { RouterComponent } from './components/router/component';
+import registerRWSComponents, { RWSUploader } from './components';
+import { ngAttr } from './components/_attrs/angular-attr';
+import RWSClient from './client';
+import RWSServiceWorker from './service_worker/src/_service_worker';
+export default RWSClient;
+export { _ROUTING_EVENT_NAME, RoutingServiceInstance, RoutingService, ApiServiceInstance, ApiService, WSServiceInstance, WSService, UtilsServiceInstance, UtilsService, DOMServiceInstance, DOMService, NotifyServiceInstance, NotifyService, ConfigServiceInstance, ConfigService as getRWSConfig, ServiceWorkerServiceInstance, ServiceWorkerService, RWSRouter, RWSViewComponent, RWSView, ngAttr, RWSService, RouterComponent, RWSUploader, renderRouteComponent, registerRWSComponents, observable, attr, RWSServiceWorker };
+//# sourceMappingURL=index.js.map
