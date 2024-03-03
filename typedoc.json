@@ -9,5 +9,5 @@
     "categorizeByGroup": true,
     "name": "Realtime Web Suite Client package",
     "jsDocCompatibility": true,
-    "includes": "src/services"
+    "includes": "src/"
 }

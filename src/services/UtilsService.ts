@@ -1,7 +1,7 @@
 import TheService from './_service';
 import ApiServiceInstance from './ApiService';
 
-import { SourceMapConsumer, RawSourceMap  } from 'source-map';
+import { RawSourceMap, SourceMapConsumer, NullableMappedPosition  } from 'source-map';
 
 let sourceMap: RawSourceMap = null; 
 
@@ -72,17 +72,18 @@ class UtilsService extends TheService {
             sourceMap = await this.fetchSourceMap(sourceMapPath);       
         }
 
-        const consumer = await new SourceMapConsumer(sourceMap);
+        let originalPosition: NullableMappedPosition = null;
 
-        // Extract line and column number
-        const lineMatch = relevantLine.match(/:(\d+):(\d+)/);
-        if (!lineMatch) return -1;
-
-        const originalPosition = consumer.originalPositionFor({
-            line: parseInt(lineMatch[1]),
-            column: parseInt(lineMatch[2]),
-        });
-
+        await SourceMapConsumer.with(sourceMap, null, consumer => {
+            const lineMatch = relevantLine.match(/:(\d+):(\d+)/);
+            if (!lineMatch) return -1;
+            
+            originalPosition = consumer.originalPositionFor({
+              line: parseInt(lineMatch[1]), // Example line and column
+              column: parseInt(lineMatch[2])
+            });            
+        });        
+     
         return originalPosition.line;
     }
 }
