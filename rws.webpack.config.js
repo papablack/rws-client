@@ -89,6 +89,23 @@ const RWSWebpackWrapper = (config) => {
     WEBPACK_PLUGINS.push(new RWSAfterPlugin({ actions: WEBPACK_AFTER_ACTIONS }));
   }
 
+  const splitInfoJson = config.outputDir + '/rws_chunks_info.json'
+  const automatedEntries = {};
+
+  const foundRWSUserClasses = findFilesWithText(executionDir, 'extends RWSViewComponent', ['dist', 'node_modules', '@rws-js-client']);
+  const foundRWSClientClasses = findFilesWithText(__dirname, 'extends RWSViewComponent', ['dist', 'node_modules']);
+
+  const RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
+
+  RWSComponents.forEach((file) => {
+    const fileParts = file.split('/');
+
+    const componentName = fileParts[fileParts.length-2].replace(/-/g, '_');
+    automatedEntries[componentName] = file;
+  });
+
+  fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
+
   const cfgExport = {
     entry: {      
       main_rws: config.entry
@@ -98,7 +115,7 @@ const RWSWebpackWrapper = (config) => {
     devtool: config.devtool || 'source-map',
     output: {
       path: config.outputDir,
-      filename: config.outputFileName,
+      filename: config.parted ? 'rws.[name].js' : config.outputFileName,
       sourceMapFilename: '[file].map',
     },
     resolve: {

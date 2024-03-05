@@ -14,4 +14,5 @@ export default interface IRWSConfig {
     pubUrl?: string
     pubPrefix?: string
     dontPushToSW?: boolean
+    parted?: boolean
 }
