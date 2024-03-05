@@ -4,7 +4,7 @@ import { NotifyService } from './services/NotifyService';
 import { RWSWSService as WSService} from './services/WSService';
 
 import { RWSRoutingService as RoutingService} from './services/RoutingService';
-import ApiService from "./services/ApiService";
+import { ApiService } from "./services/ApiService";
 
 const main = async (cfg: IRWSConfig): Promise<boolean> => {    
     //First config run for setting up data. Later just use appConfig().get() to obtain data.
@@ -12,9 +12,10 @@ const main = async (cfg: IRWSConfig): Promise<boolean> => {
     if(cfg.parted){
         const componentParts: string[] = await ApiService.get<string[]>('/js/build/rws_chunks_info.json');
 
-        componentParts.forEach((componentName) => {
-            const script: HTMLScriptElement = document.createElement('script');        
-            script.src = `/js/build/rws.${componentName}.js`;  // Replace with the path to your script file
+        componentParts.forEach((componentName: string) => {
+            const script: HTMLScriptElement = document.createElement('script');       
+
+            script.src = appConfig().get('pubUrl') + `/js/build/rws.${componentName}.js`;  // Replace with the path to your script file
             script.async = true;        
             script.type = 'text/javascript';
 

@@ -67,7 +67,7 @@ export default class RWSClient {
             this.pushUserToServiceWorker(this.user);
         }
 
-        await startClient();
+        await startClient(config);
 
         if(!this.config?.ignoreRWSComponents){
             registerRWSComponents();

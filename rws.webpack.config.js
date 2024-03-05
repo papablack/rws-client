@@ -37,7 +37,7 @@ let WEBPACK_PLUGINS = [];
     ],
   });
  */
-const RWSWebpackWrapper = (config) => {  
+const RWSWebpackWrapper = (config) => {
   const executionDir = config.executionDir || process.cwd();
 
   const isDev = config.dev;
@@ -50,42 +50,42 @@ const RWSWebpackWrapper = (config) => {
   const WEBPACK_AFTER_ACTIONS = config.actions || [];
 
   const publicIndex = config.publicIndex || 'index.html';
-  
+
   const aliases = config.aliases = {};
 
   const modules_setup = [path.resolve(__dirname, 'node_modules'), 'node_modules'];
 
   const overridePlugins = config.plugins || []
 
-  if (isHotReload){
-    if(!publicDir){
+  if (isHotReload) {
+    if (!publicDir) {
       throw new Error('No public dir set')
     }
-    
+
     WEBPACK_PLUGINS.push(new HtmlWebpackPlugin({
-      template: publicDir + '/' + publicIndex,      
+      template: publicDir + '/' + publicIndex,
     }));
   }
 
   WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, new webpack.optimize.ModuleConcatenationPlugin(), ...overridePlugins];
 
 
-  if(isDev && isReport){
+  if (isDev && isReport) {
     WEBPACK_PLUGINS.push(new BundleAnalyzerPlugin({
       analyzerMode: 'static',
-      openAnalyzer: false,       
+      openAnalyzer: false,
     }));
   }
 
-  if(serviceWorkerPath){
+  if (serviceWorkerPath) {
     WEBPACK_AFTER_ACTIONS.push(['service_worker', serviceWorkerPath]);
   }
 
-  if(!!config.copyToDir){  
+  if (!!config.copyToDir) {
     WEBPACK_AFTER_ACTIONS.push(['copy', config.copyToDir]);
   }
 
-  if(WEBPACK_AFTER_ACTIONS.length){    
+  if (WEBPACK_AFTER_ACTIONS.length) {
     WEBPACK_PLUGINS.push(new RWSAfterPlugin({ actions: WEBPACK_AFTER_ACTIONS }));
   }
 
@@ -94,96 +94,122 @@ const RWSWebpackWrapper = (config) => {
 
   const foundRWSUserClasses = findFilesWithText(executionDir, 'extends RWSViewComponent', ['dist', 'node_modules', '@rws-js-client']);
   const foundRWSClientClasses = findFilesWithText(__dirname, 'extends RWSViewComponent', ['dist', 'node_modules']);
+  let RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
 
-  const RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
+  const optimConfig = {
+    minimizer: [
+      new JsMinimizerPlugin(),
+      new CssMinimizerPlugin()
+    ],
+  };
 
-  RWSComponents.forEach((file) => {
-    const fileParts = file.split('/');
+  if (config.parted) {
+    if (config.partedComponentsLocations) {
+      config.partedComponentsLocations.forEach((componentDir) => {        
+        RWSComponents = [...RWSComponents, ...(findFilesWithText(componentDir, 'extends RWSViewComponent', ['dist', 'node_modules', '@rws-js-client']))];
+      });
+    }
 
-    const componentName = fileParts[fileParts.length-2].replace(/-/g, '_');
-    automatedEntries[componentName] = file;
-  });
+    RWSComponents.forEach((file) => {
+      const fileParts = file.split('/');
+      const componentName = fileParts[fileParts.length - 2].replace(/-/g, '_');
+      automatedEntries[componentName] = file;
+    });
 
-  fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
+    fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
+
+    optimConfig['splitChunks'] = {
+      cacheGroups: {
+        fast: {
+          test: /fast-components/,
+          name: 'fast',
+          chunks: 'all',
+          enforce: true
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/](?!@microsoft[\\/]fast-components[\\/])/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    };
+
+    RWSComponents.forEach((file) => { })
+  }
 
   const cfgExport = {
-    entry: {      
-      main_rws: config.entry
+    entry: {
+      app: config.entry
     },
     mode: isDev ? 'development' : 'production',
     target: 'web',
     devtool: config.devtool || 'source-map',
     output: {
       path: config.outputDir,
-      filename: config.parted ? 'rws.[name].js' : config.outputFileName,
+      filename: config.parted ? (config.partedPrefix || 'rws') + '.[name].js' : config.outputFileName,
       sourceMapFilename: '[file].map',
     },
     resolve: {
       extensions: ['.ts', '.js'],
       modules: modules_setup,
-      alias: {              
+      alias: {
         ...aliases
-      },      
+      },
       plugins: [
         // new TsconfigPathsPlugin({configFile: config.tsConfigPath})
       ]
     },
     module: {
-      rules: [  
+      rules: [
         {
           test: /\.html$/,
-          use: [          
+          use: [
             path.resolve(__dirname, './webpack/rws_fast_html_loader.js')
           ],
         },
         {
           test: /\.css$/,
-          use: [          
+          use: [
             'css-loader',
             // path.resolve(__dirname, './webpack/rws_fast_css_loader.js')
           ],
         },
         {
           test: /\.scss$/,
-          use: [             
+          use: [
             // 'css-loader',
-            path.resolve(__dirname, './webpack/rws_fast_scss_loader.js'),                        
+            path.resolve(__dirname, './webpack/rws_fast_scss_loader.js'),
           ],
         },
         {
           test: /\.(ts)$/,
-          use: [                       
+          use: [
             {
               loader: 'ts-loader',
               options: {
                 allowTsInNodeModules: true,
-                configFile: path.resolve(config.tsConfigPath)            
+                configFile: path.resolve(config.tsConfigPath)
               }
             },
             {
-              loader: path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),        
-            }  
+              loader: path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),
+            }
           ],
           exclude: /node_modules\/(?!rws-js-client)/,
         }
       ],
     },
     plugins: WEBPACK_PLUGINS,
-    optimization: {
-      minimizer: [
-        new JsMinimizerPlugin(),
-        new CssMinimizerPlugin()
-      ]
-    },    
+    optimization: optimConfig,
   }
 
-  if(isHotReload){
+  if (isHotReload) {
     cfgExport.devServer = {
-      hot: true,      
-      static: publicDir  
+      hot: true,
+      static: publicDir
     }
   }
-  
+
   return cfgExport;
 }
 
@@ -191,19 +217,19 @@ function findFilesWithText(dir, text, ignored = [], fileList = []) {
   const files = fs.readdirSync(dir);
 
   files.forEach(file => {
-      const filePath = path.join(dir, file);
-      const fileStat = fs.statSync(filePath);
+    const filePath = path.join(dir, file);
+    const fileStat = fs.statSync(filePath);
 
-      if (fileStat.isDirectory() && !ignored.includes(file)) {
-          // Recursively search this directory
-          findFilesWithText(filePath, text, ignored, fileList);
-      } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
-          // Read file content and check for text
-          const content = fs.readFileSync(filePath, 'utf8');
-          if (content.includes(text)) {
-              fileList.push(filePath);
-          }
+    if (fileStat.isDirectory() && !ignored.includes(file)) {
+      // Recursively search this directory
+      findFilesWithText(filePath, text, ignored, fileList);
+    } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
+      // Read file content and check for text
+      const content = fs.readFileSync(filePath, 'utf8');
+      if (content.includes(text)) {
+        fileList.push(filePath);
       }
+    }
   });
 
   return fileList;
