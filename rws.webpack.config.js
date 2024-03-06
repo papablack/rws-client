@@ -8,6 +8,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const RWSAfterPlugin = require('./webpack/rws_after_plugin');
 const { Console } = require('console');
+const { Interface } = require('readline');
+const ts = require('typescript');
+const tools = require('./_tools');
 
 let WEBPACK_PLUGINS = [];
 
@@ -92,8 +95,8 @@ const RWSWebpackWrapper = (config) => {
   const splitInfoJson = config.outputDir + '/rws_chunks_info.json'
   const automatedEntries = {};
 
-  const foundRWSUserClasses = findFilesWithText(executionDir, 'extends RWSViewComponent', ['dist', 'node_modules', '@rws-js-client']);
-  const foundRWSClientClasses = findFilesWithText(__dirname, 'extends RWSViewComponent', ['dist', 'node_modules']);
+  const foundRWSUserClasses = tools.findFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', '@rws-js-client']);
+  const foundRWSClientClasses = tools.findFilesWithText(__dirname, '@RWSView', ['dist', 'node_modules']);
   let RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
 
   const optimConfig = {
@@ -106,40 +109,47 @@ const RWSWebpackWrapper = (config) => {
   if (config.parted) {
     if (config.partedComponentsLocations) {
       config.partedComponentsLocations.forEach((componentDir) => {        
-        RWSComponents = [...RWSComponents, ...(findFilesWithText(componentDir, 'extends RWSViewComponent', ['dist', 'node_modules', '@rws-js-client']))];
+        RWSComponents = [...RWSComponents, ...(tools.findFilesWithText(componentDir, '@RWSView', ['dist', 'node_modules', '@rws-js-client']))];
       });
     }
+    
+    RWSComponents.forEach((fileInfo) => {              
+      const tsSourceFile = ts.createSourceFile(fileInfo.filePath, fileInfo.content, ts.ScriptTarget.Latest, true);
+      const decoratorData = tools.extractRWSIgnoreArguments(tsSourceFile);  
 
-    RWSComponents.forEach((file) => {
-      const fileParts = file.split('/');
-      const componentName = fileParts[fileParts.length - 2].replace(/-/g, '_');
-      automatedEntries[componentName] = file;
-    });
+      if(!decoratorData){
+        automatedEntries[fileInfo.sanitName] = fileInfo.filePath;           
+      }else{
+        console.warn('Ignored: '+ fileInfo.filePath);
+      }      
+    });    
 
-    fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
+    fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));    
 
-    optimConfig['splitChunks'] = {
+    optimConfig.splitChunks = {
       cacheGroups: {
-        fast: {
-          test: /fast-components/,
-          name: 'fast',
-          chunks: 'all',
-          enforce: true
-        },
         vendor: {
-          test: /[\\/]node_modules[\\/](?!@microsoft[\\/]fast-components[\\/])/,
+          test: (module) => {
+            return module.identifier().indexOf('node_modules')
+          },
           name: 'vendors',
           chunks: 'all',
-        },
-      },
+        },          
+      }
     };
 
-    RWSComponents.forEach((file) => { })
-  }
-
+   
+    
+  }else{
+    if(fs.existsSync(splitInfoJson)){
+      fs.unlinkSync(splitInfoJson);
+    }
+  }  
+  
   const cfgExport = {
     entry: {
-      app: config.entry
+      client: config.entry,  
+      ...automatedEntries  
     },
     mode: isDev ? 'development' : 'production',
     target: 'web',
@@ -213,26 +223,6 @@ const RWSWebpackWrapper = (config) => {
   return cfgExport;
 }
 
-function findFilesWithText(dir, text, ignored = [], fileList = []) {
-  const files = fs.readdirSync(dir);
 
-  files.forEach(file => {
-    const filePath = path.join(dir, file);
-    const fileStat = fs.statSync(filePath);
-
-    if (fileStat.isDirectory() && !ignored.includes(file)) {
-      // Recursively search this directory
-      findFilesWithText(filePath, text, ignored, fileList);
-    } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
-      // Read file content and check for text
-      const content = fs.readFileSync(filePath, 'utf8');
-      if (content.includes(text)) {
-        fileList.push(filePath);
-      }
-    }
-  });
-
-  return fileList;
-}
 
 module.exports = RWSWebpackWrapper;

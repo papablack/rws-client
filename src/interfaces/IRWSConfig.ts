@@ -15,4 +15,6 @@ export default interface IRWSConfig {
     pubPrefix?: string
     dontPushToSW?: boolean
     parted?: boolean
+    splitFileDir?: string,
+    splitPrefix?: string
 }

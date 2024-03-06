@@ -2,7 +2,7 @@
 const path = require('path');
 const fs = require('fs');
 const ts = require('typescript');
-
+const tools = require('../_tools');
 const RWSPlugin = require("./rws_plugin");
 
 const _defaultRWSLoaderOptions = {
@@ -28,40 +28,6 @@ function toJsonString(str) {
     }
 }
 
-
-function extractRWSViewArguments(sourceFile){
-    let argumentsExtracted = {
-        tagName: null,
-        options: null        
-    };
-   
-    function visit(node) {
-        if (ts.isDecorator(node) && ts.isCallExpression(node.expression)) {
-            const expression = node.expression;
-            const decoratorName = expression.expression.getText(sourceFile);
-            if (decoratorName === 'RWSView') {
-                const args = expression.arguments;
-                if (args.length > 0 && ts.isStringLiteral(args[0])) {
-                    argumentsExtracted.tagName = args[0].text;                    
-                }
-                if (args.length > 1) {
-                    // Assuming the second argument is an object literal
-                    if (ts.isObjectLiteralExpression(args[1])) {
-                        const argVal = args[1].getText(sourceFile);                        
-                        argumentsExtracted.options = JSON.parse(toJsonString(argVal));
-                    }
-                }                
-            }
-        }
-
-        ts.forEachChild(node, visit);
-    }
-
-    visit(sourceFile);
-
-    return argumentsExtracted;
-}
-
 module.exports = function(content) { 
     
     let processedContent = content;
@@ -78,7 +44,11 @@ module.exports = function(content) {
     const addedParamDefs = [];
     const addedParams = [];
 
-    const decoratorData = extractRWSViewArguments(tsSourceFile);   
+    const decoratorData = tools.extractRWSViewArguments(tsSourceFile);
+
+    if(!decoratorData){
+        return content;
+    }
 
     if(decoratorData.options){
         if(decoratorData.options.template){

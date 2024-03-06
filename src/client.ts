@@ -23,7 +23,7 @@ interface IHotModule extends NodeModule {
 
 export default class RWSClient {   
     private user: IRWSUser = null;
-    private config: IRWSConfig = { backendUrl: '', routes: {} };
+    private config: IRWSConfig = { backendUrl: '', routes: {}, splitFileDir: '/', splitPrefix: 'rws' };
     protected initCallback: () => Promise<void> = async () => {};
 
     private isSetup = false;
@@ -67,7 +67,7 @@ export default class RWSClient {
             this.pushUserToServiceWorker(this.user);
         }
 
-        await startClient(config);
+        await startClient(this.config);
 
         if(!this.config?.ignoreRWSComponents){
             registerRWSComponents();

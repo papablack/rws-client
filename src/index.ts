@@ -9,7 +9,7 @@ import RoutingServiceInstance, {
 } from './services/RoutingService';
 import DOMServiceInstance, { DOMService, DOMOutputType, TagsProcessorType }  from './services/DOMService';
 import RWSViewComponent, { IAssetShowOptions } from './components/_component';
-import RWSView, {RWSDecoratorOptions} from './components/_decorator';
+import RWSView, { RWSDecoratorOptions, RWSIgnore } from './components/_decorator';
 import ApiServiceInstance,  { IBackendRoute, ApiService, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
 import RWSService from './services/_service';
 import UtilsServiceInstance, {RWSUtilsService as UtilsService} from './services/UtilsService';
@@ -70,6 +70,7 @@ export {
 
     RWSViewComponent,        
     RWSView,
+    RWSIgnore,
     ngAttr,
     RWSService,
 

@@ -9,13 +9,16 @@ import { ApiService } from "./services/ApiService";
 const main = async (cfg: IRWSConfig): Promise<boolean> => {    
     //First config run for setting up data. Later just use appConfig().get() to obtain data.
     const config = appConfig(cfg);
+
+    console.log(cfg);
+
     if(cfg.parted){
-        const componentParts: string[] = await ApiService.get<string[]>('/js/build/rws_chunks_info.json');
+        const componentParts: string[] = await ApiService.get<string[]>(appConfig().get('splitFileDir')+'/rws_chunks_info.json');
 
         componentParts.forEach((componentName: string) => {
             const script: HTMLScriptElement = document.createElement('script');       
 
-            script.src = appConfig().get('pubUrl') + `/js/build/rws.${componentName}.js`;  // Replace with the path to your script file
+            script.src = appConfig().get('splitFileDir') + `/${cfg.splitPrefix}.${componentName}.js`;  // Replace with the path to your script file
             script.async = true;        
             script.type = 'text/javascript';
 

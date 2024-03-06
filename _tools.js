@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const ts = require('typescript');
 const { spawn } = require('child_process');
 
 function findRootWorkspacePath(currentPath) {        
@@ -96,9 +97,137 @@ async function runCommand(command, cwd = null, silent = false, extraArgs = { env
   });
 }
 
+function findFilesWithText(dir, text, ignored = [], fileList = []){
+  const files = fs.readdirSync(dir);
+
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    const fileStat = fs.statSync(filePath);
+
+    if (fileStat.isDirectory() && !ignored.includes(file)) {
+      // Recursively search this directory
+      findFilesWithText(filePath, text, ignored, fileList);
+    } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
+      // Read file content and check for text
+      const content = fs.readFileSync(filePath, 'utf8');
+      if (content.includes(text)) {                
+        const compInfo = extractComponentInfo(content);
+
+        if(compInfo){
+          const {tagName, className} = compInfo;
+
+          const fileParts = filePath.split('/');
+          const fpLen = fileParts.length;          
+
+          fileList.push({
+            filePath,
+            tagName,
+            className,
+            sanitName: className.toLowerCase(),
+            content
+          });
+        }
+      }
+    }
+  });
+
+  return fileList;
+}
+
+function extractRWSViewArguments(sourceFile){
+  let argumentsExtracted = {
+      tagName: null,
+      options: null        
+  };
+
+  let foundDecorator = false;
+ 
+  function visit(node) {
+      if (ts.isDecorator(node) && ts.isCallExpression(node.expression)) {
+          const expression = node.expression;
+          const decoratorName = expression.expression.getText(sourceFile);
+          if (decoratorName === 'RWSView') {
+              foundDecorator = true;
+              const args = expression.arguments;
+              if (args.length > 0 && ts.isStringLiteral(args[0])) {
+                  argumentsExtracted.tagName = args[0].text;                    
+              }
+              if (args.length > 1) {
+                  // Assuming the second argument is an object literal
+                  if (ts.isObjectLiteralExpression(args[1])) {
+                      const argVal = args[1].getText(sourceFile);                        
+                      argumentsExtracted.options = JSON.parse(toJsonString(argVal));
+                  }
+              }                
+          }
+      }
+
+      ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+
+  if(!foundDecorator){
+    return null;
+  }
+
+  return argumentsExtracted;
+}
+
+function extractRWSIgnoreArguments(sourceFile){
+  let argumentsExtracted = {
+      params: null,     
+  };
+  let foundDecorator = false;
+ 
+  function visit(node) {
+      if (ts.isDecorator(node) && ts.isCallExpression(node.expression)) {
+          const expression = node.expression;
+          const decoratorName = expression.expression.getText(sourceFile);
+          if (decoratorName === 'RWSIgnore') {
+            foundDecorator = true;
+              const args = expression.arguments;
+              if (args.length) {
+                  // Assuming the second argument is an object literal
+                  if (ts.isObjectLiteralExpression(args[0])) {
+                      const argVal = args[0].getText(sourceFile);                        
+                      argumentsExtracted.options = JSON.parse(toJsonString(argVal));
+                  }
+              }                
+          }
+      }
+
+      ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+
+  if(!foundDecorator){
+    return null;
+  }
+
+  return argumentsExtracted;
+}
+
+function extractComponentInfo(componentCode) {
+  const componentNameRegex = /\@RWSView\(['"](.*?)['"]\)\s*class\s+([A-Z][a-zA-Z]*)\s+extends/g;
+  // Initialize an array to hold all matches
+  const matches = [...componentCode.matchAll(componentNameRegex)];  
+  const results = matches.map(match => ({
+    tagName: match[1],
+    className: match[2]
+  }));
+
+  return results.length ? results[0] : null;
+}
+
 module.exports = {
     findRootWorkspacePath,
     findPackageDir,
     getActiveWorkSpaces,
-    runCommand
+    runCommand,
+    findFilesWithText,
+    extractComponentInfo,
+    extractRWSViewArguments,
+    extractRWSIgnoreArguments
 }
