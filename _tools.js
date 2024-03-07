@@ -97,7 +97,7 @@ async function runCommand(command, cwd = null, silent = false, extraArgs = { env
   });
 }
 
-function findFilesWithText(dir, text, ignored = [], fileList = []){
+function findComponentFilesWithText(dir, text, ignored = [], fileList = []){
   const files = fs.readdirSync(dir);
 
   files.forEach(file => {
@@ -226,7 +226,7 @@ module.exports = {
     findPackageDir,
     getActiveWorkSpaces,
     runCommand,
-    findFilesWithText,
+    findComponentFilesWithText,
     extractComponentInfo,
     extractRWSViewArguments,
     extractRWSIgnoreArguments

@@ -95,8 +95,8 @@ const RWSWebpackWrapper = (config) => {
   const splitInfoJson = config.outputDir + '/rws_chunks_info.json'
   const automatedEntries = {};
 
-  const foundRWSUserClasses = tools.findFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', '@rws-js-client']);
-  const foundRWSClientClasses = tools.findFilesWithText(__dirname, '@RWSView', ['dist', 'node_modules']);
+  const foundRWSUserClasses = tools.findComponentFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', '@rws-js-client']);
+  const foundRWSClientClasses = tools.findComponentFilesWithText(__dirname, '@RWSView', ['dist', 'node_modules']);
   let RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
 
   const optimConfig = {
@@ -109,7 +109,7 @@ const RWSWebpackWrapper = (config) => {
   if (config.parted) {
     if (config.partedComponentsLocations) {
       config.partedComponentsLocations.forEach((componentDir) => {        
-        RWSComponents = [...RWSComponents, ...(tools.findFilesWithText(componentDir, '@RWSView', ['dist', 'node_modules', '@rws-js-client']))];
+        RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(componentDir, '@RWSView', ['dist', 'node_modules', '@rws-js-client']))];
       });
     }
     
