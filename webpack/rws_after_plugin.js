@@ -2,9 +2,18 @@ const rwsAfterCopy = require('./after/copy');
 const rwsAfterSW = require('./after/sw');
 
 
-const _DEFAULT_CONFIG = { actions: [] }
+const _DEFAULT_CONFIG = {actions: []}
 
-
+const _DEFAULT_ACTION = {
+    type: 'copy',
+    actionHandler: {
+        'targetDir': [
+            'filePath0',
+            'filePath1'
+        ]
+    },
+    event: 'done'
+}
 
 class RWSAfterPlugin {
     config = _DEFAULT_CONFIG;
@@ -13,27 +22,19 @@ class RWSAfterPlugin {
     constructor(config = {}){
         this.config = Object.assign(this.config, config);
     }
-    apply(compiler) {      
-        compiler.hooks.afterEmit.tap('RWSAfterPlugin', async  (compilation) => {               
-            let copy_actions = null;
-            const proms = [];
-            
-            this.config.actions.forEach(([actionType, action]) => {                
-                if(actionType === 'copy'){
-                    copy_actions = action;
-                }else{
-                    proms.push([actionType, action]);
-                }
-            });
 
-            if(copy_actions){            
-                proms.push(['copy', copy_actions]);
-            }
-            for (const actionData of proms){
-                const [actionType, action] = actionData;
-                await this._runActionType(actionType, action);
-            }
-        });       
+    apply(compiler) {        
+        const actionsEvents = this.config.actions.map(item => item.event ? item.event : 'done');        
+
+        Array.from(new Set(actionsEvents)).forEach((eventName) => {
+            compiler.hooks[eventName].tapPromise('RWSAfterPlugin', async (buildInfo) => {     
+                const proms = this.config.actions.filter(item => item.event === _DEFAULT_ACTION.event || !item.event).map(async (rwsAfterAction) => {
+                    return await this._runActionType(rwsAfterAction.type, rwsAfterAction.actionHandler);
+                });
+    
+                return await Promise.all(proms);            
+            });       
+        });        
     }
 
     async _runActionType(actionType, action){    

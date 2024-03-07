@@ -62,10 +62,12 @@ module.exports = async (copyList = {}) => {
     copyQueue.forEach((copyset) => {
         if(fs.existsSync(copyset.to)){
             fs.unlinkSync(copyset.to);
-        }
+        }        
 
         fs.copyFileSync(copyset.from, copyset.to);
 
         console.log(`${chalk.yellow('[RWS]')} Copied "${chalk.blue(copyset.from)}" to "${chalk.blue(copyset.to)}"`)
     })
+
+    return new Promise((resolve) => resolve());
 }

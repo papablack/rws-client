@@ -31,7 +31,7 @@ export default class RWSClient {
     constructor(){
         this.user = this.getUser();
 
-        this.pushDataToServiceWorker('SET_WS_URL', { url: (window as any).edrnaConfig.websocket_host + ':' + (window as any).edrnaConfig.websocket_port }, 'ws_url');
+        this.pushDataToServiceWorker('SET_WS_URL', { url: appConfig().get('wsUrl')}, 'ws_url');
 
         if(this.user){            
             this.pushUserToServiceWorker({...this.user, instructor: false});        

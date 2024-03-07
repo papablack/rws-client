@@ -1,13 +1,10 @@
 {
   "name": "rws-js-client",
-  "version": "1.17.2",
+  "version": "1.17.9",
   "description": "client for RWS frontend",
   "main": "src/index.ts",
-  "scripts": {
-    "dev": "tsc-watch --noClear -p ./tsconfig.json",
-    "docs": "typedoc --tsconfig ./tsconfig.json",
-    "build": "npx tsc && node merge-dts.js",
-    "package": "webpack --config package.webpack.config.js"
+  "scripts": {    
+    "docs": "typedoc --tsconfig ./tsconfig.json"    
   },
   "bin": {
     "rws-client": "./console.js"

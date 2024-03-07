@@ -1,7 +1,7 @@
 import TheService from './_service';
 import ApiServiceInstance from './ApiService';
 
-import { SourceMapConsumer, RawSourceMap  } from 'source-map';
+import { RawSourceMap  } from 'source-map';
 
 let sourceMap: RawSourceMap = null; 
 
@@ -54,36 +54,39 @@ class UtilsService extends TheService {
     async getCurrentLineNumber(error: Error = null): Promise<number> {
         if(!error){
             error = new Error();
-        }    
+        }  
+        
+        return 0;
 
-        const stack = error.stack || '';
-        const stackLines = stack.split('\n');
-        const relevantLine = stackLines[1];
+        // const stack = error.stack || '';
+        // const stackLines = stack.split('\n');
+        // const relevantLine = stackLines[1];
 
-        // Extract file path from the stack line
-        const match = relevantLine.match(/\((.*?):\d+:\d+\)/);
-        if (!match) return -1;
-        const filePath = match[1];
+        // // Extract file path from the stack line
+        // const match = relevantLine.match(/\((.*?):\d+:\d+\)/);
+        // if (!match) return -1;
+        // const filePath = match[1];
 
-        // Assuming the source map is in the same directory with '.map' extension
-        const sourceMapPath = `${filePath}.map`;    
+        // // Assuming the source map is in the same directory with '.map' extension
+        // const sourceMapPath = `${filePath}.map`;    
 
-        if(sourceMap === null){
-            sourceMap = await this.fetchSourceMap(sourceMapPath);       
-        }
+        // if(sourceMap === null){
+        //     sourceMap = await this.fetchSourceMap(sourceMapPath);       
+        // }
 
-        const consumer = await new SourceMapConsumer(sourceMap);
+        // let originalPosition: any = null;
 
-        // Extract line and column number
-        const lineMatch = relevantLine.match(/:(\d+):(\d+)/);
-        if (!lineMatch) return -1;
-
-        const originalPosition = consumer.originalPositionFor({
-            line: parseInt(lineMatch[1]),
-            column: parseInt(lineMatch[2]),
-        });
-
-        return originalPosition.line;
+        // await SourceMapConsumer.with(sourceMap, null, consumer => {
+        //     const lineMatch = relevantLine.match(/:(\d+):(\d+)/);
+        //     if (!lineMatch) return -1;
+            
+        //     originalPosition = consumer.originalPositionFor({
+        //       line: parseInt(lineMatch[1]), // Example line and column
+        //       column: parseInt(lineMatch[2])
+        //     });            
+        // });        
+     
+        // return originalPosition.line;
     }
 }
 

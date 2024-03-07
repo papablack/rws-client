@@ -17,10 +17,10 @@
       "lib": ["DOM", "ESNext", "WebWorker"],
     },
     "include": [
-      "src/**/*", "../src/services/TimeTrackerService.ts", 
+      "src", 
       // "declarations.d.ts"
     ],
-    "exclude": [
+    "exclude": [      
       "node_modules",
       "**/*.spec.ts"
     ]
