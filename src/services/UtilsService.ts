@@ -86,7 +86,7 @@ class UtilsService extends TheService {
         //     });            
         // });        
      
-        return originalPosition.line;
+        // return originalPosition.line;
     }
 }
 
