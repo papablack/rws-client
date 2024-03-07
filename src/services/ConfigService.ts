@@ -7,6 +7,8 @@ const _DEFAULTS: {[property: string]: any} = {
 }
 
 class ConfigService extends TheService {
+    static isLoaded: boolean = false;
+
     private data: IRWSConfig;    
   
     constructor(cfg: IRWSConfig) {
@@ -49,13 +51,19 @@ class ConfigService extends TheService {
     {
         const className = this.name;
         const instanceExists = TheService._instances[className];
-      
-        if (cfg) {                
-            TheService._instances[className] = new this(cfg);        
-        }else if(!instanceExists && !cfg){
-            // return new this({}) as ConfigService; // DO NOT USE OR I'LL CUT U!!!!!!
 
-            throw new Error('[RWS] No frontend configuration passed to RWSClient');
+        if(!ConfigService.isLoaded){
+            TheService._instances[className] = new this({}); 
+            ConfigService.isLoaded = true;
+        }else{        
+            if (cfg) {                
+                TheService._instances[className] = new this(cfg);        
+            }else if(!instanceExists && !cfg){
+                // return new this({}) as ConfigService; // DO NOT USE OR I'LL CUT U!!!!!!
+
+                throw new Error('[RWS] No frontend configuration passed to RWSClient');
+            }
+
         }
   
         return TheService._instances[className] as ConfigService;
