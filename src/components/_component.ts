@@ -3,6 +3,7 @@ import config from '../services/ConfigService';
 import { RWSUtilsService as UtilsService } from '../services/UtilsService';
 
 import { DOMService, DOMOutputType } from '../services/DOMService';
+import IRWSConfig from '../interfaces/IRWSConfig';
 
 interface IFastDefinition {
     name: string;
@@ -15,6 +16,7 @@ interface IAssetShowOptions {
 }
 
 class RWSViewComponent extends FASTElement {
+    __isLoading: boolean = true;
     private static instances: RWSViewComponent[] = [];
     static fileList: string[] = [];
 
@@ -31,7 +33,7 @@ class RWSViewComponent extends FASTElement {
         super();
         if(routeParams){
             this.routeParams = routeParams;
-        }
+        }       
     }
 
     connectedCallback() {
@@ -39,16 +41,14 @@ class RWSViewComponent extends FASTElement {
 
         if(!(this.constructor as any).definition && (this.constructor as any).autoLoadFastElement){
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
-        }        
+        }                     
 
-        try { 
-            const configData = config();
-
+        try {             
             (this.constructor as any).fileList.forEach((file: string) => { 
                 if(this.fileAssets[file]){
                     return;
                 }
-                UtilsService.getFileContents(configData.get('pubPrefix') + file).then((response: string) => {        
+                UtilsService.getFileContents(config().get('pubPrefix') + file).then((response: string) => {        
                     this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
                 }); 
             });      
@@ -77,15 +77,34 @@ class RWSViewComponent extends FASTElement {
         return this.fileAssets[assetName];
     }
 
+    static _defined: {[key: string]: boolean} = {};
+
+    static isDefined: (key: string) => boolean = (key) => {
+        return !!RWSViewComponent._defined[key];
+    }
+
     static defineComponent()
     {
-        const def = (this as any).definition;        
+        const def = (this as any).definition;  
+       
+        if(RWSViewComponent.isDefined(def.name) == true){
+            return;
+        }
 
         if(!def){
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
 
-        FASTElement.define(this, def);
+        document.addEventListener('rws_cfg_set_' + def.name, (event: Event) => {            
+            const newEvent: CustomEvent<{config: IRWSConfig}> = event as CustomEvent<{config: IRWSConfig}>;            
+            config().mergeConfig(newEvent.detail.config);    
+            console.log('def', def)                 
+        }, { once: true});
+
+        config().waitForConfig(def.name).then(() => {
+            FASTElement.define(this, def);
+        });
+       
     }
 
     static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null){                    
@@ -187,6 +206,16 @@ class RWSViewComponent extends FASTElement {
     getState<T>(property: string): T
     {
         return (this as any)[property];
+    }
+
+    sendEventToOutside<T>(eventName: string, data: T) {
+        const event = new CustomEvent<T>(eventName, {
+          detail: data,
+          bubbles: true, 
+          composed: true
+        });
+
+        this.$emit(eventName, event);
     }
 }
 

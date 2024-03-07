@@ -115,10 +115,10 @@ const RWSWebpackWrapper = (config) => {
   };
 
   if (config.parted) {
-    if (config.partedComponentsLocations) {
+    if (config.partedComponentsLocations) {      
       config.partedComponentsLocations.forEach((componentDir) => {        
-        RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(componentDir, '@RWSView', ['dist', 'node_modules', '@rws-js-client']))];
-      });
+        RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', '@rws-js-client']))];
+      });      
     }
     
     RWSComponents.forEach((fileInfo) => {              
@@ -144,10 +144,7 @@ const RWSWebpackWrapper = (config) => {
           chunks: 'all',
         },          
       }
-    };
-
-   
-    
+    };       
   }else{
     if(fs.existsSync(splitInfoJson)){
       fs.unlinkSync(splitInfoJson);
@@ -161,7 +158,7 @@ const RWSWebpackWrapper = (config) => {
     },
     mode: isDev ? 'development' : 'production',
     target: 'web',
-    devtool: config.devtool || 'source-map',
+    devtool: config.devtool || 'inline-source-map',
     output: {
       path: config.outputDir,
       filename: config.parted ? (config.partedPrefix || 'rws') + '.[name].js' : config.outputFileName,

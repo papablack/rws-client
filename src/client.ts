@@ -21,12 +21,19 @@ interface IHotModule extends NodeModule {
     }
 }
 
+type RWSEventListener = (event: CustomEvent) => void;
+
 export default class RWSClient {   
     private user: IRWSUser = null;
     private config: IRWSConfig = { backendUrl: '', routes: {}, splitFileDir: '/', splitPrefix: 'rws' };
     protected initCallback: () => Promise<void> = async () => {};
 
     private isSetup = false;
+
+    private cfgSetupListener: RWSEventListener = (event: CustomEvent<{ callId: string }>) => {
+        console.log('Received custom event from web component:', event.detail);
+        // this.broadcastConfigForViewComponents();
+    };
 
     constructor(){
         this.user = this.getUser();
@@ -43,6 +50,8 @@ export default class RWSClient {
         this.config = {...this.config, ...config};                                 
         appConfig(this.config);
 
+        // this.on<IRWSConfig>('rws_cfg_call', this.cfgSetupListener);
+
         const hotModule: IHotModule = (module as IHotModule);
 
         if (hotModule.hot) {
@@ -50,6 +59,22 @@ export default class RWSClient {
                 console.log('Accepting the updated module!');              
             });
         }                 
+
+        if(appConfig().get('parted')){
+            const componentParts: string[] = await ApiService.get<string[]>(appConfig().get('splitFileDir')+'/rws_chunks_info.json');
+    
+            componentParts.forEach((componentName: string) => {
+                const script: HTMLScriptElement = document.createElement('script');       
+    
+                script.src = appConfig().get('splitFileDir') + `/${appConfig().get('splitPrefix')}.${componentName}.js`;  // Replace with the path to your script file
+                script.async = true;        
+                script.type = 'text/javascript';
+    
+                console.log(`Appended ${componentName} component`);
+                document.body.appendChild(script);
+            });
+        }
+    
     
         this.isSetup = true;
         return this.config;
@@ -62,12 +87,18 @@ export default class RWSClient {
         if(!this.isSetup){
             this.config = await this.setup(this.config);
         }
+
+        if(Object.keys(config).length){            
+            appConfig().mergeConfig(this.config);
+        }
+
+        console.log(this.isSetup, this.config, appConfig())
         
         if(this.config.user && !this.config.dontPushToSW){            
             this.pushUserToServiceWorker(this.user);
         }
 
-        await startClient(this.config);
+        await startClient();
 
         if(!this.config?.ignoreRWSComponents){
             registerRWSComponents();
@@ -76,6 +107,11 @@ export default class RWSClient {
         await this.initCallback();
     
         return this;
+    }
+
+    private broadcastConfigForViewComponents(): void
+    {
+        document.dispatchEvent(new CustomEvent<{ config: IRWSConfig }>('rws_cfg_broadcast', { detail: {config: appConfig().getData()}}));
     }
 
     public addRoutes(routes: IFrontRoutes){
@@ -160,6 +196,12 @@ export default class RWSClient {
 
 
         return this;
+    }
+
+    on<T>(eventName: string, listener: RWSEventListener): void {
+        document.addEventListener(eventName, (event: Event) => {
+            listener(event as CustomEvent<T>);           
+        });
     }
 
     private enableRouting(): void

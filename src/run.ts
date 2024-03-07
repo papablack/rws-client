@@ -6,27 +6,10 @@ import { RWSWSService as WSService} from './services/WSService';
 import { RWSRoutingService as RoutingService} from './services/RoutingService';
 import { ApiService } from "./services/ApiService";
 
-const main = async (cfg: IRWSConfig): Promise<boolean> => {    
+const main = async (): Promise<boolean> => {    
     //First config run for setting up data. Later just use appConfig().get() to obtain data.
-    const config = appConfig(cfg);
-
-    console.log(cfg);
-
-    if(cfg.parted){
-        const componentParts: string[] = await ApiService.get<string[]>(appConfig().get('splitFileDir')+'/rws_chunks_info.json');
-
-        componentParts.forEach((componentName: string) => {
-            const script: HTMLScriptElement = document.createElement('script');       
-
-            script.src = appConfig().get('splitFileDir') + `/${cfg.splitPrefix}.${componentName}.js`;  // Replace with the path to your script file
-            script.async = true;        
-            script.type = 'text/javascript';
-
-            console.log(`Appended ${componentName} component`);
-            document.body.appendChild(script);
-        });
-    }
-
+    const config = appConfig();
+    
     RoutingService.initRouting(config.get('routes'));    
 
     if(config.get('backendUrl')){

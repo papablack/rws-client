@@ -1,12 +1,15 @@
 import TheService from './_service';
 import IRWSConfig from '../interfaces/IRWSConfig';
+import { v4 as uuid } from 'uuid';
 
 const _DEFAULTS: {[property: string]: any} = {
     'pubPrefix': '/',
     'pubUrl' : window.origin,
 }
 
-class ConfigService extends TheService {
+const __SENT_TO_COMPONENTS: string[] = [];
+
+class ConfigService extends TheService {  
     static isLoaded: boolean = false;
 
     private data: IRWSConfig;    
@@ -46,28 +49,84 @@ class ConfigService extends TheService {
   
         return this;
     }
+
+      
   
     public static getConfigSingleton<T extends new (...args: any[]) => TheService>(this: T, cfg?: IRWSConfig): ConfigService
     {
         const className = this.name;
         const instanceExists = TheService._instances[className];
 
-        if(!ConfigService.isLoaded){
-            TheService._instances[className] = new this({}); 
-            ConfigService.isLoaded = true;
-        }else{        
-            if (cfg) {                
-                TheService._instances[className] = new this(cfg);        
+        if(!ConfigService.isLoaded){    
+            TheService._instances[className] = new this({_noLoad: true});
+            ConfigService.isLoaded = true;   
+        }else{               
+            if (cfg) {        
+                
+                const doneComponents: {[key: string]: boolean} = {};
+      
+                TheService._instances[className] = new this(cfg);     
+                document.addEventListener('rws_cfg_call', (event: Event) => {
+                    const newEvent: CustomEvent<{tagName: string}> = event as CustomEvent<{tagName: string}>;   
+                    console.log('sent cfg', cfg);            
+                    if(!!doneComponents[newEvent.detail.tagName]){
+                        return;
+                    }
+                    doneComponents[newEvent.detail.tagName] = true;       
+                    document.dispatchEvent(new CustomEvent<{config: IRWSConfig}>('rws_cfg_set_' + newEvent.detail.tagName, { detail: { config: cfg} }))
+                }, { once: true });                                 
             }else if(!instanceExists && !cfg){
                 // return new this({}) as ConfigService; // DO NOT USE OR I'LL CUT U!!!!!!
 
-                throw new Error('[RWS] No frontend configuration passed to RWSClient');
+                throw new Error('No frontend cfg');
             }
 
         }
   
         return TheService._instances[className] as ConfigService;
     }  
+
+    async waitForConfig(tagName: string): Promise<boolean>
+    {        
+        let t: NodeJS.Timeout | null = null;
+
+        if(!this.data._noLoad || __SENT_TO_COMPONENTS.includes(tagName)){
+            return;
+        }
+
+        __SENT_TO_COMPONENTS.push(tagName);
+
+        document.dispatchEvent(new CustomEvent<{tagName: string}>('rws_cfg_call', {
+            detail: {tagName},
+        }));
+
+        return new Promise((resolve) => {
+            const tick = () => {
+                if(ConfigService.isLoaded){
+                   
+
+                    // console.log('resolved', tagName);
+                    clearTimeout(t);    
+                    resolve(true);
+                    return;
+                }
+    
+                t = setTimeout(tick, 200);
+            }
+    
+            t = setTimeout(tick, 200);
+        });       
+    }
+
+    isLoaded(): boolean
+    {
+        return ConfigService.isLoaded;
+    }
+
+    mergeConfig(config: IRWSConfig) {
+        console.log('merging', config);
+        this.data = Object.assign(this.data, config);
+    }
 
     getData(): IRWSConfig
     {

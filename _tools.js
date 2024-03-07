@@ -106,14 +106,18 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []){
 
     if (fileStat.isDirectory() && !ignored.includes(file)) {
       // Recursively search this directory
-      findFilesWithText(filePath, text, ignored, fileList);
+      findComponentFilesWithText(filePath, text, ignored, fileList);
     } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
+  
+      
       // Read file content and check for text
       const content = fs.readFileSync(filePath, 'utf8');
       if (content.includes(text)) {                
         const compInfo = extractComponentInfo(content);
-
         if(compInfo){
+          if(filePath === '/app/edrna_node/frontend/src/components/book-loader/component.ts'){
+            console.log('BOOKLOADER', compInfo);
+          }
           const {tagName, className} = compInfo;
 
           const fileParts = filePath.split('/');
@@ -155,8 +159,9 @@ function extractRWSViewArguments(sourceFile){
               if (args.length > 1) {
                   // Assuming the second argument is an object literal
                   if (ts.isObjectLiteralExpression(args[1])) {
-                      const argVal = args[1].getText(sourceFile);                        
-                      argumentsExtracted.options = JSON.parse(toJsonString(argVal));
+                      const argVal = args[1].getText(sourceFile);     
+                                       
+                      argumentsExtracted.options = argVal;
                   }
               }                
           }
@@ -191,7 +196,7 @@ function extractRWSIgnoreArguments(sourceFile){
                   // Assuming the second argument is an object literal
                   if (ts.isObjectLiteralExpression(args[0])) {
                       const argVal = args[0].getText(sourceFile);                        
-                      argumentsExtracted.options = JSON.parse(toJsonString(argVal));
+                      argumentsExtracted.options = argVal;
                   }
               }                
           }
@@ -210,7 +215,7 @@ function extractRWSIgnoreArguments(sourceFile){
 }
 
 function extractComponentInfo(componentCode) {
-  const componentNameRegex = /\@RWSView\(['"](.*?)['"]\)\s*class\s+([A-Z][a-zA-Z]*)\s+extends/g;
+  const componentNameRegex = /\@RWSView\(['"]([a-zA-Z-_]*)['"],?.*\)\s*class\s+([A-Z][a-zA-Z]*)\s+extends/g;
   // Initialize an array to hold all matches
   const matches = [...componentCode.matchAll(componentNameRegex)];  
   const results = matches.map(match => ({
