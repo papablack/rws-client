@@ -168,7 +168,7 @@ export default class RWSClient {
         
     }
 
-    protected devStorage: {[key: string]: any};
+    protected devStorage: {[key: string]: any} = {};
 
     setDevStorage(key: string, stuff: any): RWSClient
     {
