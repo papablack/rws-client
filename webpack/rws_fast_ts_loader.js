@@ -40,6 +40,7 @@ module.exports = function(content) {
 
     let templatePath = 'template.html';
     let stylesPath = 'styles/layout.scss';
+    let isIgnored = false;
     let fastOptions = _defaultRWSLoaderOptions.fastOptions;
     const addedParamDefs = [];
     const addedParams = [];

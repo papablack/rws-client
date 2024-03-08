@@ -135,15 +135,15 @@ const RWSWebpackWrapper = (config) => {
     }
     
     RWSComponents.forEach((fileInfo) => {              
-      const tsSourceFile = ts.createSourceFile(fileInfo.filePath, fileInfo.content, ts.ScriptTarget.Latest, true);
-      const decoratorData = tools.extractRWSIgnoreArguments(tsSourceFile);  
+      const isIgnored = fileInfo.isIgnored;             
 
-      if(!decoratorData){
-        automatedEntries[fileInfo.sanitName] = fileInfo.filePath;           
-      }else{
+      if(isIgnored === true){
         console.warn('Ignored: '+ fileInfo.filePath);
-      }      
-    });    
+        return;
+      }
+
+      automatedEntries[fileInfo.sanitName] = fileInfo.filePath;    
+    });        
 
     fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));    
 
@@ -152,7 +152,7 @@ const RWSWebpackWrapper = (config) => {
         vendor: {
           test: (module) => {
             if(servicesLocations.find((loc) => module.identifier().indexOf(loc) > -1)){
-              console.log('splitservice', module.identifier());
+              // console.log('splitservice', module.identifier());
             }
             return module.identifier().indexOf('node_modules') || servicesLocations.find((loc) => module.identifier().indexOf(loc) > 1);
           },

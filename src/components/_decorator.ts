@@ -1,14 +1,17 @@
 interface RWSDecoratorOptions{
     template?: string,
     styles?: string,
-    fastElementOptions?: any
+    fastElementOptions?: any,
+    ignorePackaging?: boolean
 }
 
-function RWSView(name: string, data?: RWSDecoratorOptions): (type: any) => void{
+function RWSView(name: string, data?: RWSDecoratorOptions): (type: any) => void
+{
     return () => {};
 }
 
-function RWSIgnore(params: { mergeToApp: boolean } = null): () => void{
+function RWSIgnore(params: { mergeToApp?: boolean } = null): () => void
+{
     return () => {};
 }
 

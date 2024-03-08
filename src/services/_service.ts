@@ -1,4 +1,6 @@
-export default abstract class TheRWSService{
+import { DI, Container, InterfaceSymbol, Registration, Resolver, Key } from "@microsoft/fast-foundation";
+
+export default abstract class TheRWSService {
     _RELOADABLE: boolean = false;
 
     constructor() {
@@ -6,14 +8,17 @@ export default abstract class TheRWSService{
 
     protected static _instances: { [key: string]: TheRWSService } | null = {};
 
-    public static getSingleton<T extends new (...args: any[]) => TheRWSService>(this: T): InstanceType<T> {
-        const className = this.name;
+    
+    public static getSingleton<T extends Key>(this: new () => T): InterfaceSymbol<T>
+    {
+        const singletonInstance = DI.createInterface<T>();      
+        const container: Container = DI.getOrCreateDOMContainer();        
 
-        if (!TheRWSService._instances[className]) {
-            TheRWSService._instances[className] = new this();
-        }
+        container.register(
+            Registration.singleton(this, this)
+        );        
 
-        return TheRWSService._instances[className] as InstanceType<T>;
+        return singletonInstance;
     }
 
     public getReloadable(): string | null {

@@ -5,12 +5,15 @@ import {NotifyService} from './services/NotifyService';
 import { 
     IFrontRoutes,  _ROUTING_EVENT_NAME
 } from './services/RoutingService';
-import { ApiService, IBackendRoute } from './services/ApiService';
+import ApiServiceInstance, { ApiService, IBackendRoute } from './services/ApiService';
 import registerRWSComponents from './components';
-import ServiceWorkerService from './services/ServiceWorkerService';
+
 import IRWSUser from './interfaces/IRWSUser';
-import {RWSWSService} from './services/WSService'
-import appConfig, { ConfigServiceInstance } from './services/ConfigService';
+import { DI, Container } from "@microsoft/fast-foundation";
+
+import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
+import WSService, { WSServiceInstance } from './services/WSService'
+import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -24,10 +27,16 @@ interface IHotModule extends NodeModule {
 type RWSEventListener = (event: CustomEvent) => void;
 
 export default class RWSClient {  
+    private DI: Container;
     private user: IRWSUser = null;
+
     private config: IRWSConfig = { backendUrl: '', routes: {}, splitFileDir: '/', splitPrefix: 'rws' };
     protected initCallback: () => Promise<void> = async () => {};
     
+    private sw: ServiceWorkerServiceInstance;
+    private ws: WSServiceInstance;
+    private api: ApiServiceInstance;
+    private appConfig: ConfigServiceInstance;
 
     private isSetup = false;
 
@@ -36,10 +45,22 @@ export default class RWSClient {
         // this.broadcastConfigForViewComponents();
     };
 
-    constructor(){
+    constructor(
+        @ConfigService appConfig: ConfigServiceInstance, 
+        @ServiceWorkerService sw: ServiceWorkerServiceInstance,
+        @WSService ws: WSServiceInstance,
+        @ApiService api: ApiServiceInstance
+    ){
+        this.DI = DI.getOrCreateDOMContainer();
+
+        this.appConfig = appConfig;        
+        this.sw = sw;        
+        this.ws = ws;        
+        this.api = api;
+
         this.user = this.getUser();
 
-        this.pushDataToServiceWorker('SET_WS_URL', { url: appConfig().get('wsUrl')}, 'ws_url');
+        this.pushDataToServiceWorker('SET_WS_URL', { url: this.appConfig.get('wsUrl')}, 'ws_url');
 
         if(this.user){            
             this.pushUserToServiceWorker({...this.user, instructor: false});        
@@ -47,9 +68,10 @@ export default class RWSClient {
     }
 
     async setup(config: IRWSConfig = {}): Promise<IRWSConfig> 
-    {    
+    {                
         this.config = {...this.config, ...config};                                 
-        appConfig(this.config);
+        this.appConfig.mergeConfig(this.config);
+        console.log(this.appConfig.getData());
 
         // this.on<IRWSConfig>('rws_cfg_call', this.cfgSetupListener);
 
@@ -61,13 +83,13 @@ export default class RWSClient {
             });
         }                 
 
-        if(appConfig().get('parted')){
-            const componentParts: string[] = await ApiService.get<string[]>(appConfig().get('splitFileDir')+'/rws_chunks_info.json');
+        if(this.appConfig.get('parted')){
+            const componentParts: string[] = await this.api.get<string[]>(this.appConfig.get('splitFileDir')+'/rws_chunks_info.json');
     
             componentParts.forEach((componentName: string) => {
                 const script: HTMLScriptElement = document.createElement('script');       
     
-                script.src = appConfig().get('splitFileDir') + `/${appConfig().get('splitPrefix')}.${componentName}.js`;  // Replace with the path to your script file
+                script.src = this.appConfig.get('splitFileDir') + `/${this.appConfig.get('splitPrefix')}.${componentName}.js`;  // Replace with the path to your script file
                 script.async = true;        
                 script.type = 'text/javascript';
     
@@ -90,10 +112,10 @@ export default class RWSClient {
         }
 
         if(Object.keys(config).length){            
-            appConfig().mergeConfig(this.config);
+            this.appConfig.mergeConfig(this.config);
         }
 
-        console.log(this.isSetup, this.config, appConfig())
+        console.log(this.isSetup, this.config, this.appConfig);
         
         if(this.config.user && !this.config.dontPushToSW){            
             this.pushUserToServiceWorker(this.user);
@@ -112,7 +134,7 @@ export default class RWSClient {
 
     private broadcastConfigForViewComponents(): void
     {
-        document.dispatchEvent(new CustomEvent<{ config: IRWSConfig }>('rws_cfg_broadcast', { detail: {config: appConfig().getData()}}));
+        document.dispatchEvent(new CustomEvent<{ config: IRWSConfig }>('rws_cfg_broadcast', { detail: {config: this.appConfig.getData()}}));
     }
 
     public addRoutes(routes: IFrontRoutes){
@@ -151,7 +173,7 @@ export default class RWSClient {
         
         const doIt: () => void = () => {
             try {
-                ServiceWorkerService.sendDataToServiceWorker(type, data, asset_type);
+                this.sw.sendDataToServiceWorker(type, data, asset_type);
             } catch(e){
                 if(tries < 3){
                     setTimeout(() => { doIt(); }, 300)               
@@ -190,8 +212,8 @@ export default class RWSClient {
 
         this.user = user;
 
-        ApiService.setToken(this.user.jwt_token);
-        RWSWSService.setUser(this.user);
+        this.api.setToken(this.user.jwt_token);
+        this.ws.setUser(this.user);
         
         localStorage.setItem('the_rws_user', JSON.stringify(this.user));
 
@@ -201,7 +223,7 @@ export default class RWSClient {
 
     getConfig(): ConfigServiceInstance
     {
-        return appConfig();
+        return this.appConfig;
     }
 
     on<T>(eventName: string, listener: RWSEventListener): void {
@@ -226,6 +248,11 @@ export default class RWSClient {
     getDevStorage(key: string): any
     {         
         return this.devStorage[key];
+    }
+
+    registerToDI(): void
+    {
+
     }
 }
 

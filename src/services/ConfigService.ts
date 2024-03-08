@@ -1,7 +1,9 @@
 import TheService from './_service';
 import IRWSConfig from '../interfaces/IRWSConfig';
 import { v4 as uuid } from 'uuid';
-import RWSClient from '..';
+
+import { DI, Container, InterfaceSymbol, Registration } from "@microsoft/fast-foundation";
+
 
 const _DEFAULTS: {[property: string]: any} = {
     'pubPrefix': '/',
@@ -9,10 +11,6 @@ const _DEFAULTS: {[property: string]: any} = {
 }
 
 const __SENT_TO_COMPONENTS: string[] = [];
-
-// interface Window {
-//     RWSClient: RWSClient
-// }
 
 class ConfigService extends TheService {  
     static isLoaded: boolean = false;
@@ -57,25 +55,22 @@ class ConfigService extends TheService {
 
       
   
-    public static getConfigSingleton<T extends new (...args: any[]) => TheService>(this: T, cfg?: IRWSConfig): ConfigService
+    public static registerConfigSingleton<T extends new (...args: any[]) => TheService>(this: T, cfg?: IRWSConfig): InterfaceSymbol<ConfigService>
     {
         const className = this.name;
         const instanceExists = TheService._instances[className];
 
-        if(!ConfigService.isLoaded){ 
-            TheService._instances[className] = new this({_noLoad: true});
+        const singletonInstance = DI.createInterface<ConfigService>();      
+        const container: Container = DI.getOrCreateDOMContainer();
 
-            ConfigService.isLoaded = true;   
-        }else{               
-            if (cfg) {                        
-                TheService._instances[className] = new this(cfg);
-            }else if(!instanceExists && !cfg){                
-                throw new Error('No frontend cfg');
-            }
-        }
-  
-        return TheService._instances[className] as ConfigService;
-    }  
+        const instance = new this(cfg);
+
+        container.register(
+            Registration.singleton(ConfigService, ConfigService)
+        );        
+
+        return singletonInstance;
+    }
 
     async waitForConfig(tagName: string): Promise<boolean>
     {        
@@ -125,14 +120,6 @@ class ConfigService extends TheService {
     }
 }
 
-const configBuilder = (cfg?: IRWSConfig): ConfigService => {
-    if(!(window as any).RWSConfigService){
-        (window as any).RWSConfigService = ConfigService.getConfigSingleton(cfg);
-    }
-
-    return (window as any).RWSConfigService;
-};
-
-export default configBuilder;
+export default ConfigService.registerConfigSingleton();
 
 export { ConfigService as ConfigServiceInstance };

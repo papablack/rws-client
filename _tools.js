@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const ts = require('typescript');
 const { spawn } = require('child_process');
+const JSON5 = require('json5');
 
 function findRootWorkspacePath(currentPath) {        
   const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');        
@@ -163,28 +164,28 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []){
     if (fileStat.isDirectory() && !ignored.includes(file)) {
       // Recursively search this directory
       findComponentFilesWithText(filePath, text, ignored, fileList);
-    } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
-  
-      
+    } else if (fileStat.isFile() && filePath.endsWith('.ts')) {    
       // Read file content and check for text
       const content = fs.readFileSync(filePath, 'utf8');
       if (content.includes(text)) {                
         const compInfo = extractComponentInfo(content);
         if(compInfo){
-          if(filePath === '/app/edrna_node/frontend/src/components/book-loader/component.ts'){
-            console.log('BOOKLOADER', compInfo);
-          }
-          const {tagName, className} = compInfo;
+          const {tagName, className, options, isIgnored} = compInfo;
 
-          const fileParts = filePath.split('/');
-          const fpLen = fileParts.length;          
+          if(isIgnored){
+            return;
+          }
+
+          // const fileParts = filePath.split('/');
+          // const fpLen = fileParts.length;          
 
           fileList.push({
             filePath,
             tagName,
             className,
             sanitName: className.toLowerCase(),
-            content
+            content,
+            isIgnored: options?.ignorePackaging
           });
         }
       }
@@ -196,6 +197,7 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []){
 
 function extractRWSViewArguments(sourceFile){
   let argumentsExtracted = {
+      className: null,
       tagName: null,
       options: null        
   };
@@ -210,16 +212,21 @@ function extractRWSViewArguments(sourceFile){
               foundDecorator = true;
               const args = expression.arguments;
               if (args.length > 0 && ts.isStringLiteral(args[0])) {
-                  argumentsExtracted.tagName = args[0].text;                    
+                argumentsExtracted.tagName = args[0].text;                    
               }
-              if (args.length > 1) {
-                  // Assuming the second argument is an object literal
+              if (args.length > 1) {                  
                   if (ts.isObjectLiteralExpression(args[1])) {
-                      const argVal = args[1].getText(sourceFile);     
-                                       
-                      argumentsExtracted.options = argVal;
+                    const argVal = args[1].getText(sourceFile);                    
+                    argumentsExtracted.options = JSON5.parse(argVal);
                   }
-              }                
+              } 
+              
+              if (node.parent && ts.isClassDeclaration(node.parent)) {
+                const classNode = node.parent;
+                if (classNode.name) { // ClassDeclaration.name is optional as classes can be unnamed/anonymous
+                  argumentsExtracted.className = classNode.name.getText(sourceFile);
+                }
+              }
           }
       }
 
@@ -240,19 +247,25 @@ function extractRWSIgnoreArguments(sourceFile){
       params: null,     
   };
   let foundDecorator = false;
+  let ignored = false;
  
   function visit(node) {
       if (ts.isDecorator(node) && ts.isCallExpression(node.expression)) {
           const expression = node.expression;
           const decoratorName = expression.expression.getText(sourceFile);
-          if (decoratorName === 'RWSIgnore') {
+          if (decoratorName === 'RWSView') {
             foundDecorator = true;
               const args = expression.arguments;
+         
               if (args.length) {
                   // Assuming the second argument is an object literal
                   if (ts.isObjectLiteralExpression(args[0])) {
                       const argVal = args[0].getText(sourceFile);                        
-                      argumentsExtracted.options = argVal;
+                      argumentsExtracted.options = argVal;                      
+
+                      if(argVal.ignorePackaging === true){
+                        ignored = true;
+                      }
                   }
               }                
           }
@@ -264,22 +277,30 @@ function extractRWSIgnoreArguments(sourceFile){
   visit(sourceFile);
 
   if(!foundDecorator){
-    return null;
+    return true;
   }
 
-  return argumentsExtracted;
+  return ignored;
 }
 
 function extractComponentInfo(componentCode) {
-  const componentNameRegex = /\@RWSView\(['"]([a-zA-Z-_]*)['"],?.*\)\s*class\s+([A-Z][a-zA-Z]*)\s+extends/g;
-  // Initialize an array to hold all matches
-  const matches = [...componentCode.matchAll(componentNameRegex)];  
-  const results = matches.map(match => ({
-    tagName: match[1],
-    className: match[2]
-  }));
+  const componentNameRegex = /\@RWSView/g;
+  
+  if(!componentNameRegex.test(componentCode)){
+    return;
+  }
 
-  return results.length ? results[0] : null;
+  const tsSourceFile = ts.createSourceFile(`/tmp/temp_ts`, componentCode, ts.ScriptTarget.Latest, true);
+
+  let decoratorArgs = extractRWSViewArguments(tsSourceFile);
+
+  if(!decoratorArgs){
+    decoratorArgs = {};
+  }
+
+  decoratorOpts = decoratorArgs.options;  
+
+  return {...decoratorArgs, options: decoratorOpts };
 }
 
 module.exports = {
