@@ -97,6 +97,62 @@ async function runCommand(command, cwd = null, silent = false, extraArgs = { env
   });
 }
 
+function findSuperclassFilePath(entryFile){
+  const program = ts.createProgram([entryFile], {
+    target: ts.ScriptTarget.ES5,
+    module: ts.ModuleKind.CommonJS
+  });
+  const checker = program.getTypeChecker();
+
+  for (const sourceFile of program.getSourceFiles()) {
+    if (!sourceFile.isDeclarationFile) {
+      ts.forEachChild(sourceFile, visit);
+    }
+  }
+
+  function visit(node) {
+    if (ts.isClassDeclaration(node) && node.heritageClauses) {
+      for (const clause of node.heritageClauses) {
+        if (clause.token === ts.SyntaxKind.ExtendsKeyword) {
+          for (const type of clause.types) {
+            const symbol = checker.getSymbolAtLocation(type.expression);
+            if (symbol && symbol.declarations) {
+              const declaration = symbol.declarations[0];
+              const sourceFile = declaration.getSourceFile();
+              return sourceFile.fileName; // Returns the file path of the first superclass it finds
+            }
+          }
+        }
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  }
+
+  return null; // Return null if no superclass or file path is found
+}
+
+function findServiceFilesWithClassExtend(dir, classPath){
+  const files = fs.readdirSync(dir);
+  let results = []
+
+  files.forEach(file => {
+    const filePath = path.join(dir, file);
+    const fileStat = fs.statSync(filePath);
+
+    if (fileStat.isDirectory()) {  
+      results = [...results, ...findServiceFilesWithClassExtend(filePath, classPath)];
+    } else if (fileStat.isFile() && filePath.endsWith('.ts')) {  
+      const foundPath = findSuperclassFilePath(filePath);          
+      if(foundPath === classPath){
+        results = [...results, filePath];
+      }
+    };
+  });
+
+  return results;
+}
+
 function findComponentFilesWithText(dir, text, ignored = [], fileList = []){
   const files = fs.readdirSync(dir);
 
@@ -234,5 +290,7 @@ module.exports = {
     findComponentFilesWithText,
     extractComponentInfo,
     extractRWSViewArguments,
-    extractRWSIgnoreArguments
+    extractRWSIgnoreArguments,
+    findServiceFilesWithClassExtend,
+    findSuperclassFilePath
 }

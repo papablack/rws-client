@@ -86,25 +86,14 @@ class RWSViewComponent extends FASTElement {
     static defineComponent()
     {
         const def = (this as any).definition;  
-       
-        if(RWSViewComponent.isDefined(def.name) == true){
-            return;
-        }
 
         if(!def){
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
 
-        document.addEventListener('rws_cfg_set_' + def.name, (event: Event) => {            
-            const newEvent: CustomEvent<{config: IRWSConfig}> = event as CustomEvent<{config: IRWSConfig}>;            
-            config().mergeConfig(newEvent.detail.config);    
-            console.log('def', def)                 
-        }, { once: true});
+        console.log(def, config().getData());
 
-        config().waitForConfig(def.name).then(() => {
-            FASTElement.define(this, def);
-        });
-       
+        FASTElement.define(this, def);       
     }
 
     static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null){                    

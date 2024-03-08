@@ -103,9 +103,22 @@ const RWSWebpackWrapper = (config) => {
   const splitInfoJson = config.outputDir + '/rws_chunks_info.json'
   const automatedEntries = {};
 
-  const foundRWSUserClasses = tools.findComponentFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', '@rws-js-client']);
+  const foundRWSUserClasses = tools.findComponentFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', 'rws-js-client']);
   const foundRWSClientClasses = tools.findComponentFilesWithText(__dirname, '@RWSView', ['dist', 'node_modules']);
   let RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
+
+  const servicePath = path.resolve(__dirname, 'src', 'services', '_service.ts');
+
+  const servicesLocations = [
+    path.resolve(__dirname, 'src', 'services'),
+    path.resolve(executionDir, 'src', 'services')
+  ];
+
+  if (config.customServiceLocations) {      
+    config.customServiceLocations.forEach((serviceDir) => {        
+      servicesLocations.push(serviceDir);
+    });      
+  }
 
   const optimConfig = {
     minimizer: [
@@ -117,7 +130,7 @@ const RWSWebpackWrapper = (config) => {
   if (config.parted) {
     if (config.partedComponentsLocations) {      
       config.partedComponentsLocations.forEach((componentDir) => {        
-        RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', '@rws-js-client']))];
+        RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', 'rws-js-client']))];
       });      
     }
     
@@ -138,7 +151,10 @@ const RWSWebpackWrapper = (config) => {
       cacheGroups: {
         vendor: {
           test: (module) => {
-            return module.identifier().indexOf('node_modules')
+            if(servicesLocations.find((loc) => module.identifier().indexOf(loc) > -1)){
+              console.log('splitservice', module.identifier());
+            }
+            return module.identifier().indexOf('node_modules') || servicesLocations.find((loc) => module.identifier().indexOf(loc) > 1);
           },
           name: 'vendors',
           chunks: 'all',

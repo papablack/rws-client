@@ -1,29 +1,29 @@
-export default abstract class TheService{
+export default abstract class TheRWSService{
     _RELOADABLE: boolean = false;
 
     constructor() {
     }
 
-    protected static _instances: { [key: string]: TheService } | null = {};
+    protected static _instances: { [key: string]: TheRWSService } | null = {};
 
-    public static getSingleton<T extends new (...args: any[]) => TheService>(this: T): InstanceType<T> {
+    public static getSingleton<T extends new (...args: any[]) => TheRWSService>(this: T): InstanceType<T> {
         const className = this.name;
 
-        if (!TheService._instances[className]) {
-            TheService._instances[className] = new this();
+        if (!TheRWSService._instances[className]) {
+            TheRWSService._instances[className] = new this();
         }
 
-        return TheService._instances[className] as InstanceType<T>;
+        return TheRWSService._instances[className] as InstanceType<T>;
     }
 
     public getReloadable(): string | null {
         return (this as any).constructor._RELOADABLE || this._RELOADABLE;
     }
 
-    public reloadService<T extends new (...args: any[]) => TheService>(this: T, ...params: any[]): InstanceType<T> 
+    public reloadService<T extends new (...args: any[]) => TheRWSService>(this: T, ...params: any[]): InstanceType<T> 
     {    
         const className = this.name;
-        TheService._instances[className] = new this(...params);        
-        return TheService._instances[className] as InstanceType<T>;
+        TheRWSService._instances[className] = new this(...params);        
+        return TheRWSService._instances[className] as InstanceType<T>;
     }
 }

@@ -10,7 +10,7 @@ import registerRWSComponents from './components';
 import ServiceWorkerService from './services/ServiceWorkerService';
 import IRWSUser from './interfaces/IRWSUser';
 import {RWSWSService} from './services/WSService'
-import appConfig from './services/ConfigService';
+import appConfig, { ConfigServiceInstance } from './services/ConfigService';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -196,6 +196,11 @@ export default class RWSClient {
 
 
         return this;
+    }
+
+    getConfig(): ConfigServiceInstance
+    {
+        return appConfig();
     }
 
     on<T>(eventName: string, listener: RWSEventListener): void {

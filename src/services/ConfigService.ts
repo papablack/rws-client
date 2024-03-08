@@ -1,6 +1,7 @@
 import TheService from './_service';
 import IRWSConfig from '../interfaces/IRWSConfig';
 import { v4 as uuid } from 'uuid';
+import RWSClient from '..';
 
 const _DEFAULTS: {[property: string]: any} = {
     'pubPrefix': '/',
@@ -8,6 +9,10 @@ const _DEFAULTS: {[property: string]: any} = {
 }
 
 const __SENT_TO_COMPONENTS: string[] = [];
+
+// interface Window {
+//     RWSClient: RWSClient
+// }
 
 class ConfigService extends TheService {  
     static isLoaded: boolean = false;
@@ -57,30 +62,16 @@ class ConfigService extends TheService {
         const className = this.name;
         const instanceExists = TheService._instances[className];
 
-        if(!ConfigService.isLoaded){    
+        if(!ConfigService.isLoaded){ 
             TheService._instances[className] = new this({_noLoad: true});
+
             ConfigService.isLoaded = true;   
         }else{               
-            if (cfg) {        
-                
-                const doneComponents: {[key: string]: boolean} = {};
-      
-                TheService._instances[className] = new this(cfg);     
-                document.addEventListener('rws_cfg_call', (event: Event) => {
-                    const newEvent: CustomEvent<{tagName: string}> = event as CustomEvent<{tagName: string}>;   
-                    console.log('sent cfg', cfg);            
-                    if(!!doneComponents[newEvent.detail.tagName]){
-                        return;
-                    }
-                    doneComponents[newEvent.detail.tagName] = true;       
-                    document.dispatchEvent(new CustomEvent<{config: IRWSConfig}>('rws_cfg_set_' + newEvent.detail.tagName, { detail: { config: cfg} }))
-                }, { once: true });                                 
-            }else if(!instanceExists && !cfg){
-                // return new this({}) as ConfigService; // DO NOT USE OR I'LL CUT U!!!!!!
-
+            if (cfg) {                        
+                TheService._instances[className] = new this(cfg);
+            }else if(!instanceExists && !cfg){                
                 throw new Error('No frontend cfg');
             }
-
         }
   
         return TheService._instances[className] as ConfigService;
@@ -134,5 +125,14 @@ class ConfigService extends TheService {
     }
 }
 
-export default (cfg?: IRWSConfig): ConfigService => ConfigService.getConfigSingleton(cfg);
+const configBuilder = (cfg?: IRWSConfig): ConfigService => {
+    if(!(window as any).RWSConfigService){
+        (window as any).RWSConfigService = ConfigService.getConfigSingleton(cfg);
+    }
+
+    return (window as any).RWSConfigService;
+};
+
+export default configBuilder;
+
 export { ConfigService as ConfigServiceInstance };
