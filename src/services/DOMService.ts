@@ -84,5 +84,5 @@ class DOMServiceInstance extends RWSService {
 }
 
 export default DOMServiceInstance;
-const DOMService: DOMServiceInstance = DOMServiceInstance.getSingleton();
+const DOMService = DOMServiceInstance.getSingleton();
 export { DOMOutputType, DOMService, TagsProcessorType }; 

@@ -102,5 +102,5 @@ interface IRoutingEvent {
 }
 
 export default RoutingService;
-const RWSRoutingService: RoutingService = RoutingService.getSingleton();
+const RWSRoutingService = RoutingService.getSingleton();
 export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent, RWSRoutingService};

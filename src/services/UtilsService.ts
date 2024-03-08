@@ -91,5 +91,5 @@ class UtilsService extends TheService {
 }
 
 export default UtilsService;
-const RWSUtilsService: UtilsService = UtilsService.getSingleton();
+const RWSUtilsService = UtilsService.getSingleton();
 export { RWSUtilsService }
