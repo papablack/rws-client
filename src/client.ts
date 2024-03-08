@@ -21,10 +21,11 @@ interface IHotModule extends NodeModule {
     }
 }
 
-export default class RWSClient {   
+export default class RWSClient {  
     private user: IRWSUser = null;
-    private config: IRWSConfig = { backendUrl: '', routes: {} };
+    private config: IRWSConfig = { backendUrl: '', routes: {} };    
     protected initCallback: () => Promise<void> = async () => {};
+    
 
     private isSetup = false;
 
@@ -165,6 +166,19 @@ export default class RWSClient {
     private enableRouting(): void
     {
         
+    }
+
+    protected devStorage: {[key: string]: any};
+
+    setDevStorage(key: string, stuff: any): RWSClient
+    {
+        this.devStorage[key] = stuff;
+        return this;
+    }
+
+    getDevStorage(key: string): any
+    {         
+        return this.devStorage[key];
     }
 }
 
