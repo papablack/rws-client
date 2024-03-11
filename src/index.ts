@@ -25,6 +25,8 @@ import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worke
 import IRWSUser from './interfaces/IRWSUser';
 import { Transformer as HTMLTagTransformerType, Tag as HTMLTag, Attributes as HTMLAttributes } from 'sanitize-html';
 
+RoutingServiceInstance.getSingleton();
+
 export default RWSClient;
 export { 
     NotifyUiType,

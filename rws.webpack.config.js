@@ -147,14 +147,36 @@ const RWSWebpackWrapper = (config) => {
 
     fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));    
 
+    console.log(automatedEntries)
+
     optimConfig.splitChunks = {
       cacheGroups: {
         vendor: {
           test: (module) => {
-            if(servicesLocations.find((loc) => module.identifier().indexOf(loc) > -1)){
-              // console.log('splitservice', module.identifier());
+            const importString = module.identifier();
+
+            const inNodeModules = importString.indexOf('node_modules') > -1;
+            const inVendorPackage = importString.indexOf(__dirname) > -1;
+
+            const inExecDir = importString.indexOf(executionDir) > -1;
+            const isNoComponent = !Object.keys(automatedEntries).find(key => importString.indexOf(path.resolve(path.dirname(automatedEntries[key]))) > -1);
+
+            const isAvailableForVendors = (inNodeModules || inVendorPackage) && isNoComponent && (!inExecDir || (inExecDir && inVendorPackage));
+            
+            // if(importString.indexOf('ConfigService') > -1){
+            //   console.log(isNoComponent);
+            //   // console.log('IS', importString, importString.indexOf(automatedEntries['rwsuploader']) > -1);
+            //   // console.log('AE', path.resolve(path.dirname(automatedEntries['rwsuploader'])));
+
+            // }
+
+            if(isAvailableForVendors){
+              // console.log('splitservice', importString);
+            }else{
+              console.log(inNodeModules, inVendorPackage, isNoComponent, inExecDir,importString);
             }
-            return module.identifier().indexOf('node_modules') || servicesLocations.find((loc) => module.identifier().indexOf(loc) > 1);
+
+            return isAvailableForVendors
           },
           name: 'vendors',
           chunks: 'all',

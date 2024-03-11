@@ -1,19 +1,21 @@
 import IRWSConfig from './interfaces/IRWSConfig';
 import startClient from './run';
 import RWSNotify from './types/RWSNotify';
-import NotifyService, {NotifyServiceInstance} from './services/NotifyService';
+import {NotifyServiceInstance} from './services/NotifyService';
+
 import { 
-    IFrontRoutes,  _ROUTING_EVENT_NAME
+    IFrontRoutes,  RoutingServiceInstance,  _ROUTING_EVENT_NAME
 } from './services/RoutingService';
-import ApiService, { ApiServiceInstance, IBackendRoute } from './services/ApiService';
+import { ApiServiceInstance, IBackendRoute } from './services/ApiService';
 import registerRWSComponents from './components';
 
 import IRWSUser from './interfaces/IRWSUser';
 import { DI, Container } from "@microsoft/fast-foundation";
 
-import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
-import WSService, { WSServiceInstance } from './services/WSService'
-import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
+import { ConfigServiceInstance } from './services/ConfigService';
+import { WSServiceInstance } from './services/WSService'
+import { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
+
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -48,7 +50,8 @@ export default class RWSClient {
 
     constructor(
     ){
-        this.DI = DI.getOrCreateDOMContainer();
+
+        this.DI = DI.getOrCreateDOMContainer();   
 
         this.appConfig = this.DI.get<ConfigServiceInstance>(ConfigServiceInstance);
         this.sw = this.DI.get<ServiceWorkerServiceInstance>(ServiceWorkerServiceInstance); 
@@ -69,7 +72,6 @@ export default class RWSClient {
     {                
         this.config = {...this.config, ...config};                                 
         this.appConfig.mergeConfig(this.config);
-        console.log(this.appConfig.getData());
 
         // this.on<IRWSConfig>('rws_cfg_call', this.cfgSetupListener);
 
