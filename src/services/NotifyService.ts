@@ -43,6 +43,7 @@ class NotifyServiceInstance extends TheService {
     }
 }
 
-export default NotifyServiceInstance;
 const NotifyService = NotifyServiceInstance.getSingleton();
-export { NotifyService };
+
+export default NotifyService;
+export { NotifyServiceInstance };

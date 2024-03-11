@@ -1,22 +1,22 @@
 import IRWSConfig from './interfaces/IRWSConfig';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
 import { observable, attr } from '@microsoft/fast-element';
-import NotifyServiceInstance, {NotifyService} from './services/NotifyService';
-import RoutingServiceInstance, { 
+import NotifyService, {NotifyServiceInstance} from './services/NotifyService';
+import RoutingService, { 
     IFrontRoutes, renderRouteComponent, RouteReturn, 
-    _ROUTING_EVENT_NAME, IRoutingEvent, RWSRoutingService as RoutingService,
+    _ROUTING_EVENT_NAME, IRoutingEvent, RoutingServiceInstance,
     RWSRouter, IRWSRouteResult
 } from './services/RoutingService';
-import DOMServiceInstance, { DOMService, DOMOutputType, TagsProcessorType }  from './services/DOMService';
+import DOMService, { DOMServiceInstance, DOMOutputType, TagsProcessorType }  from './services/DOMService';
 import RWSViewComponent, { IAssetShowOptions } from './components/_component';
 import RWSView, { RWSDecoratorOptions, RWSIgnore } from './components/_decorator';
-import ApiServiceInstance,  { IBackendRoute, ApiService, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
+import ApiService,  { IBackendRoute, ApiServiceInstance, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
 import RWSService from './services/_service';
-import UtilsServiceInstance, {RWSUtilsService as UtilsService} from './services/UtilsService';
+import UtilsService, {UtilsServiceInstance} from './services/UtilsService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 
 import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
-import WSServiceInstance, {RWSWSService as WSService, WSStatus} from './services/WSService';
+import WSService, {WSServiceInstance, WSStatus} from './services/WSService';
 import { RouterComponent } from './components/router/component';
 import registerRWSComponents, { RWSUploader } from './components';
 import { ngAttr } from './components/_attrs/angular-attr';
@@ -47,7 +47,7 @@ export {
     NotifyServiceInstance,
     NotifyService,
     ConfigServiceInstance,
-    ConfigService as getRWSConfig,
+    ConfigService,
     ServiceWorkerServiceInstance,
     ServiceWorkerService,
 

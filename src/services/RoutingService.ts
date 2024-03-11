@@ -3,7 +3,7 @@ import TheService from './_service';
 import Router from 'url-router';
 import RWSViewComponent from '../components/_component';
 import { RouterComponent } from '../components/router/component';
-import {RWSUtilsService as UtilsService} from './UtilsService';
+import UtilsService, {UtilsServiceInstance} from './UtilsService';
 
 
 type IFrontRoutes = Record<string, unknown>; 
@@ -17,15 +17,16 @@ type IRWSRouteResult = {
 class RWSRouter {
     private baseComponent: RWSViewComponent;
     private urlRouter: Router<any>;
-  
-    constructor(routerComponent: RWSViewComponent, urlRouter: Router<any>){
+    private utilsService: UtilsServiceInstance;
+
+    constructor(routerComponent: RWSViewComponent, urlRouter: Router<any>, utilsService: UtilsServiceInstance){
         this.baseComponent = routerComponent;
         this.urlRouter = urlRouter;
+        this.utilsService = utilsService;
 
         window.addEventListener('popstate', (event: Event) => {
             console.log('pop', event);
         });
-
     }
 
     public routeComponent(newComponent: RWSViewComponent)
@@ -35,7 +36,7 @@ class RWSRouter {
 
     public fireHandler(route: IRWSRouteResult): RouteReturn
     {     const handler = route.handler();
-        return [handler[0], handler[1], UtilsService.mergeDeep(route.params, handler[2])];
+        return [handler[0], handler[1], this.utilsService.mergeDeep(route.params, handler[2])];
     }
 
     public handleRoute(url: string): RouteReturn
@@ -65,9 +66,12 @@ class RWSRouter {
 class RoutingService extends TheService {
     private router: Router<any>;
     private routes: IFrontRoutes;
+    private utilsService: UtilsServiceInstance;
 
-    constructor(){
+    constructor(@UtilsService utilsService: UtilsServiceInstance){
         super();        
+
+        this.utilsService = utilsService;
     }
 
     public initRouting(routes: IFrontRoutes)
@@ -80,7 +84,7 @@ class RoutingService extends TheService {
 
     public apply(comp: RWSViewComponent): RWSRouter
     {
-        return new RWSRouter(comp, this.router);
+        return new RWSRouter(comp, this.router, this.utilsService);
     }
 
     public routeHandler = (comp: typeof RWSViewComponent) => () => {
@@ -101,6 +105,5 @@ interface IRoutingEvent {
   component: typeof RWSViewComponent
 }
 
-export default RoutingService;
-const RWSRoutingService = RoutingService.getSingleton();
-export { IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent, RWSRoutingService};
+export default RoutingService.getSingleton();
+export { RoutingService as RoutingServiceInstance, IFrontRoutes, RWSRouter, RouterComponent, IRWSRouteResult, renderRouteComponent, RouteReturn, _ROUTING_EVENT_NAME, IRoutingEvent};

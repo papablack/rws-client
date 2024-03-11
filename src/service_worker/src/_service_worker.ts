@@ -1,5 +1,9 @@
 import IRWSUser from '../../interfaces/IRWSUser';
 
+//@4DI
+import { WSServiceInstance } from '../../services/WSService'
+import { DI, Container } from "@microsoft/fast-foundation";
+
 type SWMsgType = {
     command: string,
     asset_type?: string,
@@ -7,8 +11,10 @@ type SWMsgType = {
 };
 
 abstract class RWSServiceWorker<UserType extends IRWSUser> {
+    protected DI: Container;
     protected user: UserType = null;
     protected ignoredUrls: RegExp[] = [];
+    protected wsService: WSServiceInstance
     protected regExTypes: { [key: string]: RegExp }  
 
     public workerScope: ServiceWorkerGlobalScope;
@@ -20,8 +26,9 @@ abstract class RWSServiceWorker<UserType extends IRWSUser> {
     onInstall(): Promise<void> { return; }
     onActivate(): Promise<void> { return; }
 
-    constructor(workerScope: ServiceWorkerGlobalScope){        
-        
+    constructor(workerScope: ServiceWorkerGlobalScope, DI: Container){   
+        this.DI = DI;     
+        this.wsService = DI.get<WSServiceInstance>(WSServiceInstance);
         this.workerScope = workerScope;
 
         this.onInit().then(() => {
@@ -67,7 +74,8 @@ abstract class RWSServiceWorker<UserType extends IRWSUser> {
         const className = this.name;
 
         if (!RWSServiceWorker._instances[className]) {
-            RWSServiceWorker._instances[className] = new this(workerScope);
+            const WSService = DI.getOrCreateDOMContainer().get<WSServiceInstance>(WSServiceInstance);
+            RWSServiceWorker._instances[className] = new this(workerScope, WSService);
         }
 
         return RWSServiceWorker._instances[className] as InstanceType<T>;

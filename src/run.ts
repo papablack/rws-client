@@ -1,14 +1,19 @@
 import IRWSConfig from './interfaces/IRWSConfig';
-import appConfig, { ConfigServiceInstance } from './services/ConfigService';
-import { NotifyService } from './services/NotifyService';
-import { RWSWSService as WSService} from './services/WSService';
+import { ConfigServiceInstance } from './services/ConfigService';
+import { NotifyServiceInstance } from './services/NotifyService';
+import { WSServiceInstance} from './services/WSService';
 
-import { RWSRoutingService as RoutingService} from './services/RoutingService';
-import { ApiService } from "./services/ApiService";
+import { RoutingServiceInstance} from './services/RoutingService';
+import ApiService, { ApiServiceInstance } from "./services/ApiService";
+import { DI } from "@microsoft/fast-foundation";
 
 const main = async (): Promise<boolean> => {    
-    //First config run for setting up data. Later just use appConfig().get() to obtain data.
-    const config = appConfig();
+    const WSService = DI.getOrCreateDOMContainer().get<WSServiceInstance>(WSServiceInstance);
+    const NotifyService = DI.getOrCreateDOMContainer().get<NotifyServiceInstance>(NotifyServiceInstance);
+    const RoutingService = DI.getOrCreateDOMContainer().get<RoutingServiceInstance>(RoutingServiceInstance);
+
+    const config = DI.getOrCreateDOMContainer().get<ConfigServiceInstance>(ConfigServiceInstance);
+
     
     RoutingService.initRouting(config.get('routes'));    
 

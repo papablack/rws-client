@@ -1,8 +1,15 @@
 import { observable  } from '@microsoft/fast-element';
 
-import { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn, RWSRoutingService as RoutingService } from '../../services/RoutingService';
+import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn, RoutingServiceInstance } from '../../services/RoutingService';
 import RWSViewComponent from '../_component';
 
+
+import ConfigService, { ConfigServiceInstance } from '../../services/ConfigService';
+import UtilsService, { UtilsServiceInstance } from '../../services/UtilsService';
+import  DOMService, { DOMServiceInstance, DOMOutputType } from '../../services/DOMService';
+import ApiService, { ApiServiceInstance } from '../../services/ApiService';
+import WSService, { WSServiceInstance } from '../../services/WSService';
+import NotifyService, { NotifyServiceInstance } from '../../services/NotifyService';
 
 export class RouterComponent extends RWSViewComponent {    
     static autoLoadFastElement = false;
@@ -18,10 +25,18 @@ export class RouterComponent extends RWSViewComponent {
     @observable childComponents: HTMLElement[] = [];    
     slotEl: HTMLElement = null;
 
-    constructor(){
-        super();                
+    constructor(
+        @RoutingService routingService: RoutingServiceInstance,
+        @ConfigService config: ConfigServiceInstance, 
+        @DOMService domService: DOMServiceInstance, 
+        @UtilsService utilsService: UtilsServiceInstance,
+        @ApiService apiService: ApiServiceInstance,
+        @WSService wsService: WSServiceInstance,
+        @NotifyService notifyService: NotifyServiceInstance
+    ){
+        super(config, domService, utilsService, apiService, wsService, notifyService);
 
-        this.routing = RoutingService.apply(this);
+        this.routing = routingService.apply(this);
     }
 
     connectedCallback() {
@@ -41,9 +56,11 @@ export class RouterComponent extends RWSViewComponent {
         this.$emit(_ROUTING_EVENT_NAME, {
             routeName,
             component: childComponent
-        });
+       });
+        
+        const newComponent: RWSViewComponent = this.DI.get<RWSViewComponent>(childComponent);
 
-        const newComponent: RWSViewComponent = new childComponent(routeParams);   
+        newComponent.passRouteParams(routeParams);
 
         if(this.currentComponent){
             this.getShadowRoot().removeChild(this.currentComponent);

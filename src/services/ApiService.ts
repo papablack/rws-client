@@ -1,9 +1,9 @@
 import TheService from './_service';
-import config from '../services/ConfigService';
-import ConfigService from '../services/ConfigService';
+
+//@4DI
+import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
+
 import { upload, UploadResponse } from 'upload';
-// import { generateClient } from "aws-amplify/data";
-// import { type Schema } from "";
 
 
 interface RequestOptions {
@@ -37,9 +37,11 @@ const _DEFAULT_CONTENT_TYPE = 'application/json';
 
 class ApiServiceInstance extends TheService {
     private token?: string;    
+    private config: ConfigServiceInstance;
 
-    constructor() {
+    constructor(@ConfigService configService: ConfigServiceInstance) {
         super();        
+        this.config = configService;
     }
 
     private addHeader(headers: Headers | [string, string][] | {[key: string]: string}, key: string, val: string)
@@ -158,7 +160,7 @@ class ApiServiceInstance extends TheService {
     {
        
 
-        const routesPackage = ConfigService().get('backendRoutes');
+        const routesPackage = this.config.get('backendRoutes');
 
         let routes: IHTTProute[] = [];       
 
@@ -194,7 +196,7 @@ class ApiServiceInstance extends TheService {
             apiPath = apiPath.replace(`:${paramKey}`, paramValue);
         });
 
-        return `${config().get('backendUrl')}${config().get('apiPrefix') || ''}${apiPath}`;
+        return `${this.config.get('backendUrl')}${this.config.get('apiPrefix') || ''}${apiPath}`;
     }
 
     async uploadFile(url: string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse>
@@ -237,6 +239,6 @@ class ApiServiceInstance extends TheService {
         // // return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
     }
 }
-const apiService = ApiServiceInstance.getSingleton();
-export default ApiServiceInstance;
-export { IBackendRoute, RequestOptions, apiService as ApiService, IHTTProute, IPrefixedHTTProutes };
+
+export default ApiServiceInstance.getSingleton();
+export { IBackendRoute, RequestOptions, ApiServiceInstance, IHTTProute, IPrefixedHTTProutes };

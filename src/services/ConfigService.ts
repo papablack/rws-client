@@ -1,8 +1,5 @@
 import TheService from './_service';
 import IRWSConfig from '../interfaces/IRWSConfig';
-import { v4 as uuid } from 'uuid';
-
-import { DI, Container, InterfaceSymbol, Registration } from "@microsoft/fast-foundation";
 
 
 const _DEFAULTS: {[property: string]: any} = {
@@ -15,11 +12,10 @@ const __SENT_TO_COMPONENTS: string[] = [];
 class ConfigService extends TheService {  
     static isLoaded: boolean = false;
 
-    private data: IRWSConfig;    
+    private data: IRWSConfig = {};    
   
-    constructor(cfg: IRWSConfig) {
-        super();    
-        this.data = cfg;              
+    constructor() {
+        super();                     
     }    
   
     public get(key: keyof IRWSConfig): any
@@ -51,25 +47,6 @@ class ConfigService extends TheService {
         this.data = cfg();
   
         return this;
-    }
-
-      
-  
-    public static registerConfigSingleton<T extends new (...args: any[]) => TheService>(this: T, cfg?: IRWSConfig): InterfaceSymbol<ConfigService>
-    {
-        const className = this.name;
-        const instanceExists = TheService._instances[className];
-
-        const singletonInstance = DI.createInterface<ConfigService>();      
-        const container: Container = DI.getOrCreateDOMContainer();
-
-        const instance = new this(cfg);
-
-        container.register(
-            Registration.singleton(ConfigService, ConfigService)
-        );        
-
-        return singletonInstance;
     }
 
     async waitForConfig(tagName: string): Promise<boolean>
@@ -110,8 +87,13 @@ class ConfigService extends TheService {
     }
 
     mergeConfig(config: IRWSConfig) {
-        console.log('merging', config);
+        const unloaded = ConfigService.isLoaded;        
+
         this.data = Object.assign(this.data, config);
+
+        if(unloaded){
+            ConfigService.isLoaded = true;
+        }
     }
 
     getData(): IRWSConfig
@@ -120,6 +102,6 @@ class ConfigService extends TheService {
     }
 }
 
-export default ConfigService.registerConfigSingleton();
+export default ConfigService.getSingleton();
 
 export { ConfigService as ConfigServiceInstance };

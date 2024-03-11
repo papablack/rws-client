@@ -1,11 +1,11 @@
 import IRWSConfig from './interfaces/IRWSConfig';
 import startClient from './run';
 import RWSNotify from './types/RWSNotify';
-import {NotifyService} from './services/NotifyService';
+import NotifyService, {NotifyServiceInstance} from './services/NotifyService';
 import { 
     IFrontRoutes,  _ROUTING_EVENT_NAME
 } from './services/RoutingService';
-import ApiServiceInstance, { ApiService, IBackendRoute } from './services/ApiService';
+import ApiService, { ApiServiceInstance, IBackendRoute } from './services/ApiService';
 import registerRWSComponents from './components';
 
 import IRWSUser from './interfaces/IRWSUser';
@@ -33,10 +33,11 @@ export default class RWSClient {
     private config: IRWSConfig = { backendUrl: '', routes: {}, splitFileDir: '/', splitPrefix: 'rws' };
     protected initCallback: () => Promise<void> = async () => {};
     
-    private sw: ServiceWorkerServiceInstance;
-    private ws: WSServiceInstance;
-    private api: ApiServiceInstance;
-    private appConfig: ConfigServiceInstance;
+    sw: ServiceWorkerServiceInstance;
+    ws: WSServiceInstance;
+    api: ApiServiceInstance;
+    appConfig: ConfigServiceInstance;
+    notify: NotifyServiceInstance;
 
     private isSetup = false;
 
@@ -46,17 +47,14 @@ export default class RWSClient {
     };
 
     constructor(
-        @ConfigService appConfig: ConfigServiceInstance, 
-        @ServiceWorkerService sw: ServiceWorkerServiceInstance,
-        @WSService ws: WSServiceInstance,
-        @ApiService api: ApiServiceInstance
     ){
         this.DI = DI.getOrCreateDOMContainer();
 
-        this.appConfig = appConfig;        
-        this.sw = sw;        
-        this.ws = ws;        
-        this.api = api;
+        this.appConfig = this.DI.get<ConfigServiceInstance>(ConfigServiceInstance);
+        this.sw = this.DI.get<ServiceWorkerServiceInstance>(ServiceWorkerServiceInstance); 
+        this.ws = this.DI.get<WSServiceInstance>(WSServiceInstance);
+        this.api = this.DI.get<ApiServiceInstance>(ApiServiceInstance);
+        this.notify = this.DI.get<NotifyServiceInstance>(NotifyServiceInstance);
 
         this.user = this.getUser();
 
@@ -143,7 +141,7 @@ export default class RWSClient {
 
     public setNotifier(notifier: RWSNotify): RWSClient
     {
-        NotifyService.setNotifier(notifier);
+        this.notify.setNotifier(notifier);
 
         return this;
     }

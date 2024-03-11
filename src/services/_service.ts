@@ -6,10 +6,10 @@ export default abstract class TheRWSService {
     constructor() {
     }
 
-    protected static _instances: { [key: string]: TheRWSService } | null = {};
-
+    private static factories: Map<typeof TheRWSService, () => TheRWSService> = new Map();
+    private static instances: Map<new (...args: any[]) => TheRWSService, TheRWSService> = new Map();
     
-    public static getSingleton<T extends Key>(this: new () => T): InterfaceSymbol<T>
+    public static getSingleton<T extends Key>(this: new (...args: any[]) => T): InterfaceSymbol<T>
     {
         const singletonInstance = DI.createInterface<T>();      
         const container: Container = DI.getOrCreateDOMContainer();        
@@ -23,12 +23,5 @@ export default abstract class TheRWSService {
 
     public getReloadable(): string | null {
         return (this as any).constructor._RELOADABLE || this._RELOADABLE;
-    }
-
-    public reloadService<T extends new (...args: any[]) => TheRWSService>(this: T, ...params: any[]): InstanceType<T> 
-    {    
-        const className = this.name;
-        TheRWSService._instances[className] = new this(...params);        
-        return TheRWSService._instances[className] as InstanceType<T>;
     }
 }

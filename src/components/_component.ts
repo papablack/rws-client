@@ -1,9 +1,11 @@
 import { FASTElement, ViewTemplate, ElementStyles, observable, html } from '@microsoft/fast-element';
-import config from '../services/ConfigService';
-import { RWSUtilsService as UtilsService } from '../services/UtilsService';
-
-import { DOMService, DOMOutputType } from '../services/DOMService';
-import IRWSConfig from '../interfaces/IRWSConfig';
+import { DI } from "@microsoft/fast-foundation";
+import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
+import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
+import  DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
+import ApiService, { ApiServiceInstance } from '../services/ApiService';
+import NotifyService, { NotifyServiceInstance } from '../services/NotifyService';
+import WSService, { WSServiceInstance } from '../services/WSService';
 
 interface IFastDefinition {
     name: string;
@@ -15,7 +17,16 @@ interface IAssetShowOptions {
 
 }
 
-class RWSViewComponent extends FASTElement {
+abstract class RWSViewComponent extends FASTElement {
+    protected DI;
+
+    protected domService: DOMServiceInstance;
+    protected utilsService: UtilsServiceInstance;
+    protected config: ConfigServiceInstance
+    protected apiService: ApiServiceInstance;
+    protected notifyService: NotifyServiceInstance;
+    protected wsService: WSServiceInstance;
+
     __isLoading: boolean = true;
     private static instances: RWSViewComponent[] = [];
     static fileList: string[] = [];
@@ -29,11 +40,23 @@ class RWSViewComponent extends FASTElement {
         [key: string]: ViewTemplate
       } = {};
 
-    constructor(routeParams: Record<string, string> =  null) {
-        super();
-        if(routeParams){
-            this.routeParams = routeParams;
-        }       
+    constructor(
+        @ConfigService config: ConfigServiceInstance, 
+        @DOMService domService: DOMServiceInstance, 
+        @UtilsService utilsService: UtilsServiceInstance,
+        @ApiService apiService: ApiServiceInstance,
+        @WSService wsService: WSServiceInstance,
+        @NotifyService notifyService: NotifyServiceInstance
+    ) {
+        super();         
+
+        this.DI = DI.getOrCreateDOMContainer();
+        this.apiService = apiService;
+        this.domService = domService;
+        this.utilsService = utilsService;
+        this.notifyService = notifyService;
+        this.wsService = wsService;
+        this.config = config;
     }
 
     connectedCallback() {
@@ -48,7 +71,7 @@ class RWSViewComponent extends FASTElement {
                 if(this.fileAssets[file]){
                     return;
                 }
-                UtilsService.getFileContents(config().get('pubPrefix') + file).then((response: string) => {        
+                this.utilsService.getFileContents(this.config.get('pubPrefix') + file).then((response: string) => {        
                     this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
                 }); 
             });      
@@ -60,6 +83,13 @@ class RWSViewComponent extends FASTElement {
         
         RWSViewComponent.instances.push(this);
     } 
+
+    passRouteParams(routeParams: Record<string, string> =  null)
+    {
+        if(routeParams){
+            this.routeParams = routeParams;
+        }     
+    }
 
     private static getInstances(): RWSViewComponent[]
     {
@@ -122,11 +152,11 @@ class RWSViewComponent extends FASTElement {
     }
 
     parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): DOMOutputType<T> {           
-        return DOMService.parse$<T>(input, directReturn);
+        return this.domService.parse$<T>(input, directReturn);
     }
 
     $<T extends Element>(selectors: string, directReturn: boolean = false): DOMOutputType<T> {                
-        return DOMService.$<T>(this.getShadowRoot(), selectors, directReturn);
+        return this.domService.$<T>(this.getShadowRoot(), selectors, directReturn);
     }   
 
     async loadingString<T, C>(item: T, addContent: (cnt: C | { output: string }, paste?: boolean, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: C | { output: string }, paste?: boolean,error?: boolean) => void) => Promise<boolean>) {
