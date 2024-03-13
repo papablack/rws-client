@@ -97,7 +97,7 @@ module.exports = function(content) {
             replaced = modifiedContent;
             replaced = replaced.replace(`@RWSView('${tagName}')`, '');
             const plugin = new RWSPlugin();
-            let styles = 'const styles = null;'
+            let styles = 'const styles: null = null;'
 
             if(fs.existsSync(path.dirname(filePath) + '/styles')){
                 // const scssCode = fs.readFileSync(path.dirname(filePath) + '/styles/layout.scss', 'utf-8');
@@ -106,9 +106,12 @@ module.exports = function(content) {
                 styles = `import styles from './${stylesPath}'`;
             }
             
-            // const htmlCode = fs.readFileSync(path.dirname(filePath) + '/template.html', 'utf-8');                   
+            const templateExists = fs.existsSync(path.dirname(filePath) + '/template.html', 'utf-8');                   
+            let template = 'const template: null = null;';
 
-            let template = `import template from './${templatePath}'`;
+            if(templateExists){
+                template = `import template from './${templatePath}'`;
+            }
 
             processedContent = ` 
             import * as T from '@microsoft/fast-element';\n           
@@ -116,7 +119,7 @@ module.exports = function(content) {
             ${styles}\n
             ${addedParamDefs.join('\n')}
             \n      
-        ` + replaced;                     
+            ` + replaced;                   
         }
       
         return processedContent;

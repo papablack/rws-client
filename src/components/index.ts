@@ -1,7 +1,9 @@
 import { RWSUploader } from './uploader/component';
+import { RouterComponent } from './router/component';
 
-export default () => {
-    RWSUploader;
-};
+const RWSComponents = { 
+    RWSUploader,
+    RouterComponent
+}
 
-export { RWSUploader }
+export { RWSComponents };

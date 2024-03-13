@@ -17,5 +17,6 @@ export default interface IRWSConfig {
     parted?: boolean
     splitFileDir?: string
     splitPrefix?: string
-    _noLoad?: boolean
+    routing_enabled?: boolean
+    _noLoad?: boolean    
 }

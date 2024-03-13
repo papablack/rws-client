@@ -1,21 +1,20 @@
-import IRWSConfig from './interfaces/IRWSConfig';
 import { ConfigServiceInstance } from './services/ConfigService';
 import { NotifyServiceInstance } from './services/NotifyService';
 import { WSServiceInstance} from './services/WSService';
 
 import { RoutingServiceInstance} from './services/RoutingService';
-import ApiService, { ApiServiceInstance } from "./services/ApiService";
-import { DI } from "@microsoft/fast-foundation";
+import { RouterComponent } from './components/router/component';
 
-const main = async (): Promise<boolean> => {    
-    const WSService = DI.getOrCreateDOMContainer().get<WSServiceInstance>(WSServiceInstance);
-    const NotifyService = DI.getOrCreateDOMContainer().get<NotifyServiceInstance>(NotifyServiceInstance);
-    const RoutingService = DI.getOrCreateDOMContainer().get<RoutingServiceInstance>(RoutingServiceInstance);
-
-    const config = DI.getOrCreateDOMContainer().get<ConfigServiceInstance>(ConfigServiceInstance);
-
-    
-    RoutingService.initRouting(config.get('routes'));    
+const main = async (
+    config: ConfigServiceInstance, 
+    WSService: WSServiceInstance, 
+    NotifyService: NotifyServiceInstance, 
+    RoutingService: RoutingServiceInstance
+): Promise<boolean> => {    
+    if(config.get('routing_enabled') === true){
+        RoutingService.initRouting(config.get('routes'));    
+        RouterComponent.defineComponent();
+    }
 
     if(config.get('backendUrl')){
         WSService.on('ws:disconnected', (instance, params) => {

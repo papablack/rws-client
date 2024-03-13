@@ -138,7 +138,7 @@ const RWSWebpackWrapper = (config) => {
       const isIgnored = fileInfo.isIgnored;             
 
       if(isIgnored === true){
-        console.warn('Ignored: '+ fileInfo.filePath);
+        // console.warn('Ignored: '+ fileInfo.filePath);
         return;
       }
 
@@ -146,41 +146,30 @@ const RWSWebpackWrapper = (config) => {
     });        
 
     fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));    
-
-    console.log(automatedEntries)
-
     optimConfig.splitChunks = {
       cacheGroups: {
         vendor: {
           test: (module) => {
-            const importString = module.identifier();
+            let importString = module.identifier();
+
+            if(importString.split('!').length > 2){
+              importString = importString.split('!')[2];
+            }
 
             const inNodeModules = importString.indexOf('node_modules') > -1;
             const inVendorPackage = importString.indexOf(__dirname) > -1;
 
             const inExecDir = importString.indexOf(executionDir) > -1;
-            const isNoComponent = !Object.keys(automatedEntries).find(key => importString.indexOf(path.resolve(path.dirname(automatedEntries[key]))) > -1);
+            const isNoPartedComponent = !Object.keys(automatedEntries).find(key => importString.indexOf(path.resolve(path.dirname(automatedEntries[key]))) > -1);
 
-            const isAvailableForVendors = (inNodeModules || inVendorPackage) && isNoComponent && (!inExecDir || (inExecDir && inVendorPackage));
-            
-            // if(importString.indexOf('ConfigService') > -1){
-            //   console.log(isNoComponent);
-            //   // console.log('IS', importString, importString.indexOf(automatedEntries['rwsuploader']) > -1);
-            //   // console.log('AE', path.resolve(path.dirname(automatedEntries['rwsuploader'])));
+            let isAvailableForVendors = (inNodeModules || inVendorPackage) && isNoPartedComponent;              
 
-            // }
 
-            if(isAvailableForVendors){
-              // console.log('splitservice', importString);
-            }else{
-              console.log(inNodeModules, inVendorPackage, isNoComponent, inExecDir,importString);
-            }
-
-            return isAvailableForVendors
+            return isAvailableForVendors;
           },
           name: 'vendors',
-          chunks: 'all',
-        },          
+          reuseExistingChunk: true,
+        }   
       }
     };       
   }else{
@@ -190,7 +179,7 @@ const RWSWebpackWrapper = (config) => {
   }  
   
   const cfgExport = {
-    entry: {
+    entry: {      
       client: config.entry,  
       ...automatedEntries  
     },

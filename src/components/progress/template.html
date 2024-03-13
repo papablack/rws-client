@@ -1,0 +1,25 @@
+<template
+            role="progressbar"
+            aria-valuenow="${x => x.value}"
+            aria-valuemin="${x => x.min}"
+            aria-valuemax="${x => x.max}"
+        >
+            ${T.when(
+                x => typeof x.value === "number",
+                T.html`
+                    <div class="progress rws-progress" part="progress" slot="determinate">
+                        <div
+                            class="determinate"
+                            part="determinate"
+                            style="width: ${x => x.percentComplete}%"
+                        ></div>
+                    </div>
+                `,
+                T.html`
+                    <div class="progress rws-progress" part="progress" slot="indeterminate">
+                        <slot name="indeterminate">                           
+                        </slot>
+                    </div>
+                `
+            )}
+</template>

@@ -1,7 +1,7 @@
 <div class="upload_area">
     <section>
         <h3>Upload file</h3>
-        <fast-progress :value="${x => x.uploadProgress}" max="100"></fast-progress>
+        <rws-progress :value="${x => x.uploadProgress}" max="100"></rws-progress>
         <article>
             <div class="drag-and-drop"> 
                 <div @click="${x => !x.chosenFile ? x.onChoose() : (() => {})()}" class="upl-background"></div>
@@ -9,9 +9,9 @@
                 ${T.when(x => x.chosenFile, T.html`<div class="file-block">${ x => x.chosenFile.name} <span @click="${ x => x.removeFile() }" class="close-btn">X</span></div>`)}
             </div>
             <div class="upl-controls">
-                <button @click="${ x => x.onChoose() }" class="outline">Choose file</fast-button>                
+                <button @click="${ x => x.onChoose() }" class="outline">Choose file</button>                
             </div>
         </article>
-        <button @click="${ x => x.onUploadStart() }" :disabled="${ x => x.chosenFile ? false : true }" appearance="accent" class="next">Upload</fast-button>
+        <button @click="${ x => x.onUploadStart() }" :disabled="${ x => x.chosenFile ? false : true }" appearance="accent" class="next">Upload</button>
     </section>
 </div>

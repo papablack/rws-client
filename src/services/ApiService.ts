@@ -37,11 +37,9 @@ const _DEFAULT_CONTENT_TYPE = 'application/json';
 
 class ApiServiceInstance extends TheService {
     private token?: string;    
-    private config: ConfigServiceInstance;
 
-    constructor(@ConfigService configService: ConfigServiceInstance) {
+    constructor(@ConfigService private config: ConfigServiceInstance) {
         super();        
-        this.config = configService;
     }
 
     private addHeader(headers: Headers | [string, string][] | {[key: string]: string}, key: string, val: string)
@@ -67,12 +65,10 @@ class ApiServiceInstance extends TheService {
             this.addHeader(headers, 'Authorization', `Bearer ${this.token}`);            
         }        
 
-        if((headers as any)['Content-Type'] === 'application/json'){
-            this.addHeader(headers, 'Accept', 'application/json');
-        }else if((headers as any)['Content-Type'] === 'text/html'){
-            this.addHeader(headers, 'Accept', 'text/html');
-        }else{
+        if(!!(headers as any)['Content-Type']){
             this.addHeader(headers, 'Accept', '*/*');
+        }else{
+            this.addHeader(headers, 'Accept', (headers as any)['Content-Type']);
         }
 
         return headers;

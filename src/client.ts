@@ -1,21 +1,27 @@
 import IRWSConfig from './interfaces/IRWSConfig';
 import startClient from './run';
 import RWSNotify from './types/RWSNotify';
-import {NotifyServiceInstance} from './services/NotifyService';
 
-import { 
-    IFrontRoutes,  RoutingServiceInstance,  _ROUTING_EVENT_NAME
-} from './services/RoutingService';
-import { ApiServiceInstance, IBackendRoute } from './services/ApiService';
-import registerRWSComponents from './components';
-
+import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
+import UtilsService, { UtilsServiceInstance } from './services/UtilsService';
+import  DOMService, { DOMServiceInstance, DOMOutputType } from './services/DOMService';
+import ApiService, { ApiServiceInstance } from './services/ApiService';
+import NotifyService, { NotifyServiceInstance } from './services/NotifyService';
+import RoutingService, { RoutingServiceInstance } from './services/RoutingService';
+import WSService, { WSServiceInstance } from './services/WSService';
+import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
+import { IBackendRoute } from './services/ApiService';
 import IRWSUser from './interfaces/IRWSUser';
+import RWSWindow, {RWSWindowComponentEntry, RWSWindowComponentRegister} from './interfaces/RWSWindow';
+
 import { DI, Container } from "@microsoft/fast-foundation";
 
-import { ConfigServiceInstance } from './services/ConfigService';
-import { WSServiceInstance } from './services/WSService'
-import { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
+import { 
+    IFrontRoutes,  _ROUTING_EVENT_NAME
+} from './services/RoutingService';
 
+import RWSViewComponent from './components/_component';
+import {provideRWSDesignSystem} from './components/_design_system';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -26,22 +32,18 @@ interface IHotModule extends NodeModule {
     }
 }
 
+
 type RWSEventListener = (event: CustomEvent) => void;
 
-export default class RWSClient {  
-    private DI: Container;
+class RWSClient {  
+    private _container: Container;
     private user: IRWSUser = null;
 
     private config: IRWSConfig = { backendUrl: '', routes: {}, splitFileDir: '/', splitPrefix: 'rws' };
     protected initCallback: () => Promise<void> = async () => {};
-    
-    sw: ServiceWorkerServiceInstance;
-    ws: WSServiceInstance;
-    api: ApiServiceInstance;
-    appConfig: ConfigServiceInstance;
-    notify: NotifyServiceInstance;
 
     private isSetup = false;
+    protected devStorage: {[key: string]: any} = {};
 
     private cfgSetupListener: RWSEventListener = (event: CustomEvent<{ callId: string }>) => {
         console.log('Received custom event from web component:', event.detail);
@@ -49,16 +51,16 @@ export default class RWSClient {
     };
 
     constructor(
-    ){
-
-        this.DI = DI.getOrCreateDOMContainer();   
-
-        this.appConfig = this.DI.get<ConfigServiceInstance>(ConfigServiceInstance);
-        this.sw = this.DI.get<ServiceWorkerServiceInstance>(ServiceWorkerServiceInstance); 
-        this.ws = this.DI.get<WSServiceInstance>(WSServiceInstance);
-        this.api = this.DI.get<ApiServiceInstance>(ApiServiceInstance);
-        this.notify = this.DI.get<NotifyServiceInstance>(NotifyServiceInstance);
-
+        @ConfigService public appConfig: ConfigServiceInstance,
+        @RoutingService public routingService: RoutingServiceInstance,        
+        @DOMService public domService: DOMServiceInstance,
+        @UtilsService public utilsService: UtilsServiceInstance,        
+        @ApiService public apiService: ApiServiceInstance,
+        @WSService public wsService: WSServiceInstance,
+        @ServiceWorkerService public swService: ServiceWorkerServiceInstance,
+        @NotifyService public notifyService: NotifyServiceInstance
+    ){        
+        this._container = DI.getOrCreateDOMContainer();
         this.user = this.getUser();
 
         this.pushDataToServiceWorker('SET_WS_URL', { url: this.appConfig.get('wsUrl')}, 'ws_url');
@@ -70,6 +72,10 @@ export default class RWSClient {
 
     async setup(config: IRWSConfig = {}): Promise<IRWSConfig> 
     {                
+        if(this.isSetup){
+            return this.config;
+        }
+
         this.config = {...this.config, ...config};                                 
         this.appConfig.mergeConfig(this.config);
 
@@ -84,18 +90,7 @@ export default class RWSClient {
         }                 
 
         if(this.appConfig.get('parted')){
-            const componentParts: string[] = await this.api.get<string[]>(this.appConfig.get('splitFileDir')+'/rws_chunks_info.json');
-    
-            componentParts.forEach((componentName: string) => {
-                const script: HTMLScriptElement = document.createElement('script');       
-    
-                script.src = this.appConfig.get('splitFileDir') + `/${this.appConfig.get('splitPrefix')}.${componentName}.js`;  // Replace with the path to your script file
-                script.async = true;        
-                script.type = 'text/javascript';
-    
-                console.log(`Appended ${componentName} component`);
-                document.body.appendChild(script);
-            });
+           await this.loadPartedComponents();
         }
     
     
@@ -121,59 +116,50 @@ export default class RWSClient {
             this.pushUserToServiceWorker(this.user);
         }
 
-        await startClient();
-
-        if(!this.config?.ignoreRWSComponents){
-            registerRWSComponents();
-        }        
+        await startClient(this.appConfig, this.wsService, this.notifyService, this.routingService);        
         
         await this.initCallback();
     
         return this;
     }
 
-    private broadcastConfigForViewComponents(): void
-    {
-        document.dispatchEvent(new CustomEvent<{ config: IRWSConfig }>('rws_cfg_broadcast', { detail: {config: this.appConfig.getData()}}));
-    }
-
-    public addRoutes(routes: IFrontRoutes){
+    addRoutes(routes: IFrontRoutes){
         this.config.routes = routes;
     }
 
-    public setNotifier(notifier: RWSNotify): RWSClient
+    setNotifier(notifier: RWSNotify): RWSClient
     {
-        this.notify.setNotifier(notifier);
+        this.notifyService.setNotifier(notifier);
 
         return this;
     }
 
-    public setDefaultLayout(DefaultLayout: any): RWSClient 
+    setDefaultLayout(DefaultLayout: any): RWSClient 
     {
         this.config.defaultLayout = DefaultLayout;
 
         return this;
     }
 
-    public setBackendRoutes(routes: IBackendRoute[]): RWSClient
+    setBackendRoutes(routes: IBackendRoute[]): RWSClient
     {
         this.config.backendRoutes = routes;            
         return this;
     }
 
-    public async onInit(callback: () => Promise<void>): Promise<RWSClient>
+    async onInit(callback: () => Promise<void>): Promise<RWSClient>
     {
         this.initCallback = callback;
         return this;
     }
 
-    public pushDataToServiceWorker(type: string, data: any, asset_type: string = 'data_push'): void
+    pushDataToServiceWorker(type: string, data: any, asset_type: string = 'data_push'): void
     {
         let tries = 0;
         
         const doIt: () => void = () => {
             try {
-                this.sw.sendDataToServiceWorker(type, data, asset_type);
+                this.swService.sendDataToServiceWorker(type, data, asset_type);
             } catch(e){
                 if(tries < 3){
                     setTimeout(() => { doIt(); }, 300)               
@@ -185,7 +171,7 @@ export default class RWSClient {
         doIt();
     }
 
-    public pushUserToServiceWorker(userData: any)
+    pushUserToServiceWorker(userData: any)
     {
         this.setUser(userData);
         this.pushDataToServiceWorker('SET_USER', userData, 'logged_user');
@@ -212,8 +198,8 @@ export default class RWSClient {
 
         this.user = user;
 
-        this.api.setToken(this.user.jwt_token);
-        this.ws.setUser(this.user);
+        this.apiService.setToken(this.user.jwt_token);
+        this.wsService.setUser(this.user);
         
         localStorage.setItem('the_rws_user', JSON.stringify(this.user));
 
@@ -232,13 +218,6 @@ export default class RWSClient {
         });
     }
 
-    private enableRouting(): void
-    {
-        
-    }
-
-    protected devStorage: {[key: string]: any} = {};
-
     setDevStorage(key: string, stuff: any): RWSClient
     {
         this.devStorage[key] = stuff;
@@ -254,6 +233,88 @@ export default class RWSClient {
     {
 
     }
+
+    async loadPartedComponents(): Promise<void>
+    {        
+        this.assignClientToBrowser();
+
+        const componentParts: string[] = await this.apiService.get<string[]>(this.appConfig.get('splitFileDir')+'/rws_chunks_info.json');
+        
+        const _all: Promise<string>[] = [];
+        componentParts.forEach((componentName: string) => {
+
+            const scriptUrl: string = this.appConfig.get('splitFileDir') + `/${this.appConfig.get('splitPrefix')}.${componentName}.js`;  // Replace with the path to your script file
+          
+            
+
+            const headers: any = {};
+
+            headers['Content-Type'] = 'application/javascript';
+
+            _all.push(this.apiService.pureGet(scriptUrl, {
+                headers
+            }));
+        });
+       
+        (await Promise.all(_all)).forEach((scriptCnt: string, key: number) => {
+            const script: HTMLScriptElement = document.createElement('script');                   
+            script.textContent = scriptCnt;
+            script.type = 'text/javascript';
+            document.body.appendChild(script);
+
+            console.log(`Appended ${componentParts[key]} component`);
+        });        
+
+        const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;                
+
+        const devStr = 'book-loader';
+        // provideRWSDesignSystem().register(richWindowComponents[devStr].component);
+
+
+        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: typeof RWSViewComponent) => {
+            el.define(el, (el as any).definition);
+        });
+
+        return;
+    }
+
+    private getBrowserObject(): Window & RWSWindow
+    {
+        if(!(window as Window & RWSWindow).RWS){
+            (window as Window & RWSWindow).RWS = {
+                client: this,
+                components: {}
+            }
+        }        
+
+        return window;
+    }
+
+    assignClientToBrowser(): void
+    {        
+        this.getBrowserObject().RWS.client = this;
+    }
+
+    private enableRouting(): void
+    {
+        this.appConfig.mergeConfig({ routing_enabled: true });
+    }
+
+    private disableRouting(): void
+    {
+        this.appConfig.mergeConfig({ routing_enabled: false });
+    }
+
+    private broadcastConfigForViewComponents(): void
+    {
+        document.dispatchEvent(new CustomEvent<{ config: IRWSConfig }>('rws_cfg_broadcast', { detail: {config: this.appConfig.getData()}}));
+    }   
+    
+    static getDI(): typeof DI
+    {
+        return DI;
+    }
 }
 
-export { IHotModule }
+export default DI.createInterface<RWSClient>(x => x.singleton(RWSClient));
+export { IHotModule, RWSClient as RWSClientInstance }

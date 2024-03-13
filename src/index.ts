@@ -1,31 +1,33 @@
+import { Transformer as HTMLTagTransformerType, Tag as HTMLTag, Attributes as HTMLAttributes } from 'sanitize-html';
+import { observable, attr } from '@microsoft/fast-element';
 import IRWSConfig from './interfaces/IRWSConfig';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
-import { observable, attr } from '@microsoft/fast-element';
-import NotifyService, {NotifyServiceInstance} from './services/NotifyService';
-import RoutingService, { 
-    IFrontRoutes, renderRouteComponent, RouteReturn, 
-    _ROUTING_EVENT_NAME, IRoutingEvent, RoutingServiceInstance,
-    RWSRouter, IRWSRouteResult
-} from './services/RoutingService';
-import DOMService, { DOMServiceInstance, DOMOutputType, TagsProcessorType }  from './services/DOMService';
-import RWSViewComponent, { IAssetShowOptions } from './components/_component';
-import RWSView, { RWSDecoratorOptions, RWSIgnore } from './components/_decorator';
-import ApiService,  { IBackendRoute, ApiServiceInstance, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
+import { provideRWSDesignSystem } from './components/_design_system';
 import RWSService from './services/_service';
+import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
+import RoutingService, { RoutingServiceInstance } from './services/RoutingService';
+import NotifyService, {NotifyServiceInstance} from './services/NotifyService';
+import DOMService, { DOMServiceInstance, DOMOutputType, TagsProcessorType }  from './services/DOMService';
+import ApiService,  { IBackendRoute, ApiServiceInstance, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
 import UtilsService, {UtilsServiceInstance} from './services/UtilsService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
-
-import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
 import WSService, {WSServiceInstance, WSStatus} from './services/WSService';
-import { RouterComponent } from './components/router/component';
-import registerRWSComponents, { RWSUploader } from './components';
 import { ngAttr } from './components/_attrs/angular-attr';
 import RWSClient from './client';
 import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worker';
 import IRWSUser from './interfaces/IRWSUser';
-import { Transformer as HTMLTagTransformerType, Tag as HTMLTag, Attributes as HTMLAttributes } from 'sanitize-html';
 
-RoutingServiceInstance.getSingleton();
+import { 
+    IFrontRoutes, renderRouteComponent, RouteReturn, 
+    _ROUTING_EVENT_NAME, IRoutingEvent,
+    RWSRouter, IRWSRouteResult
+} from './services/RoutingService';
+
+// import { RWSComponents } from './components';
+import RWSViewComponent, { IAssetShowOptions } from './components/_component';
+import RWSView, { RWSDecoratorOptions, RWSIgnore } from './components/_decorator';
+
+
 
 export default RWSClient;
 export { 
@@ -35,6 +37,7 @@ export {
     RouteReturn,
     _ROUTING_EVENT_NAME,
     IRoutingEvent,
+    
     RoutingServiceInstance,
     RoutingService,
     ApiServiceInstance,
@@ -69,22 +72,22 @@ export {
     HTMLTagTransformerType,
     HTMLTag,
     HTMLAttributes,
-
-    RWSViewComponent,        
+         
     RWSView,
     RWSIgnore,
-    ngAttr,
-    RWSService,
-
-    RouterComponent,
-    RWSUploader,
+    ngAttr,    
 
     renderRouteComponent,
-    registerRWSComponents,
+    
+    // RWSComponents,
 
     observable,
     attr,
 
     RWSServiceWorker,
-    SWMsgType
+    SWMsgType,
+
+    RWSService,
+    RWSViewComponent,   
+    provideRWSDesignSystem
 };

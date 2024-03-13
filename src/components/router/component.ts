@@ -1,47 +1,25 @@
 import { observable  } from '@microsoft/fast-element';
+import { DI, Container, inject } from "@microsoft/fast-foundation";
+import { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from '../../services/RoutingService';
+import RWSViewComponent, { IRWSViewComponent } from '../_component';
+import RWSView from '../_decorator';
 
-import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn, RoutingServiceInstance } from '../../services/RoutingService';
-import RWSViewComponent from '../_component';
-
-
-import ConfigService, { ConfigServiceInstance } from '../../services/ConfigService';
-import UtilsService, { UtilsServiceInstance } from '../../services/UtilsService';
-import  DOMService, { DOMServiceInstance, DOMOutputType } from '../../services/DOMService';
-import ApiService, { ApiServiceInstance } from '../../services/ApiService';
-import WSService, { WSServiceInstance } from '../../services/WSService';
-import NotifyService, { NotifyServiceInstance } from '../../services/NotifyService';
-
+@RWSView('rws-router', { ignorePackaging: true })
 export class RouterComponent extends RWSViewComponent {    
     static autoLoadFastElement = false;
     private routing: RWSRouter;
-    private currentComponent: RWSViewComponent;
+    private currentComponent: IRWSViewComponent;
 
     @observable currentUrl: string;
-
-    static definition = {
-        name: 'rws-router',         
-    };
-    
     @observable childComponents: HTMLElement[] = [];    
     slotEl: HTMLElement = null;
 
-    constructor(
-        @RoutingService routingService: RoutingServiceInstance,
-        @ConfigService config: ConfigServiceInstance, 
-        @DOMService domService: DOMServiceInstance, 
-        @UtilsService utilsService: UtilsServiceInstance,
-        @ApiService apiService: ApiServiceInstance,
-        @WSService wsService: WSServiceInstance,
-        @NotifyService notifyService: NotifyServiceInstance
-    ){
-        super(config, domService, utilsService, apiService, wsService, notifyService);
-
-        this.routing = routingService.apply(this);
-    }
+    @inject(Container)
+    private DI: Container;
 
     connectedCallback() {
         super.connectedCallback();            
-        
+        this.routing = this.routingService.apply(this);        
         this.handleRoute(this.routing.handleRoute(this.currentUrl));        
     }
 
@@ -58,7 +36,7 @@ export class RouterComponent extends RWSViewComponent {
             component: childComponent
        });
         
-        const newComponent: RWSViewComponent = this.DI.get<RWSViewComponent>(childComponent);
+        const newComponent: IRWSViewComponent = this.DI.get<typeof childComponent>(childComponent);
 
         newComponent.passRouteParams(routeParams);
 

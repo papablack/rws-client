@@ -1,11 +1,16 @@
-import { FASTElement, ViewTemplate, ElementStyles, observable, html } from '@microsoft/fast-element';
-import { DI } from "@microsoft/fast-foundation";
+import { ViewTemplate, ElementStyles, observable, html } from '@microsoft/fast-element';
+import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry } from '@microsoft/fast-foundation';
 import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
 import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
 import  DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
 import ApiService, { ApiServiceInstance } from '../services/ApiService';
 import NotifyService, { NotifyServiceInstance } from '../services/NotifyService';
+import RoutingService, { RoutingServiceInstance } from '../services/RoutingService';
 import WSService, { WSServiceInstance } from '../services/WSService';
+import { IRWSViewComponent, IAssetShowOptions } from '../interfaces/IRWSViewComponent';
+import { DI, inject } from '@microsoft/fast-foundation';
+import { provideRWSDesignSystem } from './_design_system';
+import RWSWindow, { RWSWindowComponentEntry,RWSWindowComponentInterface } from '../interfaces/RWSWindow';
 
 interface IFastDefinition {
     name: string;
@@ -13,20 +18,7 @@ interface IFastDefinition {
     styles?: ElementStyles;
 }
 
-interface IAssetShowOptions {
-
-}
-
-abstract class RWSViewComponent extends FASTElement {
-    protected DI;
-
-    protected domService: DOMServiceInstance;
-    protected utilsService: UtilsServiceInstance;
-    protected config: ConfigServiceInstance
-    protected apiService: ApiServiceInstance;
-    protected notifyService: NotifyServiceInstance;
-    protected wsService: WSServiceInstance;
-
+abstract class RWSViewComponent extends FoundationElement implements IRWSViewComponent {
     __isLoading: boolean = true;
     private static instances: RWSViewComponent[] = [];
     static fileList: string[] = [];
@@ -34,6 +26,7 @@ abstract class RWSViewComponent extends FASTElement {
     public routeParams: Record<string, string> = {};
 
     static autoLoadFastElement = true;
+    static _defined: {[key: string]: boolean} = {};
 
     @observable trashIterator: number = 0;
     @observable fileAssets: {
@@ -41,26 +34,27 @@ abstract class RWSViewComponent extends FASTElement {
       } = {};
 
     constructor(
-        @ConfigService config: ConfigServiceInstance, 
-        @DOMService domService: DOMServiceInstance, 
-        @UtilsService utilsService: UtilsServiceInstance,
-        @ApiService apiService: ApiServiceInstance,
-        @WSService wsService: WSServiceInstance,
-        @NotifyService notifyService: NotifyServiceInstance
+        @ConfigService protected config: ConfigServiceInstance,
+        @RoutingService protected routingService: RoutingServiceInstance,        
+        @DOMService protected domService: DOMServiceInstance,
+        @UtilsService protected utilsService: UtilsServiceInstance,        
+        @ApiService protected apiService: ApiServiceInstance,
+        @WSService protected wsService: WSServiceInstance,
+        @NotifyService protected notifyService: NotifyServiceInstance
     ) {
-        super();         
+        super();    
 
-        this.DI = DI.getOrCreateDOMContainer();
-        this.apiService = apiService;
-        this.domService = domService;
-        this.utilsService = utilsService;
-        this.notifyService = notifyService;
-        this.wsService = wsService;
-        this.config = config;
+        // DI.getDependencies((this as any).constructor).forEach((el: any, key: any) => {
+        //     // console.log(DI.getOrCreateDOMContainer().get(el));
+        // });
     }
 
     connectedCallback() {
         super.connectedCallback();    
+        
+        
+
+        // console.trace(this.config);
 
         if(!(this.constructor as any).definition && (this.constructor as any).autoLoadFastElement){
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
@@ -89,12 +83,7 @@ abstract class RWSViewComponent extends FASTElement {
         if(routeParams){
             this.routeParams = routeParams;
         }     
-    }
-
-    private static getInstances(): RWSViewComponent[]
-    {
-        return RWSViewComponent.instances;
-    }
+    }    
 
     showAsset(assetName: string, options: IAssetShowOptions = {}): ViewTemplate<any, any>
     {        
@@ -105,37 +94,7 @@ abstract class RWSViewComponent extends FASTElement {
         }
 
         return this.fileAssets[assetName];
-    }
-
-    static _defined: {[key: string]: boolean} = {};
-
-    static isDefined: (key: string) => boolean = (key) => {
-        return !!RWSViewComponent._defined[key];
-    }
-
-    static defineComponent()
-    {
-        const def = (this as any).definition;  
-
-        if(!def){
-            throw new Error('RWS component is not named. Add `static definition = {name, template};`');
-        }        
-
-        FASTElement.define(this, def);       
-    }
-
-    static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null){                    
-        const def: IFastDefinition = {
-            name: tagName,
-            template: htmlTemplate
-        };
-
-        if(styles){
-            def.styles = styles;
-        }
-
-        return def;
-    }
+    }    
 
     on<T>(type: string, listener: (event: CustomEvent<T>) => any)
     {
@@ -159,7 +118,8 @@ abstract class RWSViewComponent extends FASTElement {
         return this.domService.$<T>(this.getShadowRoot(), selectors, directReturn);
     }   
 
-    async loadingString<T, C>(item: T, addContent: (cnt: C | { output: string }, paste?: boolean, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: C | { output: string }, paste?: boolean,error?: boolean) => void) => Promise<boolean>) {
+    async loadingString<T, C>(item: T, addContent: (cnt: C | { output: string }, paste?: boolean, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: C | { output: string }, paste?: boolean,error?: boolean) => void) => Promise<boolean>) 
+    {
         let dots = 1;
         const maxDots = 3; // Maximum number of dots
         const interval = setInterval(async () => {
@@ -207,10 +167,6 @@ abstract class RWSViewComponent extends FASTElement {
 
         return shRoot;
     }
-
-    static hotReplacedCallback() {
-        this.getInstances().forEach(instance => instance.forceReload());
-    }
     
     forceReload() {
         this.trashIterator += 1;
@@ -234,8 +190,59 @@ abstract class RWSViewComponent extends FASTElement {
 
         this.$emit(eventName, event);
     }
+    
+    
+    static hotReplacedCallback() {
+        this.getInstances().forEach(instance => instance.forceReload());
+    }    
+
+    static isDefined: (key: string) => boolean = (key) => {
+        return !!RWSViewComponent._defined[key];
+    }
+
+    static defineComponent()
+    {
+        const def = (this as any).definition;  
+
+        if(!def){
+            throw new Error('RWS component is not named. Add `static definition = {name, template};`');
+        }
+
+        const composedComp: RWSWindowComponentInterface = (this as any).compose({
+            baseName: def.name,
+            template: def.template,
+            styles: def.styles
+        }) as RWSWindowComponentInterface;        
+
+        if(!(window as Window & RWSWindow).RWS){
+            throw new Error('RWS client not initialized');
+        }        
+
+        (window as Window & RWSWindow).RWS.components[def.name] = {
+            interface: composedComp,
+            component: this
+        };
+    }
+
+    static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null){                    
+        const def: IFastDefinition = {
+            name: tagName,
+            template: htmlTemplate
+        };
+
+        if(styles){
+            def.styles = styles;
+        }
+        
+        return def;
+    }
+
+    private static getInstances(): RWSViewComponent[]
+    {
+        return RWSViewComponent.instances;
+    }
 }
 
 export default RWSViewComponent;
 
-export { IAssetShowOptions }
+export { IAssetShowOptions, IRWSViewComponent }
