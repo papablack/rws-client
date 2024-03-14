@@ -26,11 +26,10 @@
   },
   "homepage": "https://github.com/papablack/rws-client#readme",
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "^3.454.0",
-    "@microsoft/fast-element": "^1.12.0",
+    "@microsoft/fast-foundation": "^2.46.2",
+    "@microsoft/fast-element": "^1.12.0",    
     "@types/moment": "^2.13.0",
-    "dragula": "^3.7.3",
-    "lodash": "^4.17.21",
+    "dragula": "^3.7.3",    
     "moment": "^2.29.4",
     "partial-json-parser": "^1.0.0",
     "reflect-metadata": "^0.1.13",
@@ -45,15 +44,13 @@
     "url-router": "^13.0.0",
     "uuid": "^9.0.1",
     "v4": "^0.0.1",
-    "sanitize-html": "^2.12.1",
-    "@microsoft/fast-foundation": "^2.46.2"
+    "sanitize-html": "^2.12.1"
   },
   "devDependencies": {
     "@open-wc/dev-server-hmr": "^0.1.2-next.0",
     "@types/sanitize-html": "^2.11.0",
     "@types/dragula": "^3.7.4",
-    "@types/express-fileupload": "^1.4.4",
-    "@types/lodash": "^4.14.202",
+    "@types/express-fileupload": "^1.4.4",    
     "@types/socket.io-client": "^3.0.0",
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^7.0.1",

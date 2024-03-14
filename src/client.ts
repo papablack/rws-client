@@ -20,7 +20,7 @@ import {
     IFrontRoutes,  _ROUTING_EVENT_NAME
 } from './services/RoutingService';
 
-import RWSViewComponent from './components/_component';
+import RWSViewComponent, { IWithCompose } from './components/_component';
 import {provideRWSDesignSystem} from './components/_design_system';
 import RWSContainer from './components/_container';
 
@@ -272,8 +272,8 @@ class RWSClient {
         // provideRWSDesignSystem().register(richWindowComponents[devStr].component);
 
 
-        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: typeof RWSViewComponent) => {
-            el.define(el, (el as any).definition);
+        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
+            el.define(el, el.definition);
         });
 
         return;

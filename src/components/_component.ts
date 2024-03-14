@@ -68,11 +68,6 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         applyConstructor(this);         
     }
 
-    bound() {
-        console.log("Component is bound.");
-        // At this point, data-binding is complete, but the component might not be fully rendered.
-    }
-
     connectedCallback() {        
         super.connectedCallback();       
 
@@ -80,12 +75,12 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
         // console.trace(this.config);
 
-        if (!(this.constructor as any).definition && (this.constructor as any).autoLoadFastElement) {
+        if (!(this.constructor as IWithCompose<this>).definition && (this.constructor as IWithCompose<this>).autoLoadFastElement) {
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
 
         try {
-            (this.constructor as any).fileList.forEach((file: string) => {
+            (this.constructor as IWithCompose<this>).fileList.forEach((file: string) => {
                 if (this.fileAssets[file]) {
                     return;
                 }
@@ -132,7 +127,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
         if (!this.fileAssets[assetName]) {
             return html`<span></span>`;
-            throw new Error(`File asset "${assetName}" not declared in component "${(this as any).constructor.definition.name}"`);
+            throw new Error(`File asset "${assetName}" not declared in component "${(this.constructor as IWithCompose<this>).definition.name}"`);
         }
 
         return this.fileAssets[assetName];
@@ -200,7 +195,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         const shRoot: ShadowRoot | null = this.shadowRoot;
 
         if (!shRoot) {
-            throw new Error(`Component ${(this.constructor as any).definition.name} lacks shadow root. If you wish to have component without shadow root extend your class with FASTElement`);
+            throw new Error(`Component ${(this.constructor as IWithCompose<this>).definition.name} lacks shadow root. If you wish to have component without shadow root extend your class with FASTElement`);
         }
 
         return shRoot;
@@ -212,10 +207,6 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
     hotReplacedCallback() {
         this.forceReload();
-    }
-
-    getState<T>(property: string): T {
-        return (this as any)[property];
     }
 
     sendEventToOutside<T>(eventName: string, data: T) {

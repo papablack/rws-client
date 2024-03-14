@@ -29,9 +29,7 @@ interface IRWSViewComponent extends Node {
 
     forceReload(): void;
 
-    hotReplacedCallback(): void;
-
-    getState<T>(property: string): T;
+    hotReplacedCallback(): void;    
 
     sendEventToOutside<T>(eventName: string, data: T): void;           
 }

@@ -11,8 +11,7 @@ export interface IWithDI<T> {
 export default abstract class TheRWSService {
     _RELOADABLE: boolean = false;
 
-    constructor() {
-        // console.log('Instanced service:', (this as any).constructor.name);
+    constructor() {    
     }
 
     register<T extends Key>(this: IWithDI<T>): void 
