@@ -1,17 +1,18 @@
-import { DI, Container, InterfaceSymbol, Registration, Resolver, Key } from "@microsoft/fast-foundation";
+import { DI, InterfaceSymbol, Key, Registration, FoundationElementDefinition } from "@microsoft/fast-foundation";
+import RWSContainer from "../components/_container";
+import RWSWindow, { loadRWSRichWindow, RWSWindowComponentInterface } from "../interfaces/RWSWindow";
 
-interface IWithDI<T> {
-    [key: string]: any
+export interface IWithDI<T> {
     new (...args: any[]): T;
     getSingleton: <T extends Key>(this: IWithDI<T>) => InterfaceSymbol<T>;
-    register: <T extends Key>(this: IWithDI<T>) => void;
+    register: <T extends Key>(this: IWithDI<T>) => void;    
 }
 
 export default abstract class TheRWSService {
     _RELOADABLE: boolean = false;
 
     constructor() {
-        console.log('Instanced service:', (this as any).constructor.name);
+        // console.log('Instanced service:', (this as any).constructor.name);
     }
 
     register<T extends Key>(this: IWithDI<T>): void 
@@ -31,8 +32,20 @@ export default abstract class TheRWSService {
     
     public static getSingleton<T extends Key>(this: IWithDI<T>): InterfaceSymbol<T>
     {                  
-        // console.trace('Registered service:', (this as any).name)
+        const richWindow = loadRWSRichWindow();        
 
-        return DI.createInterface<T>(x => x.singleton(this));
+        if(Object.keys(richWindow.RWS._registered).includes(this.name)){            
+            return richWindow.RWS._registered[this.name];        
+        }
+
+        const interf = DI.createInterface<T>(this.name);
+   
+        RWSContainer().register(
+            Registration.singleton(interf, this)
+        );
+
+        richWindow.RWS._registered[this.name] = interf;
+
+        return interf;
     }
 }

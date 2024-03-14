@@ -1,4 +1,5 @@
 import IRWSUser from '../../interfaces/IRWSUser';
+import RWSContainer from '../../components/_container';
 
 //@4DI
 import { WSServiceInstance } from '../../services/WSService'
@@ -74,7 +75,7 @@ abstract class RWSServiceWorker<UserType extends IRWSUser> {
         const className = this.name;
 
         if (!RWSServiceWorker._instances[className]) {
-            const WSService = DI.getOrCreateDOMContainer().get<WSServiceInstance>(WSServiceInstance);
+            const WSService = RWSContainer().get<WSServiceInstance>(WSServiceInstance);
             RWSServiceWorker._instances[className] = new this(workerScope, WSService);
         }
 

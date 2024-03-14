@@ -12,7 +12,7 @@ import WSService, { WSServiceInstance } from './services/WSService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 import { IBackendRoute } from './services/ApiService';
 import IRWSUser from './interfaces/IRWSUser';
-import RWSWindow, {RWSWindowComponentEntry, RWSWindowComponentRegister} from './interfaces/RWSWindow';
+import RWSWindow, {RWSWindowComponentEntry, RWSWindowComponentRegister, loadRWSRichWindow} from './interfaces/RWSWindow';
 
 import { DI, Container } from "@microsoft/fast-foundation";
 
@@ -22,6 +22,7 @@ import {
 
 import RWSViewComponent from './components/_component';
 import {provideRWSDesignSystem} from './components/_design_system';
+import RWSContainer from './components/_container';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -60,7 +61,7 @@ class RWSClient {
         @ServiceWorkerService public swService: ServiceWorkerServiceInstance,
         @NotifyService public notifyService: NotifyServiceInstance
     ){        
-        this._container = DI.getOrCreateDOMContainer();
+        this._container = RWSContainer();
         this.user = this.getUser();
 
         this.pushDataToServiceWorker('SET_WS_URL', { url: this.appConfig.get('wsUrl')}, 'ws_url');
@@ -278,15 +279,9 @@ class RWSClient {
         return;
     }
 
-    private getBrowserObject(): Window & RWSWindow
-    {
-        if(!(window as Window & RWSWindow).RWS){
-            (window as Window & RWSWindow).RWS = {
-                client: this,
-                components: {}
-            }
-        }        
-
+    private getBrowserObject(): RWSWindow
+    {        
+        loadRWSRichWindow();
         return window;
     }
 

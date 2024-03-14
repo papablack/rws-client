@@ -168,7 +168,7 @@ const RWSWebpackWrapper = (config) => {
             return isAvailableForVendors;
           },
           name: 'vendors',
-          reuseExistingChunk: true,
+          chunks: 'all',
         }   
       }
     };       

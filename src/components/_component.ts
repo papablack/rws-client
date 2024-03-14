@@ -1,8 +1,8 @@
-import { ViewTemplate, ElementStyles, observable, html } from '@microsoft/fast-element';
-import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry } from '@microsoft/fast-foundation';
+import { ViewTemplate, ElementStyles, observable, html, Constructable } from '@microsoft/fast-element';
+import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, InterfaceSymbol, Key, OverrideFoundationElementDefinition } from '@microsoft/fast-foundation';
 import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
 import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
-import  DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
+import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
 import ApiService, { ApiServiceInstance } from '../services/ApiService';
 import NotifyService, { NotifyServiceInstance } from '../services/NotifyService';
 import RoutingService, { RoutingServiceInstance } from '../services/RoutingService';
@@ -10,12 +10,32 @@ import WSService, { WSServiceInstance } from '../services/WSService';
 import { IRWSViewComponent, IAssetShowOptions } from '../interfaces/IRWSViewComponent';
 import { DI, inject } from '@microsoft/fast-foundation';
 import { provideRWSDesignSystem } from './_design_system';
-import RWSWindow, { RWSWindowComponentEntry,RWSWindowComponentInterface } from '../interfaces/RWSWindow';
+import RWSWindow, { RWSWindowComponentEntry, RWSWindowComponentInterface, loadRWSRichWindow } from '../interfaces/RWSWindow';
+import RWSContainer from './_container';
+import {RWSInject, applyConstructor, applyProp} from './_decorator';
+
+import 'reflect-metadata';
 
 interface IFastDefinition {
     name: string;
     template: ViewTemplate;
     styles?: ElementStyles;
+} 
+
+type ComposeMethodType<
+    T extends FoundationElementDefinition, 
+    K extends Constructable<RWSViewComponent>
+> = (this: K, elementDefinition: T) => (overrideDefinition?: OverrideFoundationElementDefinition<T>) => FoundationElementRegistry<FoundationElementDefinition, T>;
+
+export interface IWithCompose<T extends RWSViewComponent> {
+    [key: string]: any
+    new (...args: any[]): T;
+    definition?: IFastDefinition
+    defineComponent: <T extends RWSViewComponent>(this: IWithCompose<T>) => void
+    isDefined<T extends RWSViewComponent>(this: IWithCompose<T>): boolean
+    compose: ComposeMethodType<FoundationElementDefinition, Constructable<T>>;
+    _verbose: boolean;
+    _toInject: {[key: string]: any};
 }
 
 abstract class RWSViewComponent extends FoundationElement implements IRWSViewComponent {
@@ -26,122 +46,143 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     public routeParams: Record<string, string> = {};
 
     static autoLoadFastElement = true;
-    static _defined: {[key: string]: boolean} = {};
+    static _defined: { [key: string]: boolean } = {};
+    static _toInject: any[] = [];
+    static _verbose: boolean = false;
 
     @observable trashIterator: number = 0;
     @observable fileAssets: {
         [key: string]: ViewTemplate
-      } = {};
+    } = {};    
 
     constructor(
-        @ConfigService protected config: ConfigServiceInstance,
-        @RoutingService protected routingService: RoutingServiceInstance,        
-        @DOMService protected domService: DOMServiceInstance,
-        @UtilsService protected utilsService: UtilsServiceInstance,        
-        @ApiService protected apiService: ApiServiceInstance,
-        @WSService protected wsService: WSServiceInstance,
-        @NotifyService protected notifyService: NotifyServiceInstance
+        @RWSInject(ConfigService) protected config: ConfigServiceInstance,
+        @RWSInject(RoutingService) protected routingService: RoutingServiceInstance,
+        @RWSInject(DOMService) protected domService: DOMServiceInstance,
+        @RWSInject(UtilsService) protected utilsService: UtilsServiceInstance,
+        @RWSInject(ApiService) protected apiService: ApiServiceInstance,
+        @RWSInject(WSService) protected wsService: WSServiceInstance,
+        @RWSInject(NotifyService) protected notifyService: NotifyServiceInstance
     ) {
-        super();    
+        super();       
+        applyConstructor(this);         
 
-        // DI.getDependencies((this as any).constructor).forEach((el: any, key: any) => {
-        //     // console.log(DI.getOrCreateDOMContainer().get(el));
-        // });
+        const _self = this;  
     }
 
-    connectedCallback() {
-        super.connectedCallback();    
-        
-        
+    bound() {
+        console.log("Component is bound.");
+        // At this point, data-binding is complete, but the component might not be fully rendered.
+    }
+
+    connectedCallback() {        
+        super.connectedCallback();       
+
+        applyConstructor(this);
 
         // console.trace(this.config);
 
-        if(!(this.constructor as any).definition && (this.constructor as any).autoLoadFastElement){
+        if (!(this.constructor as any).definition && (this.constructor as any).autoLoadFastElement) {
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
-        }                     
+        }
 
-        try {             
-            (this.constructor as any).fileList.forEach((file: string) => { 
-                if(this.fileAssets[file]){
+        try {
+            (this.constructor as any).fileList.forEach((file: string) => {
+                if (this.fileAssets[file]) {
                     return;
                 }
-                this.utilsService.getFileContents(this.config.get('pubPrefix') + file).then((response: string) => {        
-                    this.fileAssets = { ...this.fileAssets, [file]: html`${response}`};        
-                }); 
-            });      
+                this.utilsService.getFileContents(this.config.get('pubPrefix') + file).then((response: string) => {
+                    this.fileAssets = { ...this.fileAssets, [file]: html`${response}` };
+                });
+            });
 
-        }catch(e: Error | any){
+        } catch (e: Error | any) {
             console.error('Error loading file content:', e.message);
             console.error(e.stack);
         }
-        
+
         RWSViewComponent.instances.push(this);
-    } 
+    }
 
-    passRouteParams(routeParams: Record<string, string> =  null)
+    observe(callback: (component: this, node: Node, observer: MutationObserver) => Promise<void>, condition: (component: this, node: Node) => boolean = null, observeRemoved: boolean = false)
     {
-        if(routeParams){
+        const observer = new MutationObserver((mutationsList, observer) => {
+            for(const mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    const mutationObserveType: NodeList = observeRemoved ? mutation.removedNodes : mutation.addedNodes
+                    mutationObserveType.forEach(node => {                    
+                        if ((condition !== null && condition(this, node))) {
+                            callback(this, node, observer);
+                        }else if(condition === null){
+                            callback(this, node, observer);
+                        }                    
+                    });
+                }
+            }
+        });
+        
+        observer.observe(this.getShadowRoot(), { childList: true, subtree: true });
+    }
+
+    passRouteParams(routeParams: Record<string, string> = null) {
+        if (routeParams) {
             this.routeParams = routeParams;
-        }     
-    }    
+        }
+    }
 
-    showAsset(assetName: string, options: IAssetShowOptions = {}): ViewTemplate<any, any>
-    {        
+    showAsset(assetName: string, options: IAssetShowOptions = {}): ViewTemplate<any, any> {
 
-        if(!this.fileAssets[assetName]){            
+        if (!this.fileAssets[assetName]) {
             return html`<span></span>`;
             throw new Error(`File asset "${assetName}" not declared in component "${(this as any).constructor.definition.name}"`);
         }
 
         return this.fileAssets[assetName];
-    }    
+    }
 
-    on<T>(type: string, listener: (event: CustomEvent<T>) => any)
-    {
+    on<T>(type: string, listener: (event: CustomEvent<T>) => any) {
         this.addEventListener(type, (baseEvent: Event) => {
             listener(baseEvent as CustomEvent<T>);
         });
     }
 
-    $emitDown<T>(eventName: string, payload: T){
-        this.$emit(eventName, payload, { 
+    $emitDown<T>(eventName: string, payload: T) {
+        this.$emit(eventName, payload, {
             bubbles: true,
-            composed:true
+            composed: true
         });
     }
 
-    parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): DOMOutputType<T> {           
+    parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): DOMOutputType<T> {
         return this.domService.parse$<T>(input, directReturn);
     }
 
-    $<T extends Element>(selectors: string, directReturn: boolean = false): DOMOutputType<T> {                
+    $<T extends Element>(selectors: string, directReturn: boolean = false): DOMOutputType<T> {
         return this.domService.$<T>(this.getShadowRoot(), selectors, directReturn);
-    }   
+    }
 
-    async loadingString<T, C>(item: T, addContent: (cnt: C | { output: string }, paste?: boolean, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: C | { output: string }, paste?: boolean,error?: boolean) => void) => Promise<boolean>) 
-    {
+    async loadingString<T, C>(item: T, addContent: (cnt: C | { output: string }, paste?: boolean, error?: boolean) => void, shouldStop: (stopItem: T, addContent: (cnt: C | { output: string }, paste?: boolean, error?: boolean) => void) => Promise<boolean>) {
         let dots = 1;
         const maxDots = 3; // Maximum number of dots
         const interval = setInterval(async () => {
-            const dotsString = '. '.repeat(dots);          
+            const dotsString = '. '.repeat(dots);
 
-            const doesItStop = await shouldStop(item, addContent);                
+            const doesItStop = await shouldStop(item, addContent);
 
-            if(doesItStop){
+            if (doesItStop) {
                 addContent({ output: '' }, true);
-                clearInterval(interval);        
-            }else{
+                clearInterval(interval);
+            } else {
                 addContent({ output: `${dotsString}` }, true);
-            
+
                 dots = (dots % (maxDots)) + 1;
             }
         }, 500);
     }
 
-    async onDOMLoad(): Promise<void>
-    {
+    async onDOMLoad(): Promise<void> {
         return new Promise<void>((resolve) => {
-            if (this.getShadowRoot() !== null && this.getShadowRoot() !== undefined) {              
+            if (this.getShadowRoot() !== null && this.getShadowRoot() !== undefined) {
                 resolve();
             } else {
                 // If shadowRoot is not yet available, use MutationObserver to wait for it
@@ -155,90 +196,102 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
             }
         });
     }
-   
 
-    protected getShadowRoot(): ShadowRoot
-    {        
+
+    protected getShadowRoot(): ShadowRoot {
         const shRoot: ShadowRoot | null = this.shadowRoot;
 
-        if(!shRoot){
+        if (!shRoot) {
             throw new Error(`Component ${(this.constructor as any).definition.name} lacks shadow root. If you wish to have component without shadow root extend your class with FASTElement`);
         }
 
         return shRoot;
     }
-    
+
     forceReload() {
         this.trashIterator += 1;
     }
 
     hotReplacedCallback() {
-        this.forceReload();    
+        this.forceReload();
     }
 
-    getState<T>(property: string): T
-    {
+    getState<T>(property: string): T {
         return (this as any)[property];
     }
 
     sendEventToOutside<T>(eventName: string, data: T) {
         const event = new CustomEvent<T>(eventName, {
-          detail: data,
-          bubbles: true, 
-          composed: true
+            detail: data,
+            bubbles: true,
+            composed: true
         });
 
         this.$emit(eventName, event);
     }
-    
-    
+
+
     static hotReplacedCallback() {
         this.getInstances().forEach(instance => instance.forceReload());
-    }    
-
-    static isDefined: (key: string) => boolean = (key) => {
-        return !!RWSViewComponent._defined[key];
     }
 
-    static defineComponent()
+    static isDefined<T extends RWSViewComponent>(this: IWithCompose<T>): boolean 
     {
-        const def = (this as any).definition;  
+        const richWindow: RWSWindow = loadRWSRichWindow();
 
-        if(!def){
+        if(!this.definition){
+            return false;
+        }
+
+        return Object.keys(richWindow.RWS.components).includes(this.definition.name);
+    }
+
+    static defineComponent<T extends RWSViewComponent>(this: IWithCompose<T>): void
+    {
+        if(this.isDefined()){
+            if(this._verbose){
+                console.warn(`Component ${this.name} is already declared`);
+            }            
+            
+            return;
+        }
+
+        const richWindow = loadRWSRichWindow();        
+
+        if (!this.definition) {
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
 
-        const composedComp: RWSWindowComponentInterface = (this as any).compose({
-            baseName: def.name,
-            template: def.template,
-            styles: def.styles
-        }) as RWSWindowComponentInterface;        
+        const composedComp = this.compose({
+            baseName: this.definition.name,
+            template: this.definition.template,
+            styles: this.definition.styles
+        }) as RWSWindowComponentInterface;
 
-        if(!(window as Window & RWSWindow).RWS){
+        if (!richWindow.RWS) {
             throw new Error('RWS client not initialized');
-        }        
+        }
 
-        (window as Window & RWSWindow).RWS.components[def.name] = {
+        richWindow.RWS.components[this.definition.name] = {
             interface: composedComp,
             component: this
-        };
+        };        
     }
 
-    static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null){                    
+    static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null) {
         const def: IFastDefinition = {
             name: tagName,
             template: htmlTemplate
         };
 
-        if(styles){
+        if (styles) {
             def.styles = styles;
         }
-        
+
         return def;
     }
 
-    private static getInstances(): RWSViewComponent[]
-    {
+    private static getInstances(): RWSViewComponent[] {
         return RWSViewComponent.instances;
     }
 }
