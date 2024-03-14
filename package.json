@@ -33,7 +33,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "partial-json-parser": "^1.0.0",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.1",
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.69.7",
     "socket.io-client": "^4.7.2",
