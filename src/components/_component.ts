@@ -66,8 +66,6 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     ) {
         super();       
         applyConstructor(this);         
-
-        const _self = this;  
     }
 
     bound() {
