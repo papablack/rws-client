@@ -11,7 +11,7 @@ import DOMService, { DOMServiceInstance, DOMOutputType, TagsProcessorType }  fro
 import ApiService,  { IBackendRoute, ApiServiceInstance, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
 import UtilsService, {UtilsServiceInstance} from './services/UtilsService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
-import WSService, {WSServiceInstance, WSStatus} from './services/WSService';
+import { sanitizedAttr } from './components/_attrs/sanitize-html';import WSService, {WSServiceInstance, WSStatus} from './services/WSService';
 import { ngAttr } from './components/_attrs/angular-attr';
 import RWSClient from './client';
 import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worker';
@@ -75,6 +75,7 @@ export {
     HTMLAttributes,
          
     RWSView,
+    sanitizedAttr,
     RWSIgnore,
     RWSInject,
     ngAttr,    

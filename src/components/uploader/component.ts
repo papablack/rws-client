@@ -18,6 +18,9 @@ class RWSUploader extends RWSViewComponent {
   {    
       const response = await this.onStart(this.chosenFile, this);
    
+      if(response === null){
+        return;
+      }
 
       this.onFinish(response);
 
@@ -65,8 +68,6 @@ class RWSUploader extends RWSViewComponent {
   {
       this.shadowRoot.removeChild(fileInput);
   }
-
-
 }
 
 RWSUploader.defineComponent();
