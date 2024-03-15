@@ -17,17 +17,19 @@ export class RouterComponent extends RWSViewComponent {
 
     connectedCallback() {
         super.connectedCallback();   
-        this.routing = this.routingService.apply(this);       
-        console.log(this.routing);
-
+        this.routing = this.routingService.apply(this);   
+            
         if(this.currentUrl){
             this.handleRoute(this.routing.handleRoute(this.currentUrl));      
         }           
     }
 
-    currentUrlChanged(oldValue: string, newValue: string){
-        console.log(oldValue, newValue);
-        // this.handleRoute(this.routing.handleRoute(newValue));
+    currentUrlChanged(oldValue: string, newValue: string){  
+        if(!this.routing){
+            this.routing = this.routingService.apply(this);       
+
+        }     
+        this.handleRoute(this.routing.handleRoute(newValue));
     }
 
     private handleRoute(route: RouteReturn){
@@ -36,7 +38,12 @@ export class RouterComponent extends RWSViewComponent {
         this.$emit(_ROUTING_EVENT_NAME, {
             routeName,
             component: childComponent
-       });
+        });
+
+        console.log('handleroute',{
+            routeName,
+            component: childComponent
+        });
         
         const newComponent = document.createElement((childComponent as any).definition.name);        
         newComponent.routeParams = routeParams;

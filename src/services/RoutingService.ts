@@ -4,6 +4,7 @@ import Router from 'url-router';
 import { RWSRouter, IRWSRouteResult, RouteReturn } from '../routing/_router';
 import UtilsService, {UtilsServiceInstance} from './UtilsService';
 import { IRWSViewComponent } from '../interfaces/IRWSViewComponent';
+import ConfigService, { ConfigServiceInstance } from './ConfigService';
 
 type IFrontRoutes = Record<string, unknown>; 
 
@@ -11,18 +12,15 @@ class RoutingService extends TheService {
     private router: Router<any>;
     private routes: IFrontRoutes;
 
-    constructor(@UtilsService private utilsService: UtilsServiceInstance){
+    constructor(@UtilsService private utilsService: UtilsServiceInstance, @ConfigService private config: ConfigServiceInstance){
         super();        
-    }
-
-    public initRouting(routes: IFrontRoutes)
-    {
-        this.routes = routes;
-        this.router = new Router(this.routes);
-    }
+    }    
 
     public apply(comp: IRWSViewComponent): RWSRouter
-    {
+    {                    
+        this.routes = this.config.get('routes');
+        this.router = new Router(this.routes);
+   
         return new RWSRouter(comp, this.router, this.utilsService);
     }
 
