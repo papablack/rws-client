@@ -274,6 +274,7 @@ class RWSClient {
         const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;                
         // provideRWSDesignSystem().register(richWindowComponents[devStr].component);
 
+        console.log(richWindowComponents);
         Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {     
             el.define(el, el.definition);
         });
@@ -290,12 +291,12 @@ class RWSClient {
         this.getBrowserObject().RWS.client = this;
     }
 
-    private enableRouting(): void
+    enableRouting(): void
     {
         this.appConfig.mergeConfig({ routing_enabled: true });
     }
 
-    private disableRouting(): void
+    disableRouting(): void
     {
         this.appConfig.mergeConfig({ routing_enabled: false });
     }

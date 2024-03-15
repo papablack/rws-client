@@ -1,4 +1,4 @@
-import { ViewTemplate, ElementStyles, observable, html, Constructable } from '@microsoft/fast-element';
+import { ViewTemplate, ElementStyles, observable, html, Constructable, PartialFASTElementDefinition } from '@microsoft/fast-element';
 import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, InterfaceSymbol, Key, OverrideFoundationElementDefinition } from '@microsoft/fast-foundation';
 import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
 import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
@@ -34,6 +34,7 @@ export interface IWithCompose<T extends RWSViewComponent> {
     defineComponent: <T extends RWSViewComponent>(this: IWithCompose<T>) => void
     isDefined<T extends RWSViewComponent>(this: IWithCompose<T>): boolean
     compose: ComposeMethodType<FoundationElementDefinition, Constructable<T>>;
+    define<TType extends Function>(type: TType, nameOrDef?: string | PartialFASTElementDefinition | undefined): TType;
     _verbose: boolean;
     _toInject: {[key: string]: any};
 }
@@ -65,14 +66,13 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         @RWSInject(NotifyService) protected notifyService: NotifyServiceInstance
     ) {
         super();       
-        applyConstructor(this);         
+        applyConstructor(this);
     }
 
     connectedCallback() {        
         super.connectedCallback();       
-
         applyConstructor(this);
-
+     
         // console.trace(this.config);
 
         if (!(this.constructor as IWithCompose<this>).definition && (this.constructor as IWithCompose<this>).autoLoadFastElement) {
