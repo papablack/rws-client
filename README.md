@@ -6,13 +6,14 @@
 2. [Getting Started](#getting-started)
 3. [Key Components: RWSClient & RoutingService](#key-components-rwsclient--routingservice)
 4. [Component Initialization](#component-initialization)
-5. [Frontend routes](#frontend-routes)
-6. [Backend Imports](#backend-imports)
-7. [Utilizing APIService](#utilizing-apiservice)
-8. [Notifier](#notifier)
-9. [Service Worker](#service-worker)
-10. [Example: WebChat Component](#example-webchat-component)
-11. [Links](#links)
+5. [DI](#dependency-injection)
+6. [Frontend routes](#frontend-routes)
+7. [Backend Imports](#backend-imports)
+8. [Utilizing APIService](#utilizing-apiservice)
+9. [Notifier](#notifier)
+10. [Service Worker](#service-worker)
+11. [Example: WebChat Component](#example-webchat-component)
+12. [Links](#links)
 
 ## Overview
 
@@ -109,8 +110,8 @@ const { RuntimeGlobals } = require('webpack');
 
 const executionDir = process.cwd();
 
-const libdir = path.resolve(executionDir, '..', '..', 'frontend', 'app', 'lib', 'rws');
-const pubdir = path.resolve(executionDir, '..', '..', 'frontend', 'app');
+const libdir = path.resolve(executionDir, '..', '..', 'target', 'app', 'lib', 'rws');
+const pubdir = path.resolve(executionDir, '..', '..', 'target', 'app');
 
 if(!fs.existsSync(libdir)){
   fs.mkdirSync(libdir);
@@ -354,14 +355,14 @@ interface RWSDecoratorOptions{
 
 ```
 
-## DI
+# Dependency Injection
 
-### Default service usage:
+## Default service usage:
 
 ```typescript
-import { RWSViewComponent, RWSView } from 'rws-js-client
+import { RWSViewComponent, RWSView } from 'rws-js-client';
 
-@RWSView('your-tag')
+@RWSView('your-tag');
 class YourComponent extends RWSViewComponent {
     someMethod(url: string): void
     {
@@ -373,7 +374,7 @@ class YourComponent extends RWSViewComponent {
 
 Default services: https://github.com/papablack/rws-client/blob/7d16d9c6d83c81c9fe470eb0f507756bc6c71b35/src/components/_component.ts#L58
 
-### Custom service usage:
+## Custom service usage:
 
 ```typescript
 import { 
