@@ -257,7 +257,7 @@ class RWSClient {
     
     async onDOMLoad(): Promise<void> {
         return new Promise<void>((resolve) => {
-            document.addEventListener('load', () => {
+            document.addEventListener('DOMContentLoaded', () => {
                 resolve();
             });
         });
