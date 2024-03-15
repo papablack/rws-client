@@ -253,21 +253,14 @@ class RWSClient {
         });
 
         RWSClient.defineAllComponents();
-    }
-
-    static defineAllComponents() {
-        const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
-        // provideRWSDesignSystem().register(richWindowComponents[devStr].component);
-
-        console.log(richWindowComponents);
-        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
-            el.define(el, el.definition);
+    }   
+    
+    async onDOMLoad(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            document.addEventListener('load', () => {
+                resolve();
+            });
         });
-    }
-
-    private getBrowserObject(): RWSWindow {
-        loadRWSRichWindow();
-        return window;
     }
 
     assignClientToBrowser(): void {
@@ -282,12 +275,28 @@ class RWSClient {
         this.appConfig.mergeConfig({ routing_enabled: false });
     }
 
+    private getBrowserObject(): RWSWindow {
+        loadRWSRichWindow();
+        return window;
+    }
+
+
     private broadcastConfigForViewComponents(): void {
         document.dispatchEvent(new CustomEvent<{ config: IRWSConfig }>('rws_cfg_broadcast', { detail: { config: this.appConfig.getData() } }));
     }
 
     static getDI(): typeof DI {
         return DI;
+    }
+
+    static defineAllComponents() {
+        const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
+        // provideRWSDesignSystem().register(richWindowComponents[devStr].component);
+
+        console.log(richWindowComponents);
+        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
+            el.define(el, el.definition);
+        });
     }
 }
 
