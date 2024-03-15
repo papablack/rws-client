@@ -3,8 +3,10 @@ import IRWSConfig from '../interfaces/IRWSConfig';
 
 
 const _DEFAULTS: {[property: string]: any} = {
-    'pubPrefix': '/',
-    'pubUrl' : window.origin,
+    pubPrefix: '/',
+    pubUrl : window.origin,
+    splitFileDir: '/',
+    splitPrefix: 'rws'
 }
 
 const __SENT_TO_COMPONENTS: string[] = [];

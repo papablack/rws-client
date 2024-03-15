@@ -28,12 +28,12 @@ from your project dir do:
 yarn
 ```
 
-Initiate cfg files:
+Initiate cfg files and webpack build:
 ```bash
 rws-client init
 ```
 
-to install once and then to build after preparing compionents:
+to install once and then to build after preparing components:
 
 ```bash
 yarn build
@@ -46,7 +46,18 @@ yarn watch
 then start engine in the site javascript (can be inline):
 
 ```javascript
-window.RWSClient.start(CFG);
+window.RWSClient.start(CFG).then();
+```
+
+*or for initial setup then start on certain event (example)* 
+
+```javascript
+window.RWSClient.setup(CFG).then(() => {    
+    $.on('loaded', function(data){
+        const optionalNewCfg = { backendRoutes: data.backendRoutes };
+        window.RWSClient.start(optionalNewCfg).then();
+    })    
+});
 ```
 
 example config with interface:
@@ -54,23 +65,89 @@ example config with interface:
 ```javascript
 const CFG = {
     backendUrl: 'http://localhost:1337',
-    wsUrl: 'http://localhost:1338'
+    wsUrl: 'http://localhost:1338',
+    transports: ['websocket'],
+    user: rwsUser,
+    parted: true,
+    splitFileDir: '/lib/rws',
+    splitPrefix: 'myapp'     
 }
 ```
 
+### The FRONT config interface:
+
 ```typescript
-export default interface IRWSConfig {
-    defaultLayout?: typeof RWSViewComponent;
-    backendUrl?: string,
-    wsUrl?: string,
-    backendRoutes?: any[] // routes from backend
+interface IRWSConfig {
+    defaultLayout?: typeof RWSViewComponent
+    backendUrl?: string // url to backend request/response gateway
+    wsUrl?: string // url to backend websockets gateway
+     backendRoutes?: any[] // routes from backend
     apiPrefix?: string // f.e /api after host
     routes?: IFrontRoutes, //override front routes
     transports?: string[], //ws transports setup
     user?: any, //user data if logged
     ignoreRWSComponents?: boolean //do not register base RWS components
+    pubUrl?: string //the url for accessing public dir from browser URL (default: /)
+    pubPrefix?: string 
+    parted?: boolean //sets async partitioning mode for components. Those wil be parted and loaded in BG.
+    splitFileDir?: string //the url for accessing split dir from browser URL (default: /)
+    splitPrefix?: string // prefix for parted file (`${pubPrefix}.${cmpName}.ts`)
+    routing_enabled?: boolean
+    _noLoad?: boolean    
 }
 ```
+### The FRONT webpack config:
+
+```javascript
+const path = require('path');
+const fs = require('fs');
+const { spawn } = require('child_process');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const RWSWebpackWrapper  = require('rws-js-client/rws.webpack.config');
+const { RuntimeGlobals } = require('webpack');
+
+
+const executionDir = process.cwd();
+
+const libdir = path.resolve(executionDir, '..', '..', 'frontend', 'app', 'lib', 'rws');
+const pubdir = path.resolve(executionDir, '..', '..', 'frontend', 'app');
+
+if(!fs.existsSync(libdir)){
+  fs.mkdirSync(libdir);
+}
+
+const copies = {
+  [libdir]: [
+    './build',
+    './src/styles/compiled/main.rws.css',
+  ],
+  [pubdir]: [
+    './public/service_worker.js',
+    './public/service_worker.js.map'
+  ]
+}
+
+const myappFrontPath = path.resolve(__dirname, '../myapp/frontend');
+
+module.exports = RWSWebpackWrapper({
+  dev: true,
+  hot: false,
+  tsConfigPath: executionDir + '/tsconfig.json',
+  entry: `${executionDir}/src/index.ts`,
+  executionDir: executionDir,
+  publicDir:  path.resolve(executionDir, 'public'),
+  outputDir:  path.resolve(executionDir, 'build'),
+  outputFileName: 'junction.client.js',
+  copyToDir: copies,
+  serviceWorker: './src/service_worker/MyServiceWorker.ts',
+  parted: true,
+  partedPrefix: 'myapp',
+  partedComponentsLocations: ['../myapp', './src'],
+  customServiceLocations: ['${myappFrontPath}/src/services']
+});
+```
+
+
 
 ## Key Components
 
@@ -92,30 +169,39 @@ The main file (`index.ts`) is where you initialize the RWSClient. Here, you conf
 Following is example of full usage of the framework
 
 ```typescript
-import RWSClient, { NotifyUiType, NotifyLogType } from 'rws-js-client';
+import RWSClient, { NotifyUiType, NotifyLogType, RWSContainer } from 'rws-js-client';
+
 //@ts-ignore
 import alertify from 'alertifyjs';
 
-import './styles/main.scss';
-
-import routes from './routing/routes';
-
+import './styles/main.rws.scss';
 import { backendRoutes } from './backendImport';
-
-import initComponents from './application/_initComponents';
 import { provideFASTDesignSystem, allComponents } from '@microsoft/fast-components';
 
-async function initializeApp() {    
-    const theClient = new RWSClient();
+// For single file output (will inject itself to DI on import):
+//import initComponents from './application/_initComponents'
 
-    theClient.setBackendRoutes(backendRoutes());
-    theClient.addRoutes(routes);    
+async function initializeApp() {       
+    const theClient = RWSContainer().get(RWSClient);
     
-    theClient.onInit(async () => {
-        initComponents();
-        provideFASTDesignSystem().register(allComponents);
-    });    
+    theClient.setBackendRoutes(backendRoutes());
+    
+    theClient.onInit(async () => {        
 
+        // For single file output:
+        //initComponents();
+
+        provideFASTDesignSystem().register(allComponents);
+
+        // const swFilePath: string = `${theClient.appConfig.get('pubUrl')}/service_worker.js`;          
+
+        await theClient.swService.registerServiceWorker();        
+
+        if(theClient.getUser()){
+            theClient.pushUserToServiceWorker({...theClient.getUser(), instructor: false});  
+        }
+
+    });
 
     theClient.setNotifier((message: string, logType: NotifyLogType, uiType: NotifyUiType = 'notification', onConfirm: (params: any) => void) => {
         switch(uiType){
@@ -146,11 +232,11 @@ async function initializeApp() {
                 return;    
         }
     });
-    (window as any).RWSClient = theClient;    
+    
+    theClient.assignClientToBrowser();
 }
 
 initializeApp().catch(console.error);
-
 ```
 
 ## Component Initialization
@@ -201,22 +287,27 @@ component-dir/
 
 ### application/_initComponents.ts
 
-```typescript
-import { ChatNav } from '../components/chat-nav/component';
-import { DefaultLayout } from '../components/default-layout/component';
-import { RWSIcon } from '../components/rws-icon/component';
-import { Loader } from '../components/loader/component';
-import { LineSplitter } from '../components/line-splitter/component';
+Only if parted mode is false.
 
-import { registerRWSComponents } from 'rws-js-client';
+```typescript
+import jTrainerComponents from '../../../jtrainer/frontend/src/application/_initComponents';
+
+import { WebChat } from '../../../jtrainer/frontend/src/components/webchat/component';
+import { JunctionTrainer } from '../../../jtrainer/frontend/src/components/trainer/component';
+
+import { BookLoader } from '../components/book-loader/component'
+import { ChatLoader } from '../components/chat-loader/component'
+
+import {RWSClientInstance} from 'rws-js-client/src/client';
 
 export default () => {
-    LineSplitter;
-    DefaultLayout;
-    ChatNav;
-    RWSIcon;
-    Loader;
-    registerRWSComponents(); //register rws components like <rws-uploader> and other comfy components
+    jTrainerComponents();
+    WebChat;
+    JunctionTrainer;
+    BookLoader;    
+    ChatLoader;
+
+    RWSClientInstance.defineAllComponents();
 }
 
 ```
@@ -230,7 +321,7 @@ export default () => {
     theClient.addRoutes(routes);    //routes are optional
     
     theClient.onInit(async () => {
-        initComponents(); //user components from _initComponents.ts
+        initComponents(); //user components from _initComponents.ts (dont run and import when parted: true)
         provideFASTDesignSystem().register(allComponents); // @microsoft/fast-components ready components init
     });    
 
@@ -239,12 +330,17 @@ export default () => {
 **Component needs to extend RWSViewComponent and use @RWSView decorator**:
 
 ```typescript
-import { RWSViewComponent,  RWSView, observable, attr } from 'rws-js-client';
+import { RWSViewComponent,  RWSDecoratorOptions, RWSView, observable, attr, ngAttr, sanitizedAttr } from 'rws-js-client';
 
 const options?: RWSDecoratorOptions;
 
 @RWSView('tag-name', options)
-class WebChat extends RWSViewComponent {  
+class WebChat extends RWSViewComponent {
+    @attr tagAttr: string; //HTML tag attr
+    @ngAttr fromNgAttr: string; //HTML attr from angular template
+    @sanitizedAttr htmlAttr: string; //HTML attr that's sanitized with every val change
+    @observable someVar: any; //Var for templates/value change observation
+}
 ```
 
 The decorator options type:
@@ -255,6 +351,65 @@ interface RWSDecoratorOptions{
     styles?: string //relative path to SCSS file (./styles/layout.scss)
     fastElementOptions?: any //the stuff you would insert into static definition in FASTElement class.
 }
+
+```
+
+## DI
+
+### Default service usage:
+
+```typescript
+import { RWSViewComponent, RWSView } from 'rws-js-client
+
+@RWSView('your-tag')
+class YourComponent extends RWSViewComponent {
+    someMethod(url: string): void
+    {
+        this.apiService.get(url);
+    }
+}
+ 
+```
+
+Default services: https://github.com/papablack/rws-client/blob/7d16d9c6d83c81c9fe470eb0f507756bc6c71b35/src/components/_component.ts#L58
+
+### Custom service usage:
+
+```typescript
+import { 
+    NotifyService, RWSView, RWSViewComponent, 
+    WSService, ApiService, ConfigService, 
+    ConfigServiceInstance, UtilsServiceInstance, ApiServiceInstance, 
+    UtilsService, DOMServiceInstance, DOMService, 
+    NotifyServiceInstance, WSServiceInstance, RoutingService, 
+    RoutingServiceInstance, RWSInject
+} from 'rws-js-client';
+
+import DateService, {DateServiceInstance} from '../../my-custom-services/DateService';
+
+
+@RWSView('your-tag')
+class YourComponent extends RWSViewComponent {
+    constructor(
+        @RWSInject(DateService) protected dateService: DateServiceInstance, //custom service - default services from RWSViewComponent below
+        @RWSInject(ConfigService) protected config: ConfigServiceInstance,
+        @RWSInject(RoutingService) protected routingService: RoutingServiceInstance,
+        @RWSInject(DOMService) protected domService: DOMServiceInstance,
+        @RWSInject(UtilsService) protected utilsService: UtilsServiceInstance,
+        @RWSInject(ApiService) protected apiService: ApiServiceInstance,
+        @RWSInject(WSService) protected wsService: WSServiceInstance,
+        @RWSInject(NotifyService) protected notifyService: NotifyServiceInstance
+    ) {
+        super(config, routingService, domService, utilsService, apiService, wsService, notifyService);
+        applyConstructor(this);   //fix-incoming: DI constructor data inheritance problem - applyConstructor in super is bugged. Need tmp workaround.
+    }
+
+    someMethod(url: string): void
+    {
+        this.dateService.get(url);
+    }
+}
+ 
 ```
 
 ## Frontend routes
@@ -319,7 +474,7 @@ after control method we have dynamic types those are: <**ResponseType**, **Paylo
 Example Usage by controller route
 
 ```typescript
-  const apiPromise: Promise<ITalkApiResponse> = ApiService.back.post<ITalkApiResponse, IApiTalkPayload>('talk:models:prompt', {        
+  const apiPromise: Promise<ITalkApiResponse> = this.apiService.back.post<ITalkApiResponse, IApiTalkPayload>('talk:models:prompt', {        
         message: msg,
         model: this.chosenModel,
       });
@@ -328,7 +483,7 @@ Example Usage by controller route
 Example Usage by url
 
 ```typescript
-  const apiPromise: Promise<ITalkApiResponse> = ApiService.post<ITalkApiResponse, IApiTalkPayload>('/api/path/to/action', {        
+  const apiPromise: Promise<ITalkApiResponse> = this.apiService.post<ITalkApiResponse, IApiTalkPayload>('/api/path/to/action', {        
         message: msg,
         model: this.chosenModel,
       });
@@ -386,95 +541,123 @@ import { RWSWSService as WSService } from 'rws-js-client/src/services/WSService'
 
 declare const self: ServiceWorkerGlobalScope;
 
-class ServiceWorker extends RWSServiceWorker {
+class MyServiceWorker extends RWSServiceWorker {
+   public tracker: { currentTracker: TimeTracker | null };    
+    public trackersToSync: TimeTracker[];
+
+    protected regExTypes: { [key: string]: RegExp } = {
+        SOME_VIEW: new RegExp('.*:\\/\\/.*\\/#\\/([a-z0-9].*)\\/route\\/action$')
+    };
     ignoredUrls = [
         new RegExp('(.*(?=.[^.]*$).*)/#/login'),
         new RegExp('(.*(?=.[^.]*$).*)/#/logout'),
-    ];
+    ];   
 
-    protected regExTypes = {
-        FLASHCARDS_VIEW: new RegExp('.*:\\/\\/.*\\/#\\/([a-z0-9].*)\\/reports\\/flashcards$')
-    };
+    constructor(){        
+        super(self, RWSContainer());
+    }
+  
+    checkForbidden(url: string): boolean {
+        if (!url) {
+            return true;
+        }
+  
+        console.log('[SW] Check forbidden', url);
+
+        return this.ignoredUrls.some((item) => url.match(item));
+    }
+
+    isExtraType(id: string){
+        let result: string | null = null;
+        const _self = this;
+      
+        Object.keys(this.regExTypes).forEach(function(key){
+            if(result === null && _self.regExTypes[key].exec(id) !== null){
+                result = key;
+            }
+        });
+      
+        return result;
+    }    
+
+    startServiceWorker(regExTypes: { [key: string]: RegExp }, forbiddenUrls: RegExp[]): JunctionServiceWorker 
+    {        
+        this.tracker = { currentTracker: null };
+        this.ignoredUrls = forbiddenUrls;
+        this.trackersToSync = [];
+        this.regExTypes = regExTypes;       
+
+        return this;
+    }     
 
     async onInit(): Promise<void>
-    {        
-        type ITheUser = any;
-
-        let THE_USER: ITheUser | null = null;        
+    {
+        const _self: JunctionServiceWorker = this;
+        let THE_USER: IJunctionUser | null = null;        
         const toSync: TimeTracker[] = [];
 
-        let WS_URL: string | null;
-        self.addEventListener('install', () => {
-            console.log('Service Worker: Installed');
-        });
+        let WS_URL: string | null;   
+        
+        console.log('Initiating ServiceWorker');
 
-        self.addEventListener('activate', () => {
-            console.log('[SW] Service Worker: Activated'); 
-
-            return self.clients.claim();
-        });
-
-
-        // Send a message to the client page
-        const sendMessageToClient = (clientId: string, payload: any) => {
-            return self.clients.get(clientId)
-                .then((client: any) => {
-                    if (client) {
-                        client.postMessage(payload);
-                    }
-                });
-        };
-
-        interface MSGEvent{
-        data?: {
-            command: string,
-            asset_type?: string,
-            params: any
-        }
-        }
-
-        const checkWs = (): void => {
-            if(!WSService.socket() && WS_URL){
-                WSService.init(WS_URL, THE_USER);
-            }
-        };
-
-        // Listen for messages from the client page
-        self.addEventListener('message', (event: MSGEvent) => {
+        this.workerScope.addEventListener('message', (event: MSGEvent) => {
+            // console.log(event);
             if(!event.data){
+                console.warn('[SW] Got empty message');
                 return;
             }  
 
             if (event.data.command){
-                console.log('[SW] OP Message:', event.data);
+                console.log('[SW] OP Message:', event.data.command);
             
                 switch (event.data.command) {
                 case 'SET_WS_URL':
                     WS_URL = event.data.params.url;
                     break;
                 case 'SET_USER':      
-                    THE_USER = event.data.params;
-                    checkWs();
+                    if(!this.getUser()){
+                        THE_USER = event.data.params;                        
+                        this.setUser(THE_USER);
+                    }
+                    _self.checkWs(WS_URL, this.getUser());
                     break;
                 case 'START_TRACKING':
-                    checkWs();
-                    if(!WSService.socket() && THE_USER){
+                    _self.checkWs(WS_URL, this.getUser());
+                    if(!this.wsService.socket() && this.getUser()){
                         break;
                     }
-                    SWService.trackActivity(event.data.asset_type, event.data.params.page_location, event.data.params, toSync);
+                    _self.trackActivity(event.data.asset_type, event.data.params.page_location, event.data.params, toSync);
                     break;
                 case 'TRACKER_SAVED':
                     const { clientId, tracker } = event.data.params;
         
-                    sendMessageToClient(clientId, { message: 'TRACKER_SAVED_RESPONSE', data: tracker });
+                    _self.sendMessageToClient(clientId, { message: 'TRACKER_SAVED_RESPONSE', data: tracker });
                     break;  
                 }
             }
-        });
+        });  
     }
+
+    async onActivate(): Promise<void>
+    {        
+        console.log('Activated ServiceWorker');
+     
+        this.startServiceWorker(this.regExTypes, this.ignoredUrls);
+    }
+
+    private checkWs(WS_URL: string, THE_USER: IJunctionUser): boolean 
+    {
+        if(!this.wsService.socket() && WS_URL){
+            this.wsService.init(WS_URL, THE_USER);
+
+            return true;
+        }
+
+        return false;
+    };
 }
 
-ServiceWorker.create();
+MyServiceWorker.create();
 ```
 
 ## Example: WebChat Component
@@ -484,147 +667,182 @@ The WebChat component demonstrates a practical use of `APIService` in a real-wor
 ### WebChat Component Implementation
 
 ```typescript
-import { RWSViewComponent, ApiService, NotifyService, RWSView, WSService } from 'rws-js-client';
-import { observable, css  } from '@microsoft/fast-element';
-
-import './children/convo-footer/component';
-
-import WebChatEvents from './events';
-import { IContext } from './children/left-bar/component';
-import { IMessage } from '../chat-message/component';
-import { ITalkApiResponse, BedrockBaseModel, IHyperParameter, 
-
 @RWSView('web-chat')
-class WebChat extends RWSViewComponent {  
+class WebChat extends RWSViewComponent {
 
-  @observable chatContext: IContext = null;
-  @observable chosenModel: BedrockBaseModel = null;
-  @observable injectMessages: IMessage[] = [];
-  @observable hyperParameters: { key: string, value: any }[] = [];
+    static fileList: string[] = [
+        'svg/icon_talk_1.svg'
+    ];
 
-  connectedCallback() {
-    super.connectedCallback();
-    
-    this.on<{ item: IContext }>(WebChatEvents.item.click, (event: CustomEvent<{ item: IContext }>) => {           
-      this.chatContext = event.detail.item;      
-    });  
+    @observable messages: IMessage[] = [];
+    @observable hyperParameters: { key: string, value: any } | any = {};
+    @observable bookId: string = null;
+    @observable chapterNr: string = null;
 
-    this.on<{ item: BedrockBaseModel }>(WebChatEvents.model.set, (event: CustomEvent<{ item: BedrockBaseModel }>) => {
-      if(!event.detail.item){
-        this.chosenModel = null;
-        return;
-      }      
+    @observable chosenModel: BedrockBaseModel = null;
+    @observable chatContext: IContext = { label: 'Book chat' };
 
-      this.chosenModel = {...event.detail.item};    
+    @observable bookModel: IBook = null;
 
-      this.setupModel();
-    });  
+    @observable minified: boolean = true;
 
-    if(!this.chosenModel){
-      this.chosenModel = ClaudeModel;
-      this.setupModel();
+    @ngAttr custombookid: string = null;
+    @ngAttr customchapternr: string = null;
+
+    @observable customTemperature: number = 0.7;
+    @observable customTopK: number = 250;
+    @observable customMaxTokensToSample: number = 1024;
+    @observable customTopP: number = 0.7;
+
+    @ngAttr hTemperature?: string = '0.7';
+    @ngAttr hTopK?: string = '250';
+    @ngAttr hMaxTokensToSample?: string = '1024';
+    @ngAttr hTopP?: string = '0.7';
+
+    @observable convoId: string;
+    @observable wsId: string;
+
+    @ngAttr dev: PseudoBool = 'false';
+    @ngAttr opened: PseudoBool = 'false';
+
+    @ngAttr userImage: string | null = null;
+    @ngAttr initials: string | null = 'U';
+
+    handlers: (this: WebChat) => IWebChatHandlers = assignHandlers;
+    streamCall: (msg: IMessage) => Promise<void> = callStreamApi;
+
+    getDefaultHyperParams = getDefaultParams;
+    setHyperParam = setHyperParam;
+
+    public msgOptions: IConvoMsgOptions = {
+        headerEnabled: false,
+        dateEnabled: false
+    };
+
+    connectedCallback() {
+        super.connectedCallback();
+
+        if (this.routeParams?.dev || this.dev === 'true') {
+            this.dev = 'true';
+        } else {
+            this.dev = 'false';
+        }
+
+        this.checkForBookId();
+        this.checkForBookChapter();
+
+        this.chosenModel = ClaudeModel;
+
+        const provider = this.chosenModel?.providerName?.toLowerCase() || null;
+        const defParams = this.getDefaultHyperParams(provider);
+
+        const defaultParams: { [key: string]: any } = {};
+
+        Object.keys(defParams).forEach(paramKey => {
+            if (defParams[paramKey]) {
+                defaultParams[paramKey] = this.setHyperParam(paramKey, defParams[paramKey]);
+            }
+        });
+
+        this.hyperParameters = { ...defaultParams, ...this.hyperParameters };
+
+        this.wsId = uuid();
+
+        this.on<{ item: IMessage }>(WebChatEvents.message.send, (event: CustomEvent<{ item: IMessage }>) => {
+
+
+            this.streamCall(event.detail.item);
+        });
+
+        if (this.routeParams?.opened || this.opened === 'true') {
+            this.minified = false;
+        }
+
+        if (this.hTemperature) {
+            this.hHandlers.hTemperature(null, this.hTemperature);
+        }
+
+        if (this.hMaxTokensToSample) {
+            this.hHandlers.hMaxTokensToSample(null, this.hMaxTokensToSample);
+        }
+
+        if (this.hTopK) {
+            this.hHandlers.hTopK(null, this.hTopK);
+        }
+
+        if (this.hTopP) {
+            this.hHandlers.hTopP(null, this.hTopP);
+        }
+    }
+    checkForBookId() {
+        this.bookId = this.routeParams.bookId || this.custombookid || null;
+
+        if (this.bookId) {
+            this.apiService.back.get<IBook>('train:get:book', { routeParams: { bookId: this.bookId } }).then((data: IBook) => {
+                this.bookModel = data;
+            });
+        }
     }
 
-    this.on<{ item: IMessage }>(WebChatEvents.message.send, (event: CustomEvent<{ item: IMessage }>) => {          
-      this.injectMessages = [event.detail.item];      
-      // this.callStreamApi(event.detail.item);
-      this.callTalkApi(event.detail.item);
-    });    
-   
-  }  
-  setupModel() {
-    // other code
-  }
+    checkForBookChapter() {
+        this.chapterNr = this.routeParams.chapterNr || this.customchapternr || null;
+    }
 
-  setHyperParam(key: string, value: any): void
-  {
-   // other code
-  }
+    custombookidChanged(oldVal: string, newVal: string) {
+        if (newVal) {
+            this.custombookid = newVal;
+            this.checkForBookId();
+        } else {
+            this.custombookid = null;
+        }
+    }
 
-  
-    
-    this.hyperParameters = [
-      ...this.hyperParameters,
-      {
-        key,
-        value
-      }
-    ];
-  }
+    customchapternrChanged(oldVal: string, newVal: string) {
+        if (newVal) {
+            this.customchapternr = newVal;
+            this.checkForBookChapter();
+        } else {
+            this.customchapternr = null;
+        }
+    }
 
-  private getDefaultParams(provider: string | null)
-  {
-   // other code
-  }
+    devChanged(oldVal: string, newVal: string) {
+        if (oldVal !== newVal) {
+            this.dev = newVal === 'true' ? 'true' : 'false';
+        }
+    }
 
+    hHandlers: IHyperHandler = getParamChangeHandlers.bind(this)();
 
-  private async callTalkApi(msg: IMessage): Promise<void>
-  {
+    hTemperatureChanged: ChangeHandlerType<string> = this.hHandlers.hTemperature;
+    hMaxTokensToSampleChanged: ChangeHandlerType<string> = this.hHandlers.hMaxTokensToSample;
+    hTopKChanged: ChangeHandlerType<string> = this.hHandlers.hTopK;
+    hTopPChanged: ChangeHandlerType<string> = this.hHandlers.hTopP;
 
-    type IApiTalkPayload = {
-      message: IMessage;
-      model: any;
-    }    
+    userImageChanged(oldVal: string, newVal: string) {
+        if (newVal && oldVal !== newVal) {
+            this.userImage = newVal;
+        }
+    }
 
-    try {
-      const apiPromise: Promise<ITalkApiResponse> = ApiService.back.post<ITalkApiResponse, IApiTalkPayload>('talk:models:prompt', {        
-        message: msg,
-        model: this.chosenModel,
-      });
-      
-      this.injectMessages = [msg, {
-        _promise: apiPromise,
-        me: false,
-        author: this.chosenModel.modelName, 
-        content: null,
-        model: this.chosenModel,
-        created_at: new Date()
-      }];        
+    initialsChanged(oldVal: string, newVal: string) {
+        if (newVal && oldVal !== newVal) {
+            this.initials = newVal;
+        }
+    }
 
-    } catch(e: Error | any) {
-      console.error(e);
-    }      
-  }
-
-  private async callStreamApi(msg: IMessage): Promise<void>
-  {
-
-    type IApiTalkPayload = {
-      message: IMessage;
-      model: any;
-    }    
-
-    const llmStream = new ReadableStream();
-
-    const sendMsg: IMessage = {       
-      me: false,
-      author: this.chosenModel.modelName, 
-      content: null,
-      model: this.chosenModel,
-      created_at: new Date()
-    };   
-
-    WSService.sendMessage('send_msg', {
-      modelId: this.chosenModel.modelId,
-      prompt: msg.content
-    });
-
-    try {      
-      this.injectMessages = [msg, {          
-          ...sendMsg,
-          _stream: llmStream,
-        }];        
-
-    } catch(e: Error | any) {
-      console.error(e);
-    }      
-  }
+    convoIdChanged(oldVal: string, newVal: string) {
+        if (newVal && oldVal !== newVal) {
+            console.log(this.convoId);
+            this.convoId = newVal;
+        }
+    }
 }
 
 WebChat.defineComponent();
 
 
-export { WebChat }
+export { WebChat, IContext };
 
 ```
 
@@ -670,7 +888,7 @@ and src/config/config
 Socket route from
 
 ```typescript
- WSService.sendMessage('send_msg', {
+ WSService.sendMessage<PayloadType>('send_msg', {
       modelId: this.chosenModel.modelId,
       prompt: msg.content
     });

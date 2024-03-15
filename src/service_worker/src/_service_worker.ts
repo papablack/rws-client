@@ -74,9 +74,8 @@ abstract class RWSServiceWorker<UserType extends IRWSUser> {
     {
         const className = this.name;
 
-        if (!RWSServiceWorker._instances[className]) {
-            const WSService = RWSContainer().get<WSServiceInstance>(WSServiceInstance);
-            RWSServiceWorker._instances[className] = new this(workerScope, WSService);
+        if (!RWSServiceWorker._instances[className]) {            
+            RWSServiceWorker._instances[className] = new this(workerScope, RWSContainer());
         }
 
         return RWSServiceWorker._instances[className] as InstanceType<T>;
