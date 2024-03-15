@@ -27,6 +27,7 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
+      document: false,
       globalThis:  gThis,
       '@cwd' : process.cwd(),
       // 'rws-js-client': path.resolve(__dirname, '..') + '/index.ts',

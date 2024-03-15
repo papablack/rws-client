@@ -67,11 +67,8 @@ function modifyPropertyDescriptor(target: any, propertyKey: string, config: IOpt
             return this[privatePropName];                             
         },
         set(value: any) {                
-            if (typeof value === 'string') {                    
-                console.log('sanitizing', value);
-                this[privatePropName] = RWSContainer().get(DOMService).sanitizeHTML(value, null, config);
-                console.log('sanitized', this[privatePropName], config);
-
+            if (typeof value === 'string') {                                    
+                this[privatePropName] = RWSContainer().get(DOMService).sanitizeHTML(value, null, config);                
             } else {
                 this[privatePropName] = null;
             }

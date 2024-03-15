@@ -260,23 +260,23 @@ class RWSClient {
         (await Promise.all(_all)).forEach((scriptCnt: string, key: number) => {
             const script: HTMLScriptElement = document.createElement('script');                   
             script.textContent = scriptCnt;
+            script.async = true
             script.type = 'text/javascript';
             document.body.appendChild(script);
 
             console.log(`Appended ${componentParts[key]} component`);
         });        
 
+        RWSClient.defineAllComponents();
+    }
+    
+    static defineAllComponents() {
         const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;                
-
-        const devStr = 'book-loader';
         // provideRWSDesignSystem().register(richWindowComponents[devStr].component);
 
-
-        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
+        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {     
             el.define(el, el.definition);
         });
-
-        return;
     }
 
     private getBrowserObject(): RWSWindow
