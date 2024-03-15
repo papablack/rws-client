@@ -14,7 +14,7 @@ import ApiServiceInstance,  { IBackendRoute, ApiService, IHTTProute, IPrefixedHT
 import RWSService from './services/_service';
 import UtilsServiceInstance, {RWSUtilsService as UtilsService} from './services/UtilsService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
-
+import { sanitizedAttr } from './components/_attrs/sanitize-html';
 import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
 import WSServiceInstance, {RWSWSService as WSService, WSStatus} from './services/WSService';
 import { RouterComponent } from './components/router/component';
@@ -70,6 +70,7 @@ export {
 
     RWSViewComponent,        
     RWSView,
+    sanitizedAttr,
     ngAttr,
     RWSService,
 

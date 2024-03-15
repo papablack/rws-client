@@ -1,3 +1,6 @@
+import { Observable } from "@microsoft/fast-element";
+import DOMServiceInstance, { DOMService } from "../services/DOMService";
+
 interface RWSDecoratorOptions{
     template?: string,
     styles?: string,

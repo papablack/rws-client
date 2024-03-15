@@ -77,9 +77,11 @@ class DOMServiceInstance extends RWSService {
         
         if(allowedHTMLTags){
             sanitizeOptions.allowedTags = allowedHTMLTags;
-        }
+        }     
 
-        return htmlSanitizer(output, sanitizeOptions);
+        const sanitized = htmlSanitizer(output, sanitizeOptions);
+
+        return sanitized;
     }
 }
 

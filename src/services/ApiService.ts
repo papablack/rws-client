@@ -206,7 +206,8 @@ class ApiServiceInstance extends TheService {
                 file,
             },
             {
-                onProgress
+                onProgress,
+                headers: this.token ? { Authorization: `Bearer ${this.token}` } : null,
             }
         );
     }
