@@ -1,6 +1,7 @@
 import { Observable, AttributeConfiguration } from '@microsoft/fast-element';
 import RWSViewComponent from '../_component';
-import { DOMService } from '../../services/DOMService';
+import DOMService from '../../services/DOMService';
+import RWSContainer from '../_container';
 import { IOptions } from 'sanitize-html';
 
 import * as he from 'he';
@@ -68,7 +69,7 @@ function modifyPropertyDescriptor(target: any, propertyKey: string, config: IOpt
         set(value: any) {                
             if (typeof value === 'string') {                    
                 console.log('sanitizing', value);
-                this[privatePropName] = DOMService.sanitizeHTML(value, null, config);
+                this[privatePropName] = RWSContainer().get(DOMService).sanitizeHTML(value, null, config);
                 console.log('sanitized', this[privatePropName], config);
 
             } else {
