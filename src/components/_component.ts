@@ -1,4 +1,4 @@
-import { ViewTemplate, ElementStyles, observable, html, Constructable, PartialFASTElementDefinition } from '@microsoft/fast-element';
+import { ViewTemplate, ElementStyles, observable, html, Constructable, PartialFASTElementDefinition, attr } from '@microsoft/fast-element';
 import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, InterfaceSymbol, Key, OverrideFoundationElementDefinition } from '@microsoft/fast-foundation';
 import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
 import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
@@ -44,7 +44,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     private static instances: RWSViewComponent[] = [];
     static fileList: string[] = [];
 
-    public routeParams: Record<string, string> = {};
+    @attr routeParams: Record<string, string> = {};
 
     static autoLoadFastElement = true;
     static _defined: { [key: string]: boolean } = {};
