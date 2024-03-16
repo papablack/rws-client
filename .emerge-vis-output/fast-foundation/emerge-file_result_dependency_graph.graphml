@@ -591,7 +591,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">62</data>
+      <data key="d10">63</data>
     </node>
     <node id="./fast-foundation/dist/dts/button/button.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/button/button.form-associated.d.ts</data>
@@ -650,7 +650,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">63</data>
+      <data key="d10">64</data>
     </node>
     <node id="./fast-foundation/dist/dts/button/button.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/button/button.template.d.ts</data>
@@ -665,13 +665,13 @@
       <data key="d33">0.24452176686082294</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">13</data>
+      <data key="d10">12</data>
     </node>
     <node id="fast-foundation/dist/dts/button/button.js">
       <data key="d1">fast-foundation/dist/dts/button/button.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">13</data>
+      <data key="d10">12</data>
     </node>
     <node id="./fast-foundation/dist/dts/progress-ring/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/progress-ring/index.d.ts</data>
@@ -680,7 +680,7 @@
       <data key="d3">1</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">64</data>
+      <data key="d10">65</data>
     </node>
     <node id="./fast-foundation/dist/dts/progress-ring/progress-ring.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/progress-ring/progress-ring.template.d.ts</data>
@@ -695,13 +695,13 @@
       <data key="d33">0.26613743078087915</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">14</data>
+      <data key="d10">13</data>
     </node>
     <node id="../progress/base-progress.js">
       <data key="d1">../progress/base-progress.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">14</data>
+      <data key="d10">13</data>
     </node>
     <node id="./fast-foundation/dist/dts/slider/slider.d.ts">
       <data key="d0">./fast-foundation/dist/dts/slider/slider.d.ts</data>
@@ -768,13 +768,13 @@
       <data key="d33">0.2294290342580218</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">15</data>
+      <data key="d10">14</data>
     </node>
     <node id="fast-foundation/dist/dts/slider/slider.js">
       <data key="d1">fast-foundation/dist/dts/slider/slider.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">15</data>
+      <data key="d10">14</data>
     </node>
     <node id="./fast-foundation/dist/dts/slider/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/slider/index.d.ts</data>
@@ -783,7 +783,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">65</data>
+      <data key="d10">66</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/apply-mixins.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/apply-mixins.d.ts</data>
@@ -799,7 +799,7 @@
       <data key="d75">0.3020206162962067</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">66</data>
+      <data key="d10">67</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/intersection-service.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/intersection-service.d.ts</data>
@@ -814,7 +814,7 @@
       <data key="d11">0.20429461484527472</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">67</data>
+      <data key="d10">68</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/index.d.ts</data>
@@ -824,7 +824,7 @@
       <data key="d81">1.0</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">68</data>
+      <data key="d10">69</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/composed-contains.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/composed-contains.d.ts</data>
@@ -838,7 +838,7 @@
       <data key="d85">0.258454544983808</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">69</data>
+      <data key="d10">70</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/resize-observer.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/resize-observer.d.ts</data>
@@ -854,7 +854,7 @@
       <data key="d11">0.21772773248233865</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">70</data>
+      <data key="d10">71</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/property-stylesheet-behavior.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/property-stylesheet-behavior.d.ts</data>
@@ -896,7 +896,7 @@
       <data key="d11">0.39398757082939745</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">71</data>
+      <data key="d10">72</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/whitespace-filter.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/whitespace-filter.d.ts</data>
@@ -908,7 +908,7 @@
       <data key="d104">0.26592485090949275</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">72</data>
+      <data key="d10">73</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/match-media-stylesheet-behavior.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/match-media-stylesheet-behavior.d.ts</data>
@@ -937,7 +937,7 @@
       <data key="d112">0.2198328510028692</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">73</data>
+      <data key="d10">74</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/style/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/style/index.d.ts</data>
@@ -946,7 +946,7 @@
       <data key="d3">3</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">74</data>
+      <data key="d10">75</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/style/disabled.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/style/disabled.d.ts</data>
@@ -959,7 +959,7 @@
       <data key="d115">0.3314424232729966</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">75</data>
+      <data key="d10">76</data>
     </node>
     <node id="./fast-foundation/dist/dts/utilities/style/focus.d.ts">
       <data key="d0">./fast-foundation/dist/dts/utilities/style/focus.d.ts</data>
@@ -975,7 +975,7 @@
       <data key="d122">0.23225231122959325</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">76</data>
+      <data key="d10">77</data>
     </node>
     <node id="./fast-foundation/dist/dts/listbox-option/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/listbox-option/index.d.ts</data>
@@ -984,7 +984,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">77</data>
+      <data key="d10">78</data>
     </node>
     <node id="./fast-foundation/dist/dts/listbox-option/listbox-option.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/listbox-option/listbox-option.template.d.ts</data>
@@ -999,13 +999,13 @@
       <data key="d33">0.23650155194251393</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">16</data>
+      <data key="d10">15</data>
     </node>
     <node id="fast-foundation/dist/dts/listbox-option/listbox-option.js">
       <data key="d1">fast-foundation/dist/dts/listbox-option/listbox-option.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">16</data>
+      <data key="d10">15</data>
     </node>
     <node id="./fast-foundation/dist/dts/listbox-option/listbox-option.d.ts">
       <data key="d0">./fast-foundation/dist/dts/listbox-option/listbox-option.d.ts</data>
@@ -1041,13 +1041,13 @@
       <data key="d33">0.3205536708956743</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">2</data>
+      <data key="d10">16</data>
     </node>
     <node id="fast-foundation/dist/dts/disclosure/disclosure.js">
       <data key="d1">fast-foundation/dist/dts/disclosure/disclosure.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">2</data>
+      <data key="d10">16</data>
     </node>
     <node id="./fast-foundation/dist/dts/disclosure/disclosure.d.ts">
       <data key="d0">./fast-foundation/dist/dts/disclosure/disclosure.d.ts</data>
@@ -1072,7 +1072,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">78</data>
+      <data key="d10">79</data>
     </node>
     <node id="./fast-foundation/dist/dts/test-utilities/fixture.d.ts">
       <data key="d0">./fast-foundation/dist/dts/test-utilities/fixture.d.ts</data>
@@ -1102,7 +1102,7 @@
       <data key="d143">0.32357167215157506</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">79</data>
+      <data key="d10">80</data>
     </node>
     <node id="./fast-foundation/dist/dts/radio/radio.d.ts">
       <data key="d0">./fast-foundation/dist/dts/radio/radio.d.ts</data>
@@ -1152,7 +1152,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">80</data>
+      <data key="d10">81</data>
     </node>
     <node id="./fast-foundation/dist/dts/radio/radio.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/radio/radio.form-associated.d.ts</data>
@@ -1191,7 +1191,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">81</data>
+      <data key="d10">82</data>
     </node>
     <node id="./fast-foundation/dist/dts/accordion/accordion.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/accordion/accordion.template.d.ts</data>
@@ -1205,13 +1205,13 @@
       <data key="d33">0.3277780170138644</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">20</data>
+      <data key="d10">2</data>
     </node>
     <node id="fast-foundation/dist/dts/accordion/accordion.js">
       <data key="d1">fast-foundation/dist/dts/accordion/accordion.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">20</data>
+      <data key="d10">2</data>
     </node>
     <node id="./fast-foundation/dist/dts/search/search.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/search/search.template.d.ts</data>
@@ -1226,13 +1226,13 @@
       <data key="d33">0.23650155194251393</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">21</data>
+      <data key="d10">20</data>
     </node>
     <node id="fast-foundation/dist/dts/search/search.js">
       <data key="d1">fast-foundation/dist/dts/search/search.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">21</data>
+      <data key="d10">20</data>
     </node>
     <node id="./fast-foundation/dist/dts/search/search.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/search/search.form-associated.d.ts</data>
@@ -1257,7 +1257,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">82</data>
+      <data key="d10">83</data>
     </node>
     <node id="./fast-foundation/dist/dts/search/search.d.ts">
       <data key="d0">./fast-foundation/dist/dts/search/search.d.ts</data>
@@ -1300,7 +1300,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">83</data>
+      <data key="d10">84</data>
     </node>
     <node id="./fast-foundation/dist/dts/progress/progress.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/progress/progress.template.d.ts</data>
@@ -1315,13 +1315,13 @@
       <data key="d33">0.26613743078087915</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">22</data>
+      <data key="d10">21</data>
     </node>
     <node id="fast-foundation/dist/dts/progress/base-progress.js">
       <data key="d1">fast-foundation/dist/dts/progress/base-progress.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">22</data>
+      <data key="d10">21</data>
     </node>
     <node id="./fast-foundation/dist/dts/dialog/dialog.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/dialog/dialog.template.d.ts</data>
@@ -1335,13 +1335,13 @@
       <data key="d33">0.3277780170138644</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">23</data>
+      <data key="d10">22</data>
     </node>
     <node id="fast-foundation/dist/dts/dialog/dialog.js">
       <data key="d1">fast-foundation/dist/dts/dialog/dialog.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">23</data>
+      <data key="d10">22</data>
     </node>
     <node id="./fast-foundation/dist/dts/dialog/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/dialog/index.d.ts</data>
@@ -1350,7 +1350,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">84</data>
+      <data key="d10">85</data>
     </node>
     <node id="./fast-foundation/dist/dts/dialog/dialog.d.ts">
       <data key="d0">./fast-foundation/dist/dts/dialog/dialog.d.ts</data>
@@ -1391,13 +1391,13 @@
       <data key="d33">0.2294290342580218</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">24</data>
+      <data key="d10">23</data>
     </node>
     <node id="fast-foundation/dist/dts/tabs/tabs.js">
       <data key="d1">fast-foundation/dist/dts/tabs/tabs.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">24</data>
+      <data key="d10">23</data>
     </node>
     <node id="./fast-foundation/dist/dts/tabs/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/tabs/index.d.ts</data>
@@ -1406,7 +1406,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">85</data>
+      <data key="d10">86</data>
     </node>
     <node id="./fast-foundation/dist/dts/foundation-element/foundation-element.d.ts">
       <data key="d0">./fast-foundation/dist/dts/foundation-element/foundation-element.d.ts</data>
@@ -1449,7 +1449,7 @@
       <data key="d3">1</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">87</data>
+      <data key="d10">88</data>
     </node>
     <node id="./fast-foundation/dist/dts/design-token/design-token.d.ts">
       <data key="d0">./fast-foundation/dist/dts/design-token/design-token.d.ts</data>
@@ -1485,7 +1485,7 @@
       <data key="d189">0.20268356287646142</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">88</data>
+      <data key="d10">89</data>
     </node>
     <node id="./fast-foundation/dist/dts/design-token/custom-property-manager.d.ts">
       <data key="d0">./fast-foundation/dist/dts/design-token/custom-property-manager.d.ts</data>
@@ -1500,7 +1500,7 @@
       <data key="d194">0.22757781353710982</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">89</data>
+      <data key="d10">90</data>
     </node>
     <node id="./fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.d.ts">
       <data key="d0">./fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.d.ts</data>
@@ -1530,7 +1530,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">90</data>
+      <data key="d10">91</data>
     </node>
     <node id="./fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.template.d.ts</data>
@@ -1545,13 +1545,13 @@
       <data key="d33">0.21979540086776628</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">25</data>
+      <data key="d10">24</data>
     </node>
     <node id="fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.js">
       <data key="d1">fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">25</data>
+      <data key="d10">24</data>
     </node>
     <node id="./fast-foundation/dist/dts/toolbar/toolbar.d.ts">
       <data key="d0">./fast-foundation/dist/dts/toolbar/toolbar.d.ts</data>
@@ -1574,7 +1574,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">91</data>
+      <data key="d10">92</data>
     </node>
     <node id="./fast-foundation/dist/dts/toolbar/toolbar.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/toolbar/toolbar.template.d.ts</data>
@@ -1589,13 +1589,13 @@
       <data key="d33">0.21979540086776628</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">26</data>
+      <data key="d10">25</data>
     </node>
     <node id="fast-foundation/dist/dts/toolbar/toolbar.js">
       <data key="d1">fast-foundation/dist/dts/toolbar/toolbar.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">26</data>
+      <data key="d10">25</data>
     </node>
     <node id="./fast-foundation/dist/dts/picker/picker-list-item.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/picker/picker-list-item.template.d.ts</data>
@@ -1609,13 +1609,13 @@
       <data key="d17">0.2436087262508687</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">27</data>
+      <data key="d10">26</data>
     </node>
     <node id="fast-foundation/dist/dts/picker/picker-list-item.js">
       <data key="d1">fast-foundation/dist/dts/picker/picker-list-item.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">27</data>
+      <data key="d10">26</data>
     </node>
     <node id="./fast-foundation/dist/dts/picker/picker.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/picker/picker.form-associated.d.ts</data>
@@ -1727,7 +1727,7 @@
       <data key="d3">10</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">92</data>
+      <data key="d10">93</data>
     </node>
     <node id="./fast-foundation/dist/dts/picker/picker-menu.d.ts">
       <data key="d0">./fast-foundation/dist/dts/picker/picker-menu.d.ts</data>
@@ -1755,13 +1755,13 @@
       <data key="d17">0.2436087262508687</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">28</data>
+      <data key="d10">27</data>
     </node>
     <node id="fast-foundation/dist/dts/picker/picker-menu-option.js">
       <data key="d1">fast-foundation/dist/dts/picker/picker-menu-option.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">28</data>
+      <data key="d10">27</data>
     </node>
     <node id="./fast-foundation/dist/dts/picker/picker.d.ts">
       <data key="d0">./fast-foundation/dist/dts/picker/picker.d.ts</data>
@@ -1801,13 +1801,13 @@
       <data key="d210">0.2077498989977358</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">29</data>
+      <data key="d10">28</data>
     </node>
     <node id="fast-foundation/dist/dts/picker/picker.js">
       <data key="d1">fast-foundation/dist/dts/picker/picker.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">29</data>
+      <data key="d10">28</data>
     </node>
     <node id="./fast-foundation/dist/dts/badge/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/badge/index.d.ts</data>
@@ -1816,7 +1816,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">93</data>
+      <data key="d10">94</data>
     </node>
     <node id="./fast-foundation/dist/dts/badge/badge.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/badge/badge.template.d.ts</data>
@@ -1830,13 +1830,13 @@
       <data key="d33">0.3277780170138644</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">30</data>
+      <data key="d10">29</data>
     </node>
     <node id="fast-foundation/dist/dts/badge/badge.js">
       <data key="d1">fast-foundation/dist/dts/badge/badge.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">30</data>
+      <data key="d10">29</data>
     </node>
     <node id="./fast-foundation/dist/dts/badge/badge.d.ts">
       <data key="d0">./fast-foundation/dist/dts/badge/badge.d.ts</data>
@@ -1865,7 +1865,7 @@
       <data key="d238">0.22744467589394396</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">94</data>
+      <data key="d10">95</data>
     </node>
     <node id="./fast-foundation/dist/dts/tooltip/tooltip.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/tooltip/tooltip.template.d.ts</data>
@@ -1880,13 +1880,13 @@
       <data key="d240">0.22086202475058436</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">2</data>
+      <data key="d10">30</data>
     </node>
     <node id="fast-foundation/dist/dts/tooltip/tooltip.js">
       <data key="d1">fast-foundation/dist/dts/tooltip/tooltip.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">2</data>
+      <data key="d10">30</data>
     </node>
     <node id="./fast-foundation/dist/dts/tooltip/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/tooltip/index.d.ts</data>
@@ -1895,7 +1895,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">95</data>
+      <data key="d10">96</data>
     </node>
     <node id="./fast-foundation/dist/dts/tooltip/tooltip.d.ts">
       <data key="d0">./fast-foundation/dist/dts/tooltip/tooltip.d.ts</data>
@@ -1960,7 +1960,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">96</data>
+      <data key="d10">98</data>
     </node>
     <node id="./fast-foundation/dist/dts/horizontal-scroll/horizontal-scroll.d.ts">
       <data key="d0">./fast-foundation/dist/dts/horizontal-scroll/horizontal-scroll.d.ts</data>
@@ -1999,7 +1999,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">97</data>
+      <data key="d10">99</data>
     </node>
     <node id="./fast-foundation/dist/dts/checkbox/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/checkbox/index.d.ts</data>
@@ -2008,7 +2008,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">98</data>
+      <data key="d10">100</data>
     </node>
     <node id="./fast-foundation/dist/dts/checkbox/checkbox.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/checkbox/checkbox.form-associated.d.ts</data>
@@ -2081,7 +2081,7 @@
       <data key="d255">0.2004760129582947</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">99</data>
+      <data key="d10">101</data>
     </node>
     <node id="./fast-foundation/dist/dts/menu-item/menu-item.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/menu-item/menu-item.template.d.ts</data>
@@ -2133,7 +2133,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">100</data>
+      <data key="d10">102</data>
     </node>
     <node id="./fast-foundation/dist/dts/data-grid/data-grid-cell.d.ts">
       <data key="d0">./fast-foundation/dist/dts/data-grid/data-grid-cell.d.ts</data>
@@ -2168,7 +2168,7 @@
       <data key="d3">6</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">101</data>
+      <data key="d10">103</data>
     </node>
     <node id="./fast-foundation/dist/dts/data-grid/data-grid.options.d.ts">
       <data key="d0">./fast-foundation/dist/dts/data-grid/data-grid.options.d.ts</data>
@@ -2184,7 +2184,7 @@
       <data key="d270">0.27865419533472785</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">102</data>
+      <data key="d10">104</data>
     </node>
     <node id="./fast-foundation/dist/dts/data-grid/data-grid.d.ts">
       <data key="d0">./fast-foundation/dist/dts/data-grid/data-grid.d.ts</data>
@@ -2280,7 +2280,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">103</data>
+      <data key="d10">105</data>
     </node>
     <node id="./fast-foundation/dist/dts/tab/tab.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/tab/tab.template.d.ts</data>
@@ -2331,13 +2331,13 @@
       <data key="d33">0.24452176686082294</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">2</data>
+      <data key="d10">38</data>
     </node>
     <node id="fast-foundation/dist/dts/select/select.js">
       <data key="d1">fast-foundation/dist/dts/select/select.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">2</data>
+      <data key="d10">38</data>
     </node>
     <node id="./fast-foundation/dist/dts/select/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/select/index.d.ts</data>
@@ -2346,7 +2346,7 @@
       <data key="d3">3</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">104</data>
+      <data key="d10">106</data>
     </node>
     <node id="./fast-foundation/dist/dts/select/select.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/select/select.form-associated.d.ts</data>
@@ -2362,13 +2362,13 @@
       <data key="d282">0.21420827675985035</data>
       <data key="d8">0</data>
       <data key="d9">2</data>
-      <data key="d10">38</data>
+      <data key="d10">39</data>
     </node>
     <node id="../listbox/listbox.element.js">
       <data key="d1">../listbox/listbox.element.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">38</data>
+      <data key="d10">39</data>
     </node>
     <node id="./fast-foundation/dist/dts/select/select.d.ts">
       <data key="d0">./fast-foundation/dist/dts/select/select.d.ts</data>
@@ -2421,7 +2421,7 @@
       <data key="d253">0.21751332165293522</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">105</data>
+      <data key="d10">108</data>
     </node>
     <node id="./fast-foundation/dist/dts/switch/switch.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/switch/switch.template.d.ts</data>
@@ -2435,13 +2435,13 @@
       <data key="d33">0.318218439843106</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">39</data>
+      <data key="d10">40</data>
     </node>
     <node id="fast-foundation/dist/dts/switch/switch.js">
       <data key="d1">fast-foundation/dist/dts/switch/switch.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">39</data>
+      <data key="d10">40</data>
     </node>
     <node id="./fast-foundation/dist/dts/switch/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/switch/index.d.ts</data>
@@ -2450,7 +2450,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">106</data>
+      <data key="d10">109</data>
     </node>
     <node id="./fast-foundation/dist/dts/switch/switch.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/switch/switch.form-associated.d.ts</data>
@@ -2481,13 +2481,13 @@
       <data key="d298">0.22532603773827448</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">40</data>
+      <data key="d10">2</data>
     </node>
     <node id="fast-foundation/dist/dts/switch/switch.form-associated.js">
       <data key="d1">fast-foundation/dist/dts/switch/switch.form-associated.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">40</data>
+      <data key="d10">2</data>
     </node>
     <node id="./fast-foundation/dist/dts/anchor/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/anchor/index.d.ts</data>
@@ -2496,7 +2496,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">107</data>
+      <data key="d10">110</data>
     </node>
     <node id="./fast-foundation/dist/dts/anchor/anchor.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/anchor/anchor.template.d.ts</data>
@@ -2573,7 +2573,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">108</data>
+      <data key="d10">111</data>
     </node>
     <node id="./fast-foundation/dist/dts/directives/reflect-attributes.d.ts">
       <data key="d0">./fast-foundation/dist/dts/directives/reflect-attributes.d.ts</data>
@@ -2633,7 +2633,7 @@
       <data key="d3">3</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">109</data>
+      <data key="d10">112</data>
     </node>
     <node id="./fast-foundation/dist/dts/anchored-region/anchored-region-config.d.ts">
       <data key="d0">./fast-foundation/dist/dts/anchored-region/anchored-region-config.d.ts</data>
@@ -2679,7 +2679,7 @@
       <data key="d319">0.26015008812909507</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">110</data>
+      <data key="d10">113</data>
     </node>
     <node id="./fast-foundation/dist/dts/divider/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/divider/index.d.ts</data>
@@ -2688,7 +2688,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">111</data>
+      <data key="d10">114</data>
     </node>
     <node id="./fast-foundation/dist/dts/divider/divider.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/divider/divider.template.d.ts</data>
@@ -2752,7 +2752,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">112</data>
+      <data key="d10">115</data>
     </node>
     <node id="./fast-foundation/dist/dts/text-field/text-field.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/text-field/text-field.form-associated.d.ts</data>
@@ -2783,13 +2783,13 @@
       <data key="d33">0.2294290342580218</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">2</data>
+      <data key="d10">45</data>
     </node>
     <node id="fast-foundation/dist/dts/text-field/text-field.js">
       <data key="d1">fast-foundation/dist/dts/text-field/text-field.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">2</data>
+      <data key="d10">45</data>
     </node>
     <node id="./fast-foundation/dist/dts/text-field/text-field.d.ts">
       <data key="d0">./fast-foundation/dist/dts/text-field/text-field.d.ts</data>
@@ -2822,7 +2822,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">113</data>
+      <data key="d10">116</data>
     </node>
     <node id="./fast-foundation/dist/dts/text-field/text-field.options.d.ts">
       <data key="d0">./fast-foundation/dist/dts/text-field/text-field.options.d.ts</data>
@@ -2838,7 +2838,7 @@
       <data key="d328">0.20729057779172222</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">114</data>
+      <data key="d10">117</data>
     </node>
     <node id="./fast-foundation/dist/dts/skeleton/skeleton.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/skeleton/skeleton.template.d.ts</data>
@@ -2853,13 +2853,13 @@
       <data key="d336">0.21347768090351804</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">45</data>
+      <data key="d10">2</data>
     </node>
     <node id="fast-foundation/dist/dts/skeleton/skeleton.js">
       <data key="d1">fast-foundation/dist/dts/skeleton/skeleton.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">45</data>
+      <data key="d10">2</data>
     </node>
     <node id="./fast-foundation/dist/dts/skeleton/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/skeleton/index.d.ts</data>
@@ -2868,7 +2868,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">115</data>
+      <data key="d10">118</data>
     </node>
     <node id="./fast-foundation/dist/dts/skeleton/skeleton.d.ts">
       <data key="d0">./fast-foundation/dist/dts/skeleton/skeleton.d.ts</data>
@@ -2930,7 +2930,7 @@
       <data key="d3">3</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">116</data>
+      <data key="d10">119</data>
     </node>
     <node id="./fast-foundation/dist/dts/listbox/listbox.element.d.ts">
       <data key="d0">./fast-foundation/dist/dts/listbox/listbox.element.d.ts</data>
@@ -2993,7 +2993,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">117</data>
+      <data key="d10">120</data>
     </node>
     <node id="./fast-foundation/dist/dts/text-area/text-area.d.ts">
       <data key="d0">./fast-foundation/dist/dts/text-area/text-area.d.ts</data>
@@ -3054,7 +3054,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">118</data>
+      <data key="d10">121</data>
     </node>
     <node id="./fast-foundation/dist/dts/text-area/text-area.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/text-area/text-area.form-associated.d.ts</data>
@@ -3082,7 +3082,7 @@
       <data key="d345">0.21390940201957662</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">119</data>
+      <data key="d10">122</data>
     </node>
     <node id="./fast-foundation/dist/dts/tree-item/index.d.ts">
       <data key="d0">./fast-foundation/dist/dts/tree-item/index.d.ts</data>
@@ -3091,7 +3091,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">120</data>
+      <data key="d10">123</data>
     </node>
     <node id="./fast-foundation/dist/dts/tree-item/tree-item.d.ts">
       <data key="d0">./fast-foundation/dist/dts/tree-item/tree-item.d.ts</data>
@@ -3133,7 +3133,7 @@
       <data key="d3">1</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">121</data>
+      <data key="d10">124</data>
     </node>
     <node id="./fast-foundation/dist/dts/di/di.d.ts">
       <data key="d0">./fast-foundation/dist/dts/di/di.d.ts</data>
@@ -3194,7 +3194,7 @@
       <data key="d3">3</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">122</data>
+      <data key="d10">125</data>
     </node>
     <node id="./fast-foundation/dist/dts/calendar/date-formatter.d.ts">
       <data key="d0">./fast-foundation/dist/dts/calendar/date-formatter.d.ts</data>
@@ -3210,7 +3210,7 @@
       <data key="d371">0.20864463975210334</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">123</data>
+      <data key="d10">126</data>
     </node>
     <node id="./fast-foundation/dist/dts/menu/menu.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/menu/menu.template.d.ts</data>
@@ -3251,7 +3251,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">124</data>
+      <data key="d10">127</data>
     </node>
     <node id="./fast-foundation/dist/dts/combobox/combobox.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/combobox/combobox.template.d.ts</data>
@@ -3284,7 +3284,7 @@
       <data key="d253">0.22817123430784372</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">125</data>
+      <data key="d10">128</data>
     </node>
     <node id="./fast-foundation/dist/dts/combobox/combobox.d.ts">
       <data key="d0">./fast-foundation/dist/dts/combobox/combobox.d.ts</data>
@@ -3326,7 +3326,7 @@
       <data key="d3">3</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">126</data>
+      <data key="d10">129</data>
     </node>
     <node id="./fast-foundation/dist/dts/combobox/combobox.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/combobox/combobox.form-associated.d.ts</data>
@@ -3371,7 +3371,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">127</data>
+      <data key="d10">130</data>
     </node>
     <node id="./fast-foundation/dist/dts/tree-view/tree-view.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/tree-view/tree-view.template.d.ts</data>
@@ -3403,7 +3403,7 @@
       <data key="d253">0.24261986874933913</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">128</data>
+      <data key="d10">131</data>
     </node>
     <node id="./fast-foundation/dist/dts/flipper/flipper.d.ts">
       <data key="d0">./fast-foundation/dist/dts/flipper/flipper.d.ts</data>
@@ -3430,7 +3430,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">129</data>
+      <data key="d10">132</data>
     </node>
     <node id="./fast-foundation/dist/dts/flipper/flipper.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/flipper/flipper.template.d.ts</data>
@@ -3496,7 +3496,7 @@
       <data key="d3">3</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">130</data>
+      <data key="d10">133</data>
     </node>
     <node id="./fast-foundation/dist/dts/design-system/component-presentation.d.ts">
       <data key="d0">./fast-foundation/dist/dts/design-system/component-presentation.d.ts</data>
@@ -3537,7 +3537,7 @@
       <data key="d3">1</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">131</data>
+      <data key="d10">134</data>
     </node>
     <node id="./fast-foundation/dist/dts/slider-label/slider-label.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/slider-label/slider-label.template.d.ts</data>
@@ -3566,7 +3566,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">132</data>
+      <data key="d10">107</data>
     </node>
     <node id="./fast-foundation/dist/dts/slider-label/slider-label.d.ts">
       <data key="d0">./fast-foundation/dist/dts/slider-label/slider-label.d.ts</data>
@@ -3602,7 +3602,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">133</data>
+      <data key="d10">87</data>
     </node>
     <node id="./fast-foundation/dist/dts/patterns/aria-global.d.ts">
       <data key="d0">./fast-foundation/dist/dts/patterns/aria-global.d.ts</data>
@@ -3617,7 +3617,7 @@
       <data key="d11">0.23235608288340073</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">134</data>
+      <data key="d10">62</data>
     </node>
     <node id="./fast-foundation/dist/dts/number-field/number-field.template.d.ts">
       <data key="d0">./fast-foundation/dist/dts/number-field/number-field.template.d.ts</data>
@@ -3632,13 +3632,13 @@
       <data key="d33">0.22504578568485106</data>
       <data key="d8">0</data>
       <data key="d9">3</data>
-      <data key="d10">12</data>
+      <data key="d10">2</data>
     </node>
     <node id="fast-foundation/dist/dts/number-field/number-field.js">
       <data key="d1">fast-foundation/dist/dts/number-field/number-field.js</data>
       <data key="d8">1</data>
       <data key="d9">0</data>
-      <data key="d10">12</data>
+      <data key="d10">2</data>
     </node>
     <node id="./fast-foundation/dist/dts/number-field/number-field.form-associated.d.ts">
       <data key="d0">./fast-foundation/dist/dts/number-field/number-field.form-associated.d.ts</data>
@@ -3685,7 +3685,7 @@
       <data key="d3">2</data>
       <data key="d8">0</data>
       <data key="d9">0</data>
-      <data key="d10">86</data>
+      <data key="d10">97</data>
     </node>
     <edge source="./fast-foundation/dist/fast-foundation.d.ts" target="@microsoft/fast-element" />
     <edge source="./fast-foundation/dist/fast-foundation.d.ts" target="@microsoft/fast-web-utilities" />

@@ -2,18 +2,18 @@ the following statistics were collected in ts check on fast foundation
 +-------------------------------------+-------------------+
 |                      statistic name | value             |
 +-------------------------------------+-------------------+
-|                    scanning_runtime | 00:00:00 + 34 ms  |
+|                    scanning_runtime | 00:00:00 + 35 ms  |
 |                       scanned_files | 206               |
 |                       skipped_files | 245               |
 |                        parsing_hits | 361               |
 |              extracted_file_results | 206               |
-|       file_results_creation_runtime | 00:00:00 + 466 ms |
+|       file_results_creation_runtime | 00:00:00 + 456 ms |
 |    number-of-methods-metric-runtime | 00:00:00 + 4 ms   |
 | source-lines-of-code-metric-runtime | 00:00:00 + 10 ms  |
-|            t-f-i-d-f-metric-runtime | 00:00:00 + 284 ms |
-|           fan-in-out-metric-runtime | 00:00:00 + 2 ms   |
-|   louvain-modularity-metric-runtime | 00:00:00 + 77 ms  |
-|                       total_runtime | 00:00:00 + 881 ms |
+|            t-f-i-d-f-metric-runtime | 00:00:00 + 281 ms |
+|           fan-in-out-metric-runtime | 00:00:00 + 1 ms   |
+|   louvain-modularity-metric-runtime | 00:00:00 + 75 ms  |
+|                       total_runtime | 00:00:00 + 864 ms |
 +-------------------------------------+-------------------+
 
 the following overall metrics were collected in ts check on fast foundation
@@ -29,9 +29,9 @@ the following overall metrics were collected in ts check on fast foundation
 |             max-fan-in-name-dependency-graph | ../foundation-element/foundation-element.js       |
 |                 max-fan-out-dependency-graph | 8                                                 |
 |            max-fan-out-name-dependency-graph | ./fast-foundation/dist/dts/combobox/combobox.d.ts |
-|         louvain-communities-dependency-graph | 134                                               |
+|         louvain-communities-dependency-graph | 135                                               |
 |          louvain-modularity-dependency-graph | 0.43                                              |
-| louvain-biggest-communities-dependency-graph | 0.09, 0.08, 0.07, 0.05, 0.04                      |
+| louvain-biggest-communities-dependency-graph | 0.08, 0.08, 0.07, 0.05, 0.04                      |
 +----------------------------------------------+---------------------------------------------------+
 
 the following local metrics were collected in ts check on fast foundation
@@ -144,7 +144,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 62   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 63   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                ./fast-foundation/dist/dts/button/button.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -176,7 +176,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 63   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 64   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                       ./fast-foundation/dist/dts/button/button.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -188,13 +188,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.24452176686082294                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 13   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 12   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                          ./fast-foundation/dist/dts/progress-ring/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 1                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 64   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 65   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |         ./fast-foundation/dist/dts/progress-ring/progress-ring.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -206,7 +206,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.26613743078087915                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 14   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 13   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                ./fast-foundation/dist/dts/slider/slider.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 65                                              |
@@ -255,13 +255,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.2294290342580218                          |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 15   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 14   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                 ./fast-foundation/dist/dts/slider/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 65   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 66   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                       ./fast-foundation/dist/dts/utilities/apply-mixins.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 1                                               |
@@ -274,7 +274,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_apply: 0.3020206162962067                                 |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 66   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 67   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |               ./fast-foundation/dist/dts/utilities/intersection-service.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 9                                               |
@@ -286,14 +286,14 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_element: 0.20429461484527472                              |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 67   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 68   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                              ./fast-foundation/dist/dts/utilities/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 8                                               |
 |                                                                              | tag_composedcontains: 1.0                                     |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 68   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 69   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                  ./fast-foundation/dist/dts/utilities/composed-contains.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 1                                               |
@@ -304,7 +304,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_dom: 0.258454544983808                                    |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 69   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 70   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                    ./fast-foundation/dist/dts/utilities/resize-observer.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 25                                              |
@@ -317,7 +317,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_element: 0.21772773248233865                              |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 70   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 71   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |       ./fast-foundation/dist/dts/utilities/property-stylesheet-behavior.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 10                                              |
@@ -350,7 +350,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_element: 0.39398757082939745                              |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 71   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 72   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                  ./fast-foundation/dist/dts/utilities/whitespace-filter.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 1                                               |
@@ -359,7 +359,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_being: 0.26592485090949275                                |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 72   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 73   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |    ./fast-foundation/dist/dts/utilities/match-media-stylesheet-behavior.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 21                                              |
@@ -382,13 +382,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_cssdisplaypropertyvalue: 0.2198328510028692               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 73   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 74   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                        ./fast-foundation/dist/dts/utilities/style/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 3                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 74   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 75   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                     ./fast-foundation/dist/dts/utilities/style/disabled.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 1                                               |
@@ -398,7 +398,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_value: 0.3314424232729966                                 |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 75   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 76   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                        ./fast-foundation/dist/dts/utilities/style/focus.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 1                                               |
@@ -411,13 +411,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_will: 0.23225231122959325                                 |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 76   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 77   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                         ./fast-foundation/dist/dts/listbox-option/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 77   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 78   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |       ./fast-foundation/dist/dts/listbox-option/listbox-option.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -429,7 +429,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.23650155194251393                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 16   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 15   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                ./fast-foundation/dist/dts/listbox-option/listbox-option.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 43                                              |
@@ -453,7 +453,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.3205536708956743                          |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 16   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                        ./fast-foundation/dist/dts/disclosure/disclosure.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 13                                              |
@@ -472,7 +472,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 78   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 79   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                       ./fast-foundation/dist/dts/test-utilities/fixture.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 24                                              |
@@ -490,7 +490,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_promise: 0.32357167215157506                              |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 79   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 80   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                  ./fast-foundation/dist/dts/radio/radio.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 20                                              |
@@ -519,7 +519,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 80   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 81   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                  ./fast-foundation/dist/dts/radio/radio.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -549,7 +549,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 81   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 82   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                 ./fast-foundation/dist/dts/accordion/accordion.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -560,7 +560,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.3277780170138644                          |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 20   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                       ./fast-foundation/dist/dts/search/search.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -572,7 +572,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.23650155194251393                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 21   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 20   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                ./fast-foundation/dist/dts/search/search.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -591,7 +591,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 82   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 83   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                ./fast-foundation/dist/dts/search/search.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 38                                              |
@@ -619,7 +619,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 83   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 84   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                   ./fast-foundation/dist/dts/progress/progress.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -631,7 +631,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.26613743078087915                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 22   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 21   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                       ./fast-foundation/dist/dts/dialog/dialog.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -642,13 +642,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.3277780170138644                          |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 23   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 22   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                 ./fast-foundation/dist/dts/dialog/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 84   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 85   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                ./fast-foundation/dist/dts/dialog/dialog.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 30                                              |
@@ -680,13 +680,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.2294290342580218                          |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 24   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 23   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                   ./fast-foundation/dist/dts/tabs/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 85   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 86   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |        ./fast-foundation/dist/dts/foundation-element/foundation-element.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 39                                              |
@@ -705,7 +705,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 1                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 87   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 88   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                    ./fast-foundation/dist/dts/design-token/design-token.d.ts | number-of-methods-in-file: 2                                  |
 |                                                                              | sloc-in-file: 41                                              |
@@ -729,7 +729,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_never: 0.20268356287646142                                |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 88   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 89   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |         ./fast-foundation/dist/dts/design-token/custom-property-manager.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 18                                              |
@@ -741,7 +741,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_removeproperty: 0.22757781353710982                       |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 89   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 90   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |              ./fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 12                                              |
@@ -759,7 +759,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 90   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 91   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |     ./fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -771,7 +771,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.21979540086776628                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 25   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 24   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                              ./fast-foundation/dist/dts/toolbar/toolbar.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 36                                              |
@@ -788,7 +788,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 91   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 92   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                     ./fast-foundation/dist/dts/toolbar/toolbar.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -800,7 +800,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.21979540086776628                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 26   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 25   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |             ./fast-foundation/dist/dts/picker/picker-list-item.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -811,7 +811,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_type: 0.2436087262508687                                  |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 27   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 26   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                ./fast-foundation/dist/dts/picker/picker.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -890,7 +890,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 10                                              |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 92   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 93   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                           ./fast-foundation/dist/dts/picker/picker-menu.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 13                                              |
@@ -912,7 +912,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_type: 0.2436087262508687                                  |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 28   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 27   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                ./fast-foundation/dist/dts/picker/picker.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 88                                              |
@@ -934,13 +934,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_list: 0.2077498989977358                                  |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 29   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 28   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                  ./fast-foundation/dist/dts/badge/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 93   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 94   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                         ./fast-foundation/dist/dts/badge/badge.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -951,7 +951,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.3277780170138644                          |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 30   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 29   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                  ./fast-foundation/dist/dts/badge/badge.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 7                                               |
@@ -974,7 +974,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_left: 0.22744467589394396                                 |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 94   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 95   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                     ./fast-foundation/dist/dts/tooltip/tooltip.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -986,13 +986,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_creates: 0.22086202475058436                              |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 30   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                ./fast-foundation/dist/dts/tooltip/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 95   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 96   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                              ./fast-foundation/dist/dts/tooltip/tooltip.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 57                                              |
@@ -1027,7 +1027,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 96   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 98   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |          ./fast-foundation/dist/dts/horizontal-scroll/horizontal-scroll.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 50                                              |
@@ -1051,13 +1051,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 97   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 99   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                               ./fast-foundation/dist/dts/checkbox/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 98   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 100  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |            ./fast-foundation/dist/dts/checkbox/checkbox.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -1106,7 +1106,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_has: 0.2004760129582947                                   |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 99   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 101  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                 ./fast-foundation/dist/dts/menu-item/menu-item.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1137,7 +1137,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 100  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 102  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                     ./fast-foundation/dist/dts/data-grid/data-grid-cell.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 23                                              |
@@ -1154,7 +1154,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 6                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 101  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 103  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                  ./fast-foundation/dist/dts/data-grid/data-grid.options.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 18                                              |
@@ -1167,7 +1167,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_header: 0.27865419533472785                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 102  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 104  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                          ./fast-foundation/dist/dts/data-grid/data-grid.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 65                                              |
@@ -1233,7 +1233,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 103  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 105  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                             ./fast-foundation/dist/dts/tab/tab.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1269,13 +1269,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.24452176686082294                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 38   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                 ./fast-foundation/dist/dts/select/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 3                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 104  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 106  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                ./fast-foundation/dist/dts/select/select.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -1288,7 +1288,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_select: 0.21420827675985035                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 2                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 38   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 39   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                ./fast-foundation/dist/dts/select/select.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 55                                              |
@@ -1311,7 +1311,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_typeof: 0.21751332165293522                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 105  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 108  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                       ./fast-foundation/dist/dts/switch/switch.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1322,13 +1322,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.318218439843106                           |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 39   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 40   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                 ./fast-foundation/dist/dts/switch/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 106  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 109  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                ./fast-foundation/dist/dts/switch/switch.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -1353,13 +1353,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_state: 0.22532603773827448                                |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 40   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                 ./fast-foundation/dist/dts/anchor/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 107  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 110  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                       ./fast-foundation/dist/dts/anchor/anchor.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1409,7 +1409,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 108  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 111  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                ./fast-foundation/dist/dts/directives/reflect-attributes.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
@@ -1451,7 +1451,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 3                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 109  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 112  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |       ./fast-foundation/dist/dts/anchored-region/anchored-region-config.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 23                                              |
@@ -1482,13 +1482,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_presentation: 0.26015008812909507                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 110  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 113  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                ./fast-foundation/dist/dts/divider/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 111  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 114  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                     ./fast-foundation/dist/dts/divider/divider.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1528,7 +1528,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 112  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 115  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |        ./fast-foundation/dist/dts/text-field/text-field.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -1553,7 +1553,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.2294290342580218                          |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 45   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                        ./fast-foundation/dist/dts/text-field/text-field.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 41                                              |
@@ -1568,7 +1568,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 113  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 116  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                ./fast-foundation/dist/dts/text-field/text-field.options.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 8                                               |
@@ -1581,7 +1581,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_field: 0.20729057779172222                                |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 114  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 117  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                   ./fast-foundation/dist/dts/skeleton/skeleton.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1593,13 +1593,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_component: 0.21347768090351804                            |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 45   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                               ./fast-foundation/dist/dts/skeleton/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 115  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 118  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                            ./fast-foundation/dist/dts/skeleton/skeleton.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 8                                               |
@@ -1643,7 +1643,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 3                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 116  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 119  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                      ./fast-foundation/dist/dts/listbox/listbox.element.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 31                                              |
@@ -1682,7 +1682,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 117  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 120  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                          ./fast-foundation/dist/dts/text-area/text-area.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 32                                              |
@@ -1710,7 +1710,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 118  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 121  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |          ./fast-foundation/dist/dts/text-area/text-area.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -1732,13 +1732,13 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_mode: 0.21390940201957662                                 |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 119  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 122  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                              ./fast-foundation/dist/dts/tree-item/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 120  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 123  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                          ./fast-foundation/dist/dts/tree-item/tree-item.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 29                                              |
@@ -1765,7 +1765,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 1                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 121  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 124  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                        ./fast-foundation/dist/dts/di/di.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 175                                             |
@@ -1802,7 +1802,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 3                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 122  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 125  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                      ./fast-foundation/dist/dts/calendar/date-formatter.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 28                                              |
@@ -1815,7 +1815,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_day: 0.20864463975210334                                  |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 123  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 126  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                           ./fast-foundation/dist/dts/menu/menu.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1841,7 +1841,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 124  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 127  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                   ./fast-foundation/dist/dts/combobox/combobox.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1862,7 +1862,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_typeof: 0.22817123430784372                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 125  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 128  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                            ./fast-foundation/dist/dts/combobox/combobox.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 67                                              |
@@ -1880,7 +1880,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 3                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 126  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 129  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |            ./fast-foundation/dist/dts/combobox/combobox.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -1910,7 +1910,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 127  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 130  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                 ./fast-foundation/dist/dts/tree-view/tree-view.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1930,7 +1930,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_typeof: 0.24261986874933913                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 128  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 131  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                              ./fast-foundation/dist/dts/flipper/flipper.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 14                                              |
@@ -1945,7 +1945,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 129  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 132  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                     ./fast-foundation/dist/dts/flipper/flipper.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -1987,7 +1987,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 3                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 130  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 133  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |         ./fast-foundation/dist/dts/design-system/component-presentation.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 15                                              |
@@ -2019,7 +2019,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 1                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 131  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 134  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |           ./fast-foundation/dist/dts/slider-label/slider-label.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -2036,7 +2036,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 132  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 107  |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                    ./fast-foundation/dist/dts/slider-label/slider-label.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 22                                              |
@@ -2063,7 +2063,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 133  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 87   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                         ./fast-foundation/dist/dts/patterns/aria-global.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 21                                              |
@@ -2075,7 +2075,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_element: 0.23235608288340073                              |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 134  |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 62   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |           ./fast-foundation/dist/dts/number-field/number-field.template.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 4                                               |
@@ -2087,7 +2087,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | tag_viewtemplate: 0.22504578568485106                         |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 3                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 12   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |    ./fast-foundation/dist/dts/number-field/number-field.form-associated.d.ts | number-of-methods-in-file: 0                                  |
 |                                                                              | sloc-in-file: 11                                              |
@@ -2119,7 +2119,7 @@ the following local metrics were collected in ts check on fast foundation
 |                                                                              | sloc-in-file: 2                                               |
 |                                                                              | fan-in-dependency-graph: 0                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 86   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 97   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                                      @microsoft/fast-element | fan-in-dependency-graph: 84                                   |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2159,11 +2159,11 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    fast-foundation/dist/dts/button/button.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 13   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 12   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                                 ../progress/base-progress.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 14   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 13   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                    fast-foundation/dist/dts/slider/slider.form-associated.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2171,11 +2171,11 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    fast-foundation/dist/dts/slider/slider.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 15   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 14   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                    fast-foundation/dist/dts/listbox-option/listbox-option.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 16   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 15   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                                   ../patterns/aria-global.js | fan-in-dependency-graph: 3                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2183,7 +2183,7 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                            fast-foundation/dist/dts/disclosure/disclosure.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 16   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                                    ../design-system/index.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2199,11 +2199,11 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                              fast-foundation/dist/dts/accordion/accordion.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 20   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    fast-foundation/dist/dts/search/search.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 21   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 20   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                    fast-foundation/dist/dts/search/search.form-associated.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2211,15 +2211,15 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                           fast-foundation/dist/dts/progress/base-progress.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 22   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 21   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    fast-foundation/dist/dts/dialog/dialog.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 23   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 22   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                        fast-foundation/dist/dts/tabs/tabs.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 24   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 23   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                   ../design-system/component-presentation.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2243,15 +2243,15 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                  fast-foundation/dist/dts/breadcrumb-item/breadcrumb-item.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 25   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 24   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                  fast-foundation/dist/dts/toolbar/toolbar.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 26   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 25   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                          fast-foundation/dist/dts/picker/picker-list-item.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 27   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 26   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                               fast-foundation/dist/dts/picker/picker-menu.js | fan-in-dependency-graph: 2                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2263,7 +2263,7 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                        fast-foundation/dist/dts/picker/picker-menu-option.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 28   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 27   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                                  ../anchored-region/index.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2275,15 +2275,15 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    fast-foundation/dist/dts/picker/picker.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 29   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 28   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                      fast-foundation/dist/dts/badge/badge.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 30   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 29   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                  fast-foundation/dist/dts/tooltip/tooltip.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 30   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                        ../anchored-region/anchored-region.js | fan-in-dependency-graph: 2                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2339,11 +2339,11 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    fast-foundation/dist/dts/select/select.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 38   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                                ../listbox/listbox.element.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 38   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 39   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                          ../listbox-option/listbox-option.js | fan-in-dependency-graph: 4                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2363,11 +2363,11 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    fast-foundation/dist/dts/switch/switch.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 39   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 40   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                    fast-foundation/dist/dts/switch/switch.form-associated.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 40   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    fast-foundation/dist/dts/anchor/anchor.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2395,7 +2395,7 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                            fast-foundation/dist/dts/text-field/text-field.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 45   |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |            fast-foundation/dist/dts/text-field/text-field.form-associated.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2407,7 +2407,7 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                fast-foundation/dist/dts/skeleton/skeleton.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 45   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                          fast-foundation/dist/dts/listbox/listbox.element.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
@@ -2495,7 +2495,7 @@ the following local metrics were collected in ts check on fast foundation
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |                        fast-foundation/dist/dts/number-field/number-field.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
-|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 12   |
+|                                                                              | file_result_dependency_graph_louvain-modularity-in-file: 2    |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
 |        fast-foundation/dist/dts/number-field/number-field.form-associated.js | fan-in-dependency-graph: 1                                    |
 |                                                                              | fan-out-dependency-graph: 0                                   |
