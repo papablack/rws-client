@@ -1,9 +1,7 @@
 import { observable  } from '@microsoft/fast-element';
-import { DI, Container, inject } from "@microsoft/fast-foundation";
 import { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from '../../services/RoutingService';
-import RWSViewComponent, { IRWSViewComponent, IWithCompose } from '../_component';
+import RWSViewComponent, { IRWSViewComponent } from '../_component';
 import {RWSView} from '../_decorator';
-import RWSContainer from '../_container';
 
 @RWSView('rws-router', { ignorePackaging: true })
 export class RouterComponent extends RWSViewComponent {    

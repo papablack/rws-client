@@ -2,8 +2,8 @@ import IRWSUser from '../../interfaces/IRWSUser';
 import RWSContainer from '../../components/_container';
 
 //@4DI
-import { WSServiceInstance } from '../../services/WSService'
-import { DI, Container } from "@microsoft/fast-foundation";
+import { WSServiceInstance } from '../../services/WSService';
+import { Container } from '@microsoft/fast-foundation';
 
 type SWMsgType = {
     command: string,
@@ -15,8 +15,8 @@ abstract class RWSServiceWorker<UserType extends IRWSUser> {
     protected DI: Container;
     protected user: UserType = null;
     protected ignoredUrls: RegExp[] = [];
-    protected wsService: WSServiceInstance
-    protected regExTypes: { [key: string]: RegExp }  
+    protected wsService: WSServiceInstance;
+    protected regExTypes: { [key: string]: RegExp };  
 
     public workerScope: ServiceWorkerGlobalScope;
 
@@ -85,4 +85,4 @@ abstract class RWSServiceWorker<UserType extends IRWSUser> {
 
 export default RWSServiceWorker;
 
-export { SWMsgType }
+export { SWMsgType };

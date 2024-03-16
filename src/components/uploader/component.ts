@@ -19,7 +19,7 @@ class RWSUploader extends RWSViewComponent {
       const response = await this.onStart(this.chosenFile, this);
    
       if(response === null){
-        return;
+          return;
       }
 
       this.onFinish(response);

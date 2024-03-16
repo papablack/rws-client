@@ -3,8 +3,6 @@ import { NotifyServiceInstance } from './services/NotifyService';
 import { WSServiceInstance} from './services/WSService';
 
 import { RoutingServiceInstance} from './services/RoutingService';
-import { RouterComponent } from './components/router/component';
-import { RWSClientInstance } from './client';
 
 const main = async (
     config: ConfigServiceInstance, 

@@ -4,7 +4,7 @@ import RWSNotify from './types/RWSNotify';
 
 import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
 import UtilsService, { UtilsServiceInstance } from './services/UtilsService';
-import DOMService, { DOMServiceInstance, DOMOutputType } from './services/DOMService';
+import DOMService, { DOMServiceInstance } from './services/DOMService';
 import ApiService, { ApiServiceInstance } from './services/ApiService';
 import NotifyService, { NotifyServiceInstance } from './services/NotifyService';
 import RoutingService, { RoutingServiceInstance } from './services/RoutingService';
@@ -12,16 +12,15 @@ import WSService, { WSServiceInstance } from './services/WSService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 import { IBackendRoute } from './services/ApiService';
 import IRWSUser from './interfaces/IRWSUser';
-import RWSWindow, { RWSWindowComponentEntry, RWSWindowComponentRegister, loadRWSRichWindow } from './interfaces/RWSWindow';
+import RWSWindow, { RWSWindowComponentRegister, loadRWSRichWindow } from './interfaces/RWSWindow';
 
-import { DI, Container } from "@microsoft/fast-foundation";
+import { DI, Container } from '@microsoft/fast-foundation';
 
 import {
-    IFrontRoutes, _ROUTING_EVENT_NAME
+    IFrontRoutes
 } from './services/RoutingService';
 
 import RWSViewComponent, { IWithCompose } from './components/_component';
-import { provideRWSDesignSystem } from './components/_design_system';
 import RWSContainer from './components/_container';
 
 interface IHotModule extends NodeModule {
@@ -156,11 +155,11 @@ class RWSClient {
                 this.swService.sendDataToServiceWorker(type, data, asset_type);
             } catch (e) {
                 if (tries < 3) {
-                    setTimeout(() => { doIt(); }, 300)
+                    setTimeout(() => { doIt(); }, 300);
                     tries++;
                 }
             }
-        }
+        };
 
         doIt();
     }
@@ -174,7 +173,7 @@ class RWSClient {
 
         const localSaved = localStorage.getItem('the_rws_user');
 
-        if (!!localSaved) {
+        if (localSaved) {
             this.setUser(JSON.parse(localSaved) as IRWSUser);
         }
 
@@ -245,7 +244,7 @@ class RWSClient {
         (await Promise.all(_all)).forEach((scriptCnt: string, key: number) => {
             const script: HTMLScriptElement = document.createElement('script');
             script.textContent = scriptCnt;
-            script.async = true
+            script.async = true;
             script.type = 'text/javascript';
             document.body.appendChild(script);
 
@@ -301,4 +300,4 @@ class RWSClient {
 }
 
 export default DI.createInterface<RWSClient>(x => x.singleton(RWSClient));
-export { IHotModule, RWSClient as RWSClientInstance }
+export { IHotModule, RWSClient as RWSClientInstance };

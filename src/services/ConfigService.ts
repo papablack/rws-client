@@ -5,7 +5,7 @@ import IRWSConfig from '../interfaces/IRWSConfig';
 const _DEFAULTS: {[property: string]: any} = {
     'pubPrefix': '/',
     'pubUrl' : window.origin,
-}
+};
 
 const __SENT_TO_COMPONENTS: string[] = [];
 
@@ -75,7 +75,7 @@ class ConfigService extends TheService {
                 }
     
                 t = setTimeout(tick, 200);
-            }
+            };
     
             t = setTimeout(tick, 200);
         });       

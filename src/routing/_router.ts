@@ -1,5 +1,5 @@
 import Router from 'url-router';
-import UtilsService, {UtilsServiceInstance} from '../services/UtilsService';
+import {UtilsServiceInstance} from '../services/UtilsService';
 import { IRWSViewComponent } from '../interfaces/IRWSViewComponent';
 export type RouteReturn = [string, IRWSViewComponent, Record<string, string>];
 export type IRWSRouteResult = {
@@ -56,4 +56,4 @@ class RWSRouter {
     }
 }
 
-export { RWSRouter }
+export { RWSRouter };

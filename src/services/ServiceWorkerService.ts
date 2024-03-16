@@ -13,7 +13,7 @@ class ServiceWorkerService extends RWSService {
         {
             navigator.serviceWorker.getRegistrations().then(registrations => {
                 if (registrations.length) {
-                  return;
+                    return;
                 }
 
                 try {
@@ -45,13 +45,13 @@ class ServiceWorkerService extends RWSService {
     {
         if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
-              command: type,
-              asset_type,
-              params: data
+                command: type,
+                asset_type,
+                params: data
             });
-          } else {
+        } else {
             throw new Error('Service worker is not available');
-          }
+        }
     }
 }
 

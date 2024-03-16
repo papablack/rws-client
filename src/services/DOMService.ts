@@ -6,7 +6,7 @@ type TagsProcessorType = { [tagName: string]: string | Transformer };
 type DOMOutputType<T extends Element> = NodeListOf<T> | T | null;
 
 //@ts-expect-error tsconfig.json problem
-declare var trustedTypes: TrustedTypePolicyFactory;
+declare let trustedTypes: TrustedTypePolicyFactory;
 
 
 class DOMServiceInstance extends RWSService {
@@ -41,7 +41,7 @@ class DOMServiceInstance extends RWSService {
     {
         const myPolicy = trustedTypes.createPolicy(policyName, {
             createHTML(html: string) {              
-              return policyImplementation(html);
+                return policyImplementation(html);
             }
         });
           
@@ -73,7 +73,7 @@ class DOMServiceInstance extends RWSService {
         allowedHTMLTags: string[] = null,         
         sanitizeOptions: IOptions = {})
     {
-        let output: string = line.trim(); 
+        const output: string = line.trim(); 
         
         if(allowedHTMLTags){
             sanitizeOptions.allowedTags = allowedHTMLTags;
