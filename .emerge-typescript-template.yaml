@@ -1,5 +1,5 @@
 ---
-project_name: typescript-example-project
+project_name: "@rws-framework/client"
 loglevel: info
 analyses:
 - analysis_name: ts check
@@ -16,7 +16,7 @@ analyses:
   - louvain_modularity
   - tfidf
   export:
-  - directory: ./.emerge-vis-output
+  - directory: ./.emerge-vis-output/rws-client
   - graphml
   - json
   - tabular_file

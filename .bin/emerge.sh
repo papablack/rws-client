@@ -6,5 +6,9 @@ if ! command -v emerge >/dev/null 2>&1; then
     pip install emerge-viz
 fi
 
+mkdir -p ./.emerge-vis-output/rws-client
+mkdir -p ./.emerge-vis-output/fast-element
+mkdir -p ./.emerge-vis-output/fast-foundation
 
 emerge -c ./.emerge-typescript-template.yaml
+emerge -c ./.emerge-fast.yaml
