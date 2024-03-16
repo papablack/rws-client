@@ -10,5 +10,7 @@ mkdir -p ./.emerge-vis-output/rws-client
 mkdir -p ./.emerge-vis-output/fast-element
 mkdir -p ./.emerge-vis-output/fast-foundation
 
+yarn
+
 emerge -c ./.emerge-typescript-template.yaml
 emerge -c ./.emerge-fast.yaml
