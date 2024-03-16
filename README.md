@@ -1,6 +1,6 @@
 # RWS-JS Client Setup and Configuration Guide
 
-RWS-JS Client is a web-component powered, MS FAST powered framework for fullstack Realtime Web Suite framework that you can use to create domain-agnostic modular asynchoronous components with intershared states.
+RWS-JS Client is a web-component powered, MS FAST powered framework that you can use to create domain-agnostic modular asynchoronous components with intershared states. It is capable of holding and sharing authorization data between web components, and helps bind it to backend.
 
 ## Table of Contents
 
@@ -280,7 +280,7 @@ Router tag:
 
 ## Backend Imports
 
-`backendImports.ts` consolidates various backend interfaces, routes, and models, allowing for a synchronized frontend and backend.
+`backendImports.ts` consolidates various backend interfaces, routes, and models, allowing for a synchronized frontend and backend from package https://github.com/papablack/rws
 
 ```typescript
 import IBook from '../../backend/src/models/interfaces/IBook';
