@@ -1,4 +1,4 @@
-import RWSService from 'rws-js-client/src/services/_service';
+import RWSService from '@rws-framework/client/src/services/_service';
 
 
 class ServiceWorkerService extends RWSService {   

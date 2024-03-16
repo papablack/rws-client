@@ -14,8 +14,8 @@
       "allowSyntheticDefaultImports": true,  
       "lib": ["DOM", "ESNext", "WebWorker"],  
       "paths": {        
-        //  "rws-js-client/*": ["../*"],      
-        //  "rws-js-client": ["../index"],      
+        //  "@rws-framework/client/*": ["../*"],      
+        //  "@rws-framework/client": ["../index"],      
       }       
     }
   }

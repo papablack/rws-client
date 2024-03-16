@@ -94,7 +94,7 @@ The main file (`index.ts`) is where you initialize the RWSClient. Here, you conf
 Following is example of full usage of the framework
 
 ```typescript
-import RWSClient, { NotifyUiType, NotifyLogType } from 'rws-js-client';
+import RWSClient, { NotifyUiType, NotifyLogType } from '@rws-framework/client';
 //@ts-ignore
 import alertify from 'alertifyjs';
 
@@ -210,7 +210,7 @@ import { RWSIcon } from '../components/rws-icon/component';
 import { Loader } from '../components/loader/component';
 import { LineSplitter } from '../components/line-splitter/component';
 
-import { registerRWSComponents } from 'rws-js-client';
+import { registerRWSComponents } from '@rws-framework/client';
 
 export default () => {
     LineSplitter;
@@ -241,7 +241,7 @@ export default () => {
 **Component needs to extend RWSViewComponent and use @RWSView decorator**:
 
 ```typescript
-import { RWSViewComponent,  RWSView, observable, attr } from 'rws-js-client';
+import { RWSViewComponent,  RWSView, observable, attr } from '@rws-framework/client';
 
 const options?: RWSDecoratorOptions;
 
@@ -381,10 +381,10 @@ If you pass ```{serviceWorker: 'service_worker_class_path.ts'}``` to RWS Webpack
 example ServiceWorker class:
 
 ```typescript
-import SWService, { ServiceWorkerServiceInstance } from 'rws-js-client/src/services/ServiceWorkerService'
+import SWService, { ServiceWorkerServiceInstance } from '@rws-framework/client/src/services/ServiceWorkerService'
 import {TimeTracker} from '../services/TimeTrackerService';
-import RWSServiceWorker from 'rws-js-client/src/service_worker/src/_service_worker';
-import { RWSWSService as WSService } from 'rws-js-client/src/services/WSService'
+import RWSServiceWorker from '@rws-framework/client/src/service_worker/src/_service_worker';
+import { RWSWSService as WSService } from '@rws-framework/client/src/services/WSService'
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -486,7 +486,7 @@ The WebChat component demonstrates a practical use of `APIService` in a real-wor
 ### WebChat Component Implementation
 
 ```typescript
-import { RWSViewComponent, ApiService, NotifyService, RWSView, WSService } from 'rws-js-client';
+import { RWSViewComponent, ApiService, NotifyService, RWSView, WSService } from '@rws-framework/client';
 import { observable, css  } from '@microsoft/fast-element';
 
 import './children/convo-footer/component';
