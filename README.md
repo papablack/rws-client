@@ -1,4 +1,4 @@
-# RWS-JS Client Setup and Configuration Guide
+# Realtime Web Suit client setup and configuration guide
 
 RWS-JS Client is a web-component powered, MS FAST powered framework that you can use to create domain-agnostic modular asynchoronous components with intershared states. It is capable of holding and sharing authorization data between web components, and helps bind it to backend.
 
