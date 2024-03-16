@@ -1,6 +1,6 @@
 # Realtime Web Suit client setup and configuration guide
 
-RWS-JS Client is a web-component powered, MS FAST powered fullstack- oriented framework that you can use to create domain-agnostic modular asynchoronous components with intershared authorized states.
+Realtime Web Suit is a web-component powered, MS FAST powered fullstack- oriented framework that you can use to create domain-agnostic modular asynchoronous components with intershared authorized states.
 
 ## Table of Contents
 
