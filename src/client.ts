@@ -294,7 +294,7 @@ class RWSClient {
 
         console.log(richWindowComponents);
         Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
-            el.define(el, el.definition);
+            el.define(el as any, el.definition);
         });
     }
 }

@@ -31,7 +31,7 @@ export interface IWithCompose<T extends RWSViewComponent> {
     defineComponent: <T extends RWSViewComponent>(this: IWithCompose<T>) => void
     isDefined<T extends RWSViewComponent>(this: IWithCompose<T>): boolean
     compose: ComposeMethodType<FoundationElementDefinition, Constructable<T>>;
-    define<TType extends (params: any[]) => any>(type: TType, nameOrDef?: string | PartialFASTElementDefinition | undefined): TType;
+    define<TType extends (...params: any[]) => any>(type: TType, nameOrDef?: string | PartialFASTElementDefinition | undefined): TType;
     _verbose: boolean;
     _toInject: {[key: string]: any};
 }
