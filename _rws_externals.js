@@ -7,7 +7,7 @@ const _defaultOpts = {
   inc_list_context: [],
   inc_list: [],
   not_inc_list: [],
-  not_inc_list_context: ['rws-js-client', 'node_modules'],
+  not_inc_list_context: ['@rws-framework/client', 'node_modules'],
   exceptions: [],
   exceptions_context: [],  
 }

@@ -103,7 +103,7 @@ const RWSWebpackWrapper = (config) => {
   const splitInfoJson = config.outputDir + '/rws_chunks_info.json'
   const automatedEntries = {};
 
-  const foundRWSUserClasses = tools.findComponentFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', 'rws-js-client']);
+  const foundRWSUserClasses = tools.findComponentFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', '@rws-framework/client']);
   const foundRWSClientClasses = tools.findComponentFilesWithText(__dirname, '@RWSView', ['dist', 'node_modules']);
   let RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
 
@@ -130,7 +130,7 @@ const RWSWebpackWrapper = (config) => {
   if (config.parted) {
     if (config.partedComponentsLocations) {      
       config.partedComponentsLocations.forEach((componentDir) => {        
-        RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', 'rws-js-client']))];
+        RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', '@rws-framework/client']))];
       });      
     }
     
@@ -237,7 +237,7 @@ const RWSWebpackWrapper = (config) => {
               loader: path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),
             }
           ],
-          exclude: /node_modules\/(?!rws-js-client)/,
+          exclude: /node_modules\/(?!\@rws-framework\/client)/,
         }
       ],
     },

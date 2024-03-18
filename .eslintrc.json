@@ -14,7 +14,7 @@
         "project": "./tsconfig.json"
     },
     "plugins": ["@typescript-eslint", "unused-imports"],
-    "ignorePatterns": ["*.js"],
+    "ignorePatterns": ["*.js", "*.d.ts"],
     "rules": {
         "no-unused-vars": "off",                
         "no-prototype-builtins": "off",                

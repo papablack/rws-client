@@ -1,7 +1,5 @@
 import { IFrontRoutes } from '../services/RoutingService';
 import RWSViewComponent from '../components/_component';
-import { DI, InterfaceSymbol, Key } from "@microsoft/fast-foundation";
-import { RWSContainer } from '..';
 
 export default interface IRWSConfig {
     defaultLayout?: typeof RWSViewComponent

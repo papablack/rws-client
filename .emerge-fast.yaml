@@ -1,0 +1,46 @@
+---
+project_name: "@microsoft/fast"
+loglevel: info
+analyses:
+- analysis_name: ts check on fast foundation
+  source_directory: ./node_modules/@microsoft/fast-foundation
+  only_permit_languages:
+  - typescript
+  only_permit_file_extensions:
+  - .ts
+  file_scan:
+  - number_of_methods
+  - source_lines_of_code
+  - dependency_graph
+  - fan_in_out
+  - louvain_modularity
+  - tfidf
+  export:
+  - directory: ./.emerge-vis-output/fast-foundation
+  - graphml
+  - json
+  - tabular_file
+  - tabular_console_overall
+  - d3
+
+- analysis_name: ts check on fast element
+  source_directory: ./node_modules/@microsoft/fast-element
+  only_permit_languages:
+  - typescript
+  only_permit_file_extensions:
+  - .ts
+  file_scan:
+  - number_of_methods
+  - source_lines_of_code
+  - dependency_graph
+  - fan_in_out
+  - louvain_modularity
+  - tfidf
+  export:
+  - directory: ./.emerge-vis-output/fast-element
+  - graphml
+  - json
+  - tabular_file
+  - tabular_console_overall
+  - d3  
+

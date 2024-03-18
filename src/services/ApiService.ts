@@ -65,7 +65,7 @@ class ApiServiceInstance extends TheService {
             this.addHeader(headers, 'Authorization', `Bearer ${this.token}`);            
         }        
 
-        if(!!(headers as any)['Content-Type']){
+        if((headers as any)['Content-Type']){
             this.addHeader(headers, 'Accept', '*/*');
         }else{
             this.addHeader(headers, 'Accept', (headers as any)['Content-Type']);
@@ -111,7 +111,7 @@ class ApiServiceInstance extends TheService {
         }
     }
     
-    public async post<T, P extends Object = {}>(url: string, payload?: P, options: IAPIOptions = {}): Promise<T> {
+    public async post<T, P extends object = object>(url: string, payload?: P, options: IAPIOptions = {}): Promise<T> {
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -125,7 +125,7 @@ class ApiServiceInstance extends TheService {
         }
     }
     
-    public async put<T, P extends Object = {}>(url: string, payload?: P, options: IAPIOptions = {}): Promise<T> {
+    public async put<T, P extends object = object>(url: string, payload?: P, options: IAPIOptions = {}): Promise<T> {
         try {
             const response = await fetch(url, {
                 method: 'PUT',
@@ -212,8 +212,8 @@ class ApiServiceInstance extends TheService {
 
     public back = {
         get: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.get(this.getBackendUrl(routeName, options?.routeParams), options),
-        post: <T, P extends Object = {}>(routeName: string, payload?: P, options?: IAPIOptions): Promise<T> => this.post(this.getBackendUrl(routeName, options?.routeParams), payload, options),
-        put: <T, P extends Object = {}>(routeName: string, payload: P, options?: IAPIOptions): Promise<T> => this.put(this.getBackendUrl(routeName, options?.routeParams), payload, options),
+        post: <T, P extends object = object>(routeName: string, payload?: P, options?: IAPIOptions): Promise<T> => this.post(this.getBackendUrl(routeName, options?.routeParams), payload, options),
+        put: <T, P extends object = object>(routeName: string, payload: P, options?: IAPIOptions): Promise<T> => this.put(this.getBackendUrl(routeName, options?.routeParams), payload, options),
         delete: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.delete(this.getBackendUrl(routeName, options?.routeParams), options),
         uploadFile: (routeName: string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse> => this.uploadFile(this.getBackendUrl(routeName, options?.routeParams), file, onProgress),
     };

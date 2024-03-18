@@ -1,0 +1,24 @@
+---
+project_name: "@rws-framework/client"
+loglevel: info
+analyses:
+- analysis_name: ts check
+  source_directory: ./src
+  only_permit_languages:
+  - typescript
+  only_permit_file_extensions:
+  - .ts
+  file_scan:
+  - number_of_methods
+  - source_lines_of_code
+  - dependency_graph
+  - fan_in_out
+  - louvain_modularity
+  - tfidf
+  export:
+  - directory: ./.emerge-vis-output/rws-client
+  - graphml
+  - json
+  - tabular_file
+  - tabular_console_overall
+  - d3

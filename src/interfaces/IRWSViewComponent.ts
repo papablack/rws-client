@@ -1,7 +1,7 @@
-import { ViewTemplate, ElementStyles } from "@microsoft/fast-element";
-import { DOMOutputType } from "../services/DOMService";
+import { ViewTemplate } from '@microsoft/fast-element';
+import { DOMOutputType } from '../services/DOMService';
 
-type IAssetShowOptions = {}
+type IAssetShowOptions = Record<string, any>;
 
 interface IRWSViewComponent extends Node {    
     __isLoading: boolean;
@@ -34,4 +34,4 @@ interface IRWSViewComponent extends Node {
     sendEventToOutside<T>(eventName: string, data: T): void;           
 }
 
-export {IRWSViewComponent, IAssetShowOptions}
+export {IRWSViewComponent, IAssetShowOptions};

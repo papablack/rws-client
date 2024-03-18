@@ -1,5 +1,5 @@
-import { ViewTemplate, ElementStyles, observable, html, Constructable } from '@microsoft/fast-element';
-import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, InterfaceSymbol, Key, OverrideFoundationElementDefinition } from '@microsoft/fast-foundation';
+import { ViewTemplate, ElementStyles, observable, html, Constructable, PartialFASTElementDefinition, attr } from '@microsoft/fast-element';
+import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, OverrideFoundationElementDefinition } from '@microsoft/fast-foundation';
 import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
 import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
 import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
@@ -8,11 +8,8 @@ import NotifyService, { NotifyServiceInstance } from '../services/NotifyService'
 import RoutingService, { RoutingServiceInstance } from '../services/RoutingService';
 import WSService, { WSServiceInstance } from '../services/WSService';
 import { IRWSViewComponent, IAssetShowOptions } from '../interfaces/IRWSViewComponent';
-import { DI, inject } from '@microsoft/fast-foundation';
-import { provideRWSDesignSystem } from './_design_system';
-import RWSWindow, { RWSWindowComponentEntry, RWSWindowComponentInterface, loadRWSRichWindow } from '../interfaces/RWSWindow';
-import RWSContainer from './_container';
-import {RWSInject, applyConstructor, applyProp} from './_decorator';
+import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../interfaces/RWSWindow';
+import {RWSInject, applyConstructor} from './_decorator';
 
 import 'reflect-metadata';
 
@@ -34,6 +31,7 @@ export interface IWithCompose<T extends RWSViewComponent> {
     defineComponent: <T extends RWSViewComponent>(this: IWithCompose<T>) => void
     isDefined<T extends RWSViewComponent>(this: IWithCompose<T>): boolean
     compose: ComposeMethodType<FoundationElementDefinition, Constructable<T>>;
+    define<TType extends (...params: any[]) => any>(type: TType, nameOrDef?: string | PartialFASTElementDefinition | undefined): TType;
     _verbose: boolean;
     _toInject: {[key: string]: any};
 }
@@ -43,7 +41,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     private static instances: RWSViewComponent[] = [];
     static fileList: string[] = [];
 
-    public routeParams: Record<string, string> = {};
+    @attr routeParams: Record<string, string> = {};
 
     static autoLoadFastElement = true;
     static _defined: { [key: string]: boolean } = {};
@@ -65,14 +63,13 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         @RWSInject(NotifyService) protected notifyService: NotifyServiceInstance
     ) {
         super();       
-        applyConstructor(this);         
+        applyConstructor(this);
     }
 
     connectedCallback() {        
         super.connectedCallback();       
-
         applyConstructor(this);
-
+     
         // console.trace(this.config);
 
         if (!(this.constructor as IWithCompose<this>).definition && (this.constructor as IWithCompose<this>).autoLoadFastElement) {
@@ -102,7 +99,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         const observer = new MutationObserver((mutationsList, observer) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'childList') {
-                    const mutationObserveType: NodeList = observeRemoved ? mutation.removedNodes : mutation.addedNodes
+                    const mutationObserveType: NodeList = observeRemoved ? mutation.removedNodes : mutation.addedNodes;
                     mutationObserveType.forEach(node => {                    
                         if ((condition !== null && condition(this, node))) {
                             callback(this, node, observer);
@@ -287,4 +284,4 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
 export default RWSViewComponent;
 
-export { IAssetShowOptions, IRWSViewComponent }
+export { IAssetShowOptions, IRWSViewComponent };

@@ -1,4 +1,4 @@
-export default interface IRWSUser extends Object {
+export default interface IRWSUser {
     email: string;
     mongoId: string;
     name: string;

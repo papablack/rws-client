@@ -1,7 +1,6 @@
-import { RWSClientInstance } from "../client";
+import { RWSClientInstance } from '../client';
 import { Container, InterfaceSymbol } from '@microsoft/fast-foundation';
 import { v1 as uuid} from 'uuid';
-import { IWithDI } from "../services/_service";
 export type RWSWindowComponentInterface = (params?: any) => void;
 export type RWSWindowComponentEntry = { interface: RWSWindowComponentInterface, component: any };
 export type RWSWindowComponentRegister = { [key: string]: RWSWindowComponentEntry};
@@ -22,14 +21,14 @@ export function loadRWSRichWindow(): RWSWindow
             container: null,
             container_node: newNode,
             _registered: {}
-        }
+        };
     }    
 
     return richWindow;
 }
 
 export default interface RWSWindow extends Window {
-    RWS?:{
+    RWS?: {
         client?: RWSClientInstance
         components: RWSWindowComponentRegister
         container: Container | null

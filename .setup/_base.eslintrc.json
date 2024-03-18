@@ -1,0 +1,50 @@
+{
+    "root": true,    
+    "plugins": ["@typescript-eslint", "unused-imports"],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "project": "{{backend_dir}}/tsconfig.json"
+    },
+    "ignorePatterns": ["*.js", "*.d.ts"],
+    "rules": {
+        "no-case-declarations": "off",
+        "no-unused-vars": "off",                
+        "no-prototype-builtins": "off",                
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": ["warn", { "vars": "all", "args": "none"}],     
+        "@typescript-eslint/no-var-requires": "off",   
+        "@typescript-eslint/semi": ["error", "always"],
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-this-alias": "off",
+        "@typescript-eslint/type-annotation-spacing": ["error", {
+            "before": false, // No space before the type annotation
+            "after": true, // Space after the type annotation
+            "overrides": {
+              "arrow": {
+                "before": true, // Space before the arrow function's arrow
+                "after": true // Space after the arrow function's arrow
+              }
+            }
+        }],
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": "off"
+    }
+}

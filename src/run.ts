@@ -3,19 +3,13 @@ import { NotifyServiceInstance } from './services/NotifyService';
 import { WSServiceInstance} from './services/WSService';
 
 import { RoutingServiceInstance} from './services/RoutingService';
-import { RouterComponent } from './components/router/component';
 
 const main = async (
     config: ConfigServiceInstance, 
     WSService: WSServiceInstance, 
     NotifyService: NotifyServiceInstance, 
     RoutingService: RoutingServiceInstance
-): Promise<boolean> => {    
-    if(config.get('routing_enabled') === true){
-        RoutingService.initRouting(config.get('routes'));    
-        RouterComponent.defineComponent();
-    }
-
+): Promise<boolean> => {        
     if(config.get('backendUrl')){
         WSService.on('ws:disconnected', (instance, params) => {
             NotifyService.notify(`Your websocket client disconnected from the server. Your ID was <strong>${params.socketId}</strong>`, 'error');

@@ -3,8 +3,6 @@ import ApiService, {ApiServiceInstance} from './ApiService';
 
 import { RawSourceMap  } from 'source-map';
 
-let sourceMap: RawSourceMap = null; 
-
 class UtilsService extends TheService {
     private apiService: ApiServiceInstance;
 
@@ -100,4 +98,4 @@ class UtilsService extends TheService {
 
 export default UtilsService.getSingleton();
 
-export { UtilsService as UtilsServiceInstance }
+export { UtilsService as UtilsServiceInstance };

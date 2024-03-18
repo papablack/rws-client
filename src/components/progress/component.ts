@@ -1,7 +1,7 @@
 import { RWSView, RWSViewComponent, observable, attr } from '../../index';
 import {
     nullableNumberConverter,
-} from "@microsoft/fast-element";
+} from '@microsoft/fast-element';
 
 @RWSView('rws-progress')
 class RWSProgress extends RWSViewComponent {
@@ -40,9 +40,9 @@ class RWSProgress extends RWSViewComponent {
     }
 
     private updatePercentComplete(): void {
-        const min: number = typeof this.min === "number" ? this.min : 0;
-        const max: number = typeof this.max === "number" ? this.max : 100;
-        const value: number = typeof this.value === "number" ? this.value : 0;
+        const min: number = typeof this.min === 'number' ? this.min : 0;
+        const max: number = typeof this.max === 'number' ? this.max : 100;
+        const value: number = typeof this.value === 'number' ? this.value : 0;
         const range: number = max - min;
 
         this.percentComplete =

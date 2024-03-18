@@ -77,7 +77,7 @@ class ConfigService extends TheService {
                 }
     
                 t = setTimeout(tick, 200);
-            }
+            };
     
             t = setTimeout(tick, 200);
         });       

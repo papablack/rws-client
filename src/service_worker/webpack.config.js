@@ -1,18 +1,18 @@
 const path = require('path');
 const webpack = require('webpack');
-const tools = require('rws-js-client/_tools');
+const tools = require('@rws-framework/client/_tools');
 const gThis = require.resolve('globalthis')
-const {rwsExternals} = require('rws-js-client/_rws_externals');
+const {rwsExternals} = require('@rws-framework/client/_rws_externals');
 
 
 const executionDir = process.cwd();
 const rootPackageNodeModules = path.resolve(tools.findRootWorkspacePath(process.cwd()), 'node_modules');
 
 const mergeCodeBaseOptions = {
-  incl: ['rws-js-client/src/services'],
+  incl: ['@rws-framework/client/src/services'],
   not_incl: ['./services/RoutingService'],
   exceptions_context: ['socket.io-', '@socket.io'],
-  exceptions: ['rws-js-client/src/services', './service', './ws_handlers', 'socket.io-', '@socket.io','uuid',]
+  exceptions: ['@rws-framework/client/src/services', './service', './ws_handlers', 'socket.io-', '@socket.io','uuid',]
 };
 
 module.exports = {
@@ -30,8 +30,8 @@ module.exports = {
       document: false,
       globalThis:  gThis,
       '@cwd' : process.cwd(),
-      // 'rws-js-client': path.resolve(__dirname, '..') + '/index.ts',
-      // 'rws-js-client/*': path.resolve(__dirname, '..', '..')
+      // '@rws-framework/client': path.resolve(__dirname, '..') + '/index.ts',
+      // '@rws-framework/client/*': path.resolve(__dirname, '..', '..')
     }
   },
   plugins: [

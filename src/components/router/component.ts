@@ -1,5 +1,4 @@
 import { observable  } from '@microsoft/fast-element';
-import { DI, Container, inject } from "@microsoft/fast-foundation";
 import { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from '../../services/RoutingService';
 import RWSViewComponent, { IRWSViewComponent } from '../_component';
 import {RWSView} from '../_decorator';
@@ -14,18 +13,21 @@ export class RouterComponent extends RWSViewComponent {
     @observable childComponents: HTMLElement[] = [];    
     slotEl: HTMLElement = null;
 
-    @inject(Container)
-    private DI: Container;
-
     connectedCallback() {
-        super.connectedCallback();            
-        this.routing = this.routingService.apply(this);        
-        this.handleRoute(this.routing.handleRoute(this.currentUrl));        
+        super.connectedCallback();   
+        this.routing = this.routingService.apply(this);   
+            
+        if(this.currentUrl){
+            this.handleRoute(this.routing.handleRoute(this.currentUrl));      
+        }           
     }
 
-    currentUrlChanged(oldValue: string, newValue: string){
-        
-        this.handleRoute(this.routing.handleRoute(this.currentUrl));
+    currentUrlChanged(oldValue: string, newValue: string){  
+        if(!this.routing){
+            this.routing = this.routingService.apply(this);       
+
+        }     
+        this.handleRoute(this.routing.handleRoute(newValue));
     }
 
     private handleRoute(route: RouteReturn){
@@ -34,11 +36,15 @@ export class RouterComponent extends RWSViewComponent {
         this.$emit(_ROUTING_EVENT_NAME, {
             routeName,
             component: childComponent
-       });
-        
-        const newComponent: IRWSViewComponent = this.DI.get<typeof childComponent>(childComponent);
+        });
 
-        newComponent.passRouteParams(routeParams);
+        console.log('handleroute',{
+            routeName,
+            component: childComponent
+        });
+        
+        const newComponent = document.createElement((childComponent as any).definition.name);        
+        newComponent.routeParams = routeParams;
 
         if(this.currentComponent){
             this.getShadowRoot().removeChild(this.currentComponent);
@@ -56,3 +62,4 @@ export class RouterComponent extends RWSViewComponent {
     }
 }
 
+RouterComponent.defineComponent();

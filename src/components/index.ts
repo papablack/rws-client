@@ -4,6 +4,6 @@ import { RouterComponent } from './router/component';
 const RWSComponents = { 
     RWSUploader,
     RouterComponent
-}
+};
 
 export { RWSComponents };

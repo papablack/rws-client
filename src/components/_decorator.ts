@@ -1,9 +1,7 @@
-import { DI, InterfaceSymbol, inject, Key } from '@microsoft/fast-foundation';
+import { Key } from '@microsoft/fast-foundation';
 import RWSViewComponent, { IWithCompose } from './_component';
 import RWSContainer from './_container';
 import 'reflect-metadata';
-
-type Constructor<T = any> = new (...args: any[]) => T;
 
 interface RWSDecoratorOptions {
     template?: string,
@@ -14,7 +12,7 @@ interface RWSDecoratorOptions {
 
 type InjectDecoratorReturnType = (target: any, key?: string | number | undefined, parameterIndex?: number) => void;
 
-const _PARAMTYPES_METADATA_KEY = 'design:paramtypes';
+//const _PARAMTYPES_METADATA_KEY = 'design:paramtypes';
 
 function RWSInject<T extends RWSViewComponent>(dependencyClass: Key): InjectDecoratorReturnType {
     return (target: IWithCompose<T>, key?: keyof IWithCompose<T>, parameterIndex?: number) => {
@@ -33,7 +31,7 @@ function RWSIgnore(params: { mergeToApp?: boolean } = null): () => void {
     return () => { };
 }
 
-function getFunctionParamNames(func: Function): string[] {
+function getFunctionParamNames(func: () => any): string[] {
     // Convert the function to its string form and extract the parameter names
     const funcStr = func.toString().replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg, '');  
     return funcStr.slice(funcStr.indexOf('(')+1, funcStr.indexOf(')')).split(',');
@@ -109,4 +107,4 @@ const applyProp = (component: RWSViewComponent, propName: string | symbol): any 
     return loadedDependency;
 };
 
-export { RWSView, RWSDecoratorOptions, RWSIgnore, RWSInject, applyConstructor, applyProp }
+export { RWSView, RWSDecoratorOptions, RWSIgnore, RWSInject, applyConstructor, applyProp };

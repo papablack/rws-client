@@ -1,4 +1,6 @@
-# RWS Frontend Framework README
+# Realtime Web Suit client setup and configuration guide
+
+Realtime Web Suit is a web-component powered, MS FAST powered fullstack-oriented framework that you can use to create domain-agnostic modular asynchoronous components with intershared authorized states.
 
 ## Table of Contents
 
@@ -170,8 +172,7 @@ The main file (`index.ts`) is where you initialize the RWSClient. Here, you conf
 Following is example of full usage of the framework
 
 ```typescript
-import RWSClient, { NotifyUiType, NotifyLogType, RWSContainer } from 'rws-js-client';
-
+import RWSClient, { NotifyUiType, NotifyLogType } from '@rws-framework/client';
 //@ts-ignore
 import alertify from 'alertifyjs';
 
@@ -299,7 +300,7 @@ import { JunctionTrainer } from '../../../jtrainer/frontend/src/components/train
 import { BookLoader } from '../components/book-loader/component'
 import { ChatLoader } from '../components/chat-loader/component'
 
-import {RWSClientInstance} from 'rws-js-client/src/client';
+import { registerRWSComponents } from '@rws-framework/client';
 
 export default () => {
     jTrainerComponents();
@@ -331,7 +332,7 @@ export default () => {
 **Component needs to extend RWSViewComponent and use @RWSView decorator**:
 
 ```typescript
-import { RWSViewComponent,  RWSDecoratorOptions, RWSView, observable, attr, ngAttr, sanitizedAttr } from 'rws-js-client';
+import { RWSViewComponent,  RWSView, observable, attr } from '@rws-framework/client';
 
 const options?: RWSDecoratorOptions;
 
@@ -434,7 +435,7 @@ Router tag:
 
 ## Backend Imports
 
-`backendImports.ts` consolidates various backend interfaces, routes, and models, allowing for a synchronized frontend and backend.
+`backendImports.ts` consolidates various backend interfaces, routes, and models, allowing for a synchronized frontend and backend from package https://github.com/papablack/rws
 
 ```typescript
 import IBook from '../../backend/src/models/interfaces/IBook';
@@ -535,10 +536,10 @@ If you pass ```{serviceWorker: 'service_worker_class_path.ts'}``` to RWS Webpack
 example ServiceWorker class:
 
 ```typescript
-import SWService, { ServiceWorkerServiceInstance } from 'rws-js-client/src/services/ServiceWorkerService'
+import SWService, { ServiceWorkerServiceInstance } from '@rws-framework/client/src/services/ServiceWorkerService'
 import {TimeTracker} from '../services/TimeTrackerService';
-import RWSServiceWorker from 'rws-js-client/src/service_worker/src/_service_worker';
-import { RWSWSService as WSService } from 'rws-js-client/src/services/WSService'
+import RWSServiceWorker from '@rws-framework/client/src/service_worker/src/_service_worker';
+import { RWSWSService as WSService } from '@rws-framework/client/src/services/WSService'
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -668,6 +669,16 @@ The WebChat component demonstrates a practical use of `APIService` in a real-wor
 ### WebChat Component Implementation
 
 ```typescript
+import { RWSViewComponent, ApiService, NotifyService, RWSView, WSService } from '@rws-framework/client';
+import { observable, css  } from '@microsoft/fast-element';
+
+import './children/convo-footer/component';
+
+import WebChatEvents from './events';
+import { IContext } from './children/left-bar/component';
+import { IMessage } from '../chat-message/component';
+import { ITalkApiResponse, BedrockBaseModel, IHyperParameter, 
+
 @RWSView('web-chat')
 class WebChat extends RWSViewComponent {
 

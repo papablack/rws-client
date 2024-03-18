@@ -1,4 +1,4 @@
-import { Observable, AttributeConfiguration } from '@microsoft/fast-element';
+import { Observable } from '@microsoft/fast-element';
 import RWSViewComponent from '../_component';
 import DOMService from '../../services/DOMService';
 import RWSContainer from '../_container';
@@ -6,12 +6,12 @@ import { IOptions } from 'sanitize-html';
 
 import * as he from 'he';
 
-type SanitizeOptions = IOptions & { fullEncode?: boolean }
+type SanitizeOptions = IOptions & { fullEncode?: boolean };
 
 const heOpt: he.EncodeOptions = {
     useNamedReferences: false, 
     encodeEverything: true,
-}
+};
 
 function enc(html: string): string
 {
@@ -47,8 +47,8 @@ function sanitizedAttr(configOrTarget?: SanitizeOptions | RWSViewComponent, prop
 function applyDecorator(target: RWSViewComponent, prop: string, config: SanitizeOptions = null): void 
 {    
     if(config.fullEncode){
-        const encAllOpts = {transformTags: { '*' : transformAnyTag }, textFilter: function(text: string, tagName?: string) { return tagName ? `${enc('<')}${tagName}${enc('>')}${text}${enc('</')}${tagName}${enc('>')}` : text; }}
-        config = {...config, ...encAllOpts}
+        const encAllOpts = {transformTags: { '*' : transformAnyTag }, textFilter: function(text: string, tagName?: string) { return tagName ? `${enc('<')}${tagName}${enc('>')}${text}${enc('</')}${tagName}${enc('>')}` : text; }};
+        config = {...config, ...encAllOpts};
         delete config.fullEncode;
     }
 
