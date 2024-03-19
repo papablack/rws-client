@@ -1,4 +1,4 @@
-import { IFrontRoutes } from '../services/RoutingService';
+// import { IFrontRoutes } from '../services/RoutingService';
 import RWSViewComponent from '../components/_component';
 
 export default interface IRWSConfig {
@@ -7,7 +7,7 @@ export default interface IRWSConfig {
     wsUrl?: string
     backendRoutes?: any[]
     apiPrefix?: string
-    routes?: IFrontRoutes
+    routes?: any
     transports?: string[]
     user?: any
     ignoreRWSComponents?: boolean

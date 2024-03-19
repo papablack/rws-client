@@ -5,8 +5,8 @@ import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
 import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
 import ApiService, { ApiServiceInstance } from '../services/ApiService';
 import NotifyService, { NotifyServiceInstance } from '../services/NotifyService';
-import RoutingService, { RoutingServiceInstance } from '../services/RoutingService';
-import WSService, { WSServiceInstance } from '../services/WSService';
+// import RoutingService, { RoutingServiceInstance } from '../services/RoutingService';
+// import WSService, { WSServiceInstance } from '../services/WSService';
 import { IRWSViewComponent, IAssetShowOptions } from '../interfaces/IRWSViewComponent';
 import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../interfaces/RWSWindow';
 import {RWSInject, applyConstructor} from './_decorator';
@@ -54,12 +54,10 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     } = {};    
 
     constructor(
-        @RWSInject(ConfigService) protected config: ConfigServiceInstance,
-        @RWSInject(RoutingService) protected routingService: RoutingServiceInstance,
+        @RWSInject(ConfigService) protected config: ConfigServiceInstance,        
         @RWSInject(DOMService) protected domService: DOMServiceInstance,
         @RWSInject(UtilsService) protected utilsService: UtilsServiceInstance,
-        @RWSInject(ApiService) protected apiService: ApiServiceInstance,
-        @RWSInject(WSService) protected wsService: WSServiceInstance,
+        @RWSInject(ApiService) protected apiService: ApiServiceInstance,        
         @RWSInject(NotifyService) protected notifyService: NotifyServiceInstance
     ) {
         super();       

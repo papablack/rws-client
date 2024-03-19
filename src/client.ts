@@ -7,8 +7,7 @@ import UtilsService, { UtilsServiceInstance } from './services/UtilsService';
 import DOMService, { DOMServiceInstance } from './services/DOMService';
 import ApiService, { ApiServiceInstance } from './services/ApiService';
 import NotifyService, { NotifyServiceInstance } from './services/NotifyService';
-import RoutingService, { RoutingServiceInstance } from './services/RoutingService';
-import WSService, { WSServiceInstance } from './services/WSService';
+
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 import { IBackendRoute } from './services/ApiService';
 import IRWSUser from './interfaces/IRWSUser';
@@ -16,12 +15,15 @@ import RWSWindow, { RWSWindowComponentRegister, loadRWSRichWindow } from './inte
 
 import { DI, Container } from '@microsoft/fast-foundation';
 
-import {
-    IFrontRoutes
-} from './services/RoutingService';
+// import RoutingService, { RoutingServiceInstance } from './services/RoutingService';
+// import WSService, { WSServiceInstance } from './services/WSService';
+// import {
+//     IFrontRoutes
+// } from './services/RoutingService';
 
 import RWSViewComponent, { IWithCompose } from './components/_component';
 import RWSContainer from './components/_container';
+import { CallbacksHolder, RWSPlugin } from './_plugin';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -50,13 +52,13 @@ class RWSClient {
         // this.broadcastConfigForViewComponents();
     };
 
+    private _plugins: RWSPlugin[] = [];
+
     constructor(
-        @ConfigService public appConfig: ConfigServiceInstance,
-        @RoutingService public routingService: RoutingServiceInstance,
+        @ConfigService public appConfig: ConfigServiceInstance,        
         @DOMService public domService: DOMServiceInstance,
         @UtilsService public utilsService: UtilsServiceInstance,
-        @ApiService public apiService: ApiServiceInstance,
-        @WSService public wsService: WSServiceInstance,
+        @ApiService public apiService: ApiServiceInstance,        
         @ServiceWorkerService public swService: ServiceWorkerServiceInstance,
         @NotifyService public notifyService: NotifyServiceInstance
     ) {
@@ -67,6 +69,18 @@ class RWSClient {
 
         if (this.user) {
             this.pushUserToServiceWorker({ ...this.user, instructor: false });
+        }
+    }
+
+    public getPlugins(): RWSPlugin[]
+    {
+        return this._plugins;
+    }
+
+    public async runPluginsEvent(eventName: keyof CallbacksHolder, eventParams?: any): Promise<void>
+    {
+        for (const plugin of this._plugins){
+            await plugin.runCallback(eventName, eventParams);
         }
     }
 
@@ -94,6 +108,9 @@ class RWSClient {
 
 
         this.isSetup = true;
+
+        await this.runPluginsEvent('onClientSetup');
+
         return this.config;
     }
 
@@ -114,16 +131,16 @@ class RWSClient {
             this.pushUserToServiceWorker(this.user);
         }
 
-        await startClient(this.appConfig, this.wsService, this.notifyService, this.routingService);
-
-        await this.initCallback();
+        await this.runPluginsEvent('onClientStart');
+        await this.initCallback();     
+        await this.runPluginsEvent('onInitDone');
 
         return this;
     }
 
-    addRoutes(routes: IFrontRoutes) {
-        this.config.routes = routes;
-    }
+    // addRoutes(routes: IFrontRoutes) {
+    //     this.config.routes = routes;
+    // }
 
     setNotifier(notifier: RWSNotify): RWSClient {
         this.notifyService.setNotifier(notifier);
@@ -189,7 +206,7 @@ class RWSClient {
         this.user = user;
 
         this.apiService.setToken(this.user.jwt_token);
-        this.wsService.setUser(this.user);
+        // this.wsService.setUser(this.user);
 
         localStorage.setItem('the_rws_user', JSON.stringify(this.user));
 
@@ -229,11 +246,7 @@ class RWSClient {
         componentParts.forEach((componentName: string) => {
 
             const scriptUrl: string = this.appConfig.get('splitFileDir') + `/${this.appConfig.get('splitPrefix')}.${componentName}.js`;  // Replace with the path to your script file
-
-
-
             const headers: any = {};
-
             headers['Content-Type'] = 'application/javascript';
 
             _all.push(this.apiService.pureGet(scriptUrl, {
@@ -241,17 +254,24 @@ class RWSClient {
             }));
         });
 
-        (await Promise.all(_all)).forEach((scriptCnt: string, key: number) => {
+        const asyncComponents = await Promise.all(_all);
+        
+        for(const componentCodeKey in asyncComponents){
+            const componentCode: string = asyncComponents[componentCodeKey];
             const script: HTMLScriptElement = document.createElement('script');
-            script.textContent = scriptCnt;
+            script.textContent = componentCode;
             script.async = true;
             script.type = 'text/javascript';
             document.body.appendChild(script);
 
-            console.log(`Appended ${componentParts[key]} component`);
-        });
+            console.log(`Appended ${componentParts[componentCodeKey]} component`);
+
+            await this.runPluginsEvent('onPartedComponentAppend', { partName: componentParts[componentCodeKey] });
+        }     
 
         RWSClient.defineAllComponents();
+
+        await this.runPluginsEvent('onPartedComponentsDone');
     }   
     
     async onDOMLoad(): Promise<void> {
@@ -296,6 +316,11 @@ class RWSClient {
         Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
             el.define(el as any, el.definition);
         });
+    }
+
+    addPlugin(plugin: RWSPlugin)
+    {
+        this._plugins.push(plugin.bind(this));
     }
 }
 
