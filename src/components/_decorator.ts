@@ -2,6 +2,7 @@ import { Key } from '@microsoft/fast-foundation';
 import RWSViewComponent, { IWithCompose } from './_component';
 import RWSContainer from './_container';
 import 'reflect-metadata';
+import { RWSPlugin, { IPluginCompose } } from 'src/_plugin';
 
 interface RWSDecoratorOptions {
     template?: string,
@@ -19,6 +20,11 @@ function RWSInject<T extends RWSViewComponent>(dependencyClass: Key): InjectDeco
         const loadedDependency = RWSContainer().get(dependencyClass);    
         const paramNames = getFunctionParamNames(target.prototype.constructor);
         target.prototype.constructor._toInject[paramNames[parameterIndex]] = loadedDependency;
+    };
+}
+
+function RWSPluginDetector<T extends RWSPlugin>(): InjectDecoratorReturnType {
+    return (constructor: T) => {
     };
 }
 
@@ -107,4 +113,4 @@ const applyProp = (component: RWSViewComponent, propName: string | symbol): any 
     return loadedDependency;
 };
 
-export { RWSView, RWSDecoratorOptions, RWSIgnore, RWSInject, applyConstructor, applyProp };
+export { RWSView, RWSDecoratorOptions, RWSIgnore, RWSInject, applyConstructor, applyProp, RWSPluginDetector };

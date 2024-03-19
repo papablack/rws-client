@@ -1,5 +1,6 @@
 import RWSClient, { RWSClientInstance } from "./client";
 import RWSContainer from "./components/_container";
+import { RWSPluginDetector } from "./components/_decorator";
 
 type BasePluginOptions = {
     enabled: boolean,
@@ -21,9 +22,12 @@ const _defaultOpts: BasePluginOptions = {
     asyncCallbacks: false
 };
 
-export class RWSPlugin<ChildOptionsType extends BasePluginOptions = BasePluginOptions> {  
-    private options?: ChildOptionsType = _defaultOpts as ChildOptionsType;  
-    private client?: RWSClientInstance
+@RWSPluginDetector()
+export abstract class RWSPlugin<ChildOptionsType extends BasePluginOptions = BasePluginOptions> {  
+    protected options?: ChildOptionsType = _defaultOpts as ChildOptionsType;  
+    protected client?: RWSClientInstance
+
+    static componentsDir: string | null = null;
 
     constructor(options: Partial<ChildOptionsType>, client?: RWSClientInstance){
         if(client){
@@ -31,6 +35,8 @@ export class RWSPlugin<ChildOptionsType extends BasePluginOptions = BasePluginOp
         }
 
         this.options = {..._defaultOpts, ...options} as ChildOptionsType;
+
+        this.initPlugin();
     }
 
     protected callbacks: CallbacksHolder = {
@@ -39,40 +45,39 @@ export class RWSPlugin<ChildOptionsType extends BasePluginOptions = BasePluginOp
         onPartedComponentAppend: async (client: RWSClientInstance) => client,
         onPartedComponentsDone: async (client: RWSClientInstance) => client,
         onInitDone: async (client: RWSClientInstance) => client,
-    }    
+    } 
+    
+    protected initPlugin(): void {
+        throw new Error(`Class "${this.constructor.name}" needs to have method "initPlugin()" defined`);
+    }
 
     onClientSetup(this: RWSPlugin<ChildOptionsType>, callback: CallbackType): RWSPlugin<ChildOptionsType>
-    {    
-        const call = callback;
-        this.callbacks.onClientSetup = call;
+    {            
+        this.callbacks.onClientSetup = callback;
         return this;
     }
 
     onClientStart(this: RWSPlugin<ChildOptionsType>, callback: CallbackType): RWSPlugin<ChildOptionsType>
-    {    
-        const call = callback;
-        this.callbacks.onClientStart = call;
+    {            
+        this.callbacks.onClientStart = callback;
         return this;
     }
 
     onPartedComponentAppend(this: RWSPlugin<ChildOptionsType>, callback: CallbackType): RWSPlugin<ChildOptionsType>
-    {    
-        const call = callback;
-        this.callbacks.onPartedComponentAppend = call;
+    {            
+        this.callbacks.onPartedComponentAppend = callback;
         return this;
     }
 
     onPartedComponentsDone(this: RWSPlugin<ChildOptionsType>, callback: CallbackType): RWSPlugin<ChildOptionsType>
-    {    
-        const call = callback;
-        this.callbacks.onPartedComponentsDone = call;
+    {            
+        this.callbacks.onPartedComponentsDone = callback;
         return this;
     }
 
     onInitDone(this: RWSPlugin<ChildOptionsType>, callback: CallbackType): RWSPlugin<ChildOptionsType>
-    {    
-        const call = callback;
-        this.callbacks.onInitDone = call;
+    {            
+        this.callbacks.onInitDone = callback;
         return this;
     }
 
@@ -107,9 +112,11 @@ export class RWSPlugin<ChildOptionsType extends BasePluginOptions = BasePluginOp
         }
     }
 
-    static injectPlugin<ChildOptionsType>(options?: Partial<ChildOptionsType>)
+    static injectPlugin<ChildOptionsType>(
+        constructor: { new(opts?: Partial<ChildOptionsType>): any },
+        options?: Partial<ChildOptionsType>)
     {
         const client: RWSClientInstance = RWSContainer().get<RWSClientInstance>(RWSClient);
-        client.addPlugin(new RWSPlugin(options));
+        client.addPlugin(new constructor(options));
     }
 }

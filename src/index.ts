@@ -18,7 +18,7 @@ import RWSClient from './client';
 import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worker';
 import IRWSUser from './interfaces/IRWSUser';
 import RWSContainer from './components/_container';
-
+import { RWSPlugin } from './_plugin';
 // import { 
 //     IFrontRoutes, renderRouteComponent, RouteReturn, 
 //     _ROUTING_EVENT_NAME, IRoutingEvent,
@@ -88,5 +88,6 @@ export {
     RWSViewComponent,   
     provideRWSDesignSystem,
 
-    RWSContainer
+    RWSContainer,
+    RWSPlugin
 };
