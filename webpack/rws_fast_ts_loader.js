@@ -106,11 +106,13 @@ module.exports = function(content) {
                 styles = `import styles from './${stylesPath}'`;
             }
             
-            const templateExists = fs.existsSync(path.dirname(filePath) + '/template.html', 'utf-8');                   
+            const templateName = 'template';
+            const templatePath = path.dirname(filePath) + `/${templateName}.html`;
+            const templateExists = fs.existsSync(templatePath, 'utf-8');                   
             let template = 'const template: null = null;';
 
             if(templateExists){
-                template = `import template from './${templatePath}'`;
+                template = `const template: any = T.html\`${fs.readFileSync(templatePath, 'utf-8')}\`;`;
             }
 
             processedContent = ` 
