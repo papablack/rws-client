@@ -34,7 +34,7 @@
     "json5": "^2.2.3",
     "moment": "^2.29.4",
     "partial-json-parser": "^1.0.0",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.1",
     "resolve-url-loader": "^5.0.0",
     "sanitize-html": "^2.12.1",
     "sass": "^1.69.7",
