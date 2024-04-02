@@ -112,7 +112,7 @@ module.exports = function(content) {
             let template = 'const template: null = null;';
 
             if(templateExists){
-                template = `const template: any = T.html\`${fs.readFileSync(templatePath, 'utf-8')}\`;`;
+                template = `import './${templateName}.html';\nconst template: any = T.html\`${fs.readFileSync(templatePath, 'utf-8')}\`;`;
             }
 
             processedContent = ` 

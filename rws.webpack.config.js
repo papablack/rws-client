@@ -200,7 +200,7 @@ const RWSWebpackWrapper = (config) => {
       plugins: [
         // new TsconfigPathsPlugin({configFile: config.tsConfigPath})
       ]
-    },
+    },   
     module: {
       rules: [
         {
