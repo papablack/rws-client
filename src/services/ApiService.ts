@@ -195,13 +195,14 @@ class ApiServiceInstance extends TheService {
         return `${this.config.get('backendUrl')}${this.config.get('apiPrefix') || ''}${apiPath}`;
     }
 
-    async uploadFile(url: string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse>
+    async uploadFile(url: string, file: File, onProgress: (progress: number) => void, data: any = {}): Promise<UploadResponse>
     {
         return upload(
             
             url,
             {
                 file,
+                ...data
             },
             {
                 onProgress,
