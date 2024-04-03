@@ -26,7 +26,6 @@ const externals = (declaredCodeBase, nodeModules, externalOptions = _defaultOpts
     const codeBase = path.resolve(declaredCodeBase);  
     
     let mergeTarget = true;
-    console.log('req', context, request, mergeTarget);
 
     if (mergeTarget) {
       //merging to output

@@ -72,6 +72,7 @@ module.exports = function(content) {
 
     const tagName = decoratorData.tagName;
 
+
     
     try { 
         if(tagName){           
@@ -112,6 +113,8 @@ module.exports = function(content) {
             let template = 'const template: null = null;';
 
             if(templateExists){
+                this.addDependency(templatePath);
+
                 template = `import './${templateName}.html';\nconst template: any = T.html\`${fs.readFileSync(templatePath, 'utf-8')}\`;`;
             }
 

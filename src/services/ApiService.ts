@@ -195,14 +195,14 @@ class ApiServiceInstance extends TheService {
         return `${this.config.get('backendUrl')}${this.config.get('apiPrefix') || ''}${apiPath}`;
     }
 
-    async uploadFile(url: string, file: File, onProgress: (progress: number) => void, data: any = {}): Promise<UploadResponse>
+    async uploadFile(url: string, file: File, onProgress: (progress: number) => void, payload: any = {}): Promise<UploadResponse>
     {
         return upload(
             
             url,
             {
                 file,
-                ...data
+                ...payload
             },
             {
                 onProgress,
@@ -216,7 +216,7 @@ class ApiServiceInstance extends TheService {
         post: <T, P extends object = object>(routeName: string, payload?: P, options?: IAPIOptions): Promise<T> => this.post(this.getBackendUrl(routeName, options?.routeParams), payload, options),
         put: <T, P extends object = object>(routeName: string, payload: P, options?: IAPIOptions): Promise<T> => this.put(this.getBackendUrl(routeName, options?.routeParams), payload, options),
         delete: <T>(routeName: string, options?: IAPIOptions): Promise<T> => this.delete(this.getBackendUrl(routeName, options?.routeParams), options),
-        uploadFile: (routeName: string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}): Promise<UploadResponse> => this.uploadFile(this.getBackendUrl(routeName, options?.routeParams), file, onProgress),
+        uploadFile: (routeName: string, file: File, onProgress: (progress: number) => void, options: IAPIOptions = {}, payload: any = {}): Promise<UploadResponse> => this.uploadFile(this.getBackendUrl(routeName, options?.routeParams), file, onProgress, payload),
     };
 
     connectToAmplify()
