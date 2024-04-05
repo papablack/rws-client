@@ -36,7 +36,7 @@ class RWSProgress extends RWSViewComponent {
 
     public connectedCallback(): void {
         super.connectedCallback();
-        this.updatePercentComplete();
+        this.updatePercentComplete();        
     }
 
     private updatePercentComplete(): void {
@@ -46,7 +46,7 @@ class RWSProgress extends RWSViewComponent {
         const range: number = max - min;
 
         this.percentComplete =
-            range === 0 ? 0 : Math.fround(((value - min) / range) * 100);
+            range === 0 ? 0 : Math.fround(((value - min) / range) * 100);            
     }
 }
 

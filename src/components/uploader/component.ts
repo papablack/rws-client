@@ -68,6 +68,11 @@ class RWSUploader extends RWSViewComponent {
   {
       this.shadowRoot.removeChild(fileInput);
   }
+
+  uploadProgressChanged(oldV: any, newV: any)
+  {
+    console.log('chng', this.uploadProgress);
+  }
 }
 
 RWSUploader.defineComponent();

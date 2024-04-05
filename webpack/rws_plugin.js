@@ -5,8 +5,9 @@ const { getTokenSourceMapRange } = require('typescript');
 const _tools = require('../_tools');
 const _COMPILE_DIR_NAME = 'compiled';
 
-const FONT_REGEX = /url\(['"]?(.+?\.(woff|woff2|eot|ttf|otf))['"]?\)/g;
-
+const FONT_REGEX = /url\(['"]?(.+?\.(woff|woff2|eot|ttf|otf))['"]?\)/gm;
+const CSS_IMPORT_REGEX = /@import\s+['"]((?![^'"]*:[^'"]*).+?)['"];?/gm
+const SCSS_USE_REGEX = /@use\s+['"]?([^'"\s]+)['"]?;?/gm;
 const _DEV = true;
 
 const log = (args) => {
@@ -34,51 +35,36 @@ class RWSPlugin {
     }
   }
 
-  extractCssImports(fileContent) {    
-    const regex = /@import\s+['"](.+?\.css)['"];?/g;
+  extractScssImports(fileContent) {      
     let match;
     const imports = [];
   
-    while ((match = regex.exec(fileContent)) !== null) {      
-      let importPath = match[1];
-      // Convert to absolute path or handle it as required
-      imports.push(importPath);
-    }
-
-    fileContent = fileContent.replace(regex, '');
-  
-    return [imports, fileContent];
-  }
-
-  extractScssImports(fileContent) {    
-    const regex = /@import\s+['"](.+?\.scss)['"];?/g;
-    let match;
-    const imports = [];
-  
-    while ((match = regex.exec(fileContent)) !== null) {      
-      let importPath = match[1];
+    while ((match = CSS_IMPORT_REGEX.exec(fileContent)) !== null) {        
+      const importPath = match[1];
+      const importLine = match[0];
       
-      imports.push(importPath);
-    }
-
-    fileContent = fileContent.replace(regex, '');
+      imports.push([importPath, importLine]);
+    }    
   
     return [imports, fileContent];
   }
 
-  replaceNodeModulesImport(fileContent, fileDir) {    
-    const regex = /@import\s+['"](.+?\.scss)['"];?/g;        
-    
-    const resultCode = fileContent.replace(regex, (match, importPath) => {    
-      return `@import "${path.join(this.node_modules_dir(fileDir), importPath)}";`;
-    });
+  extractScssUses(fileContent) {      
+    let match;
+    const uses = [];
   
-    return resultCode;
+    while ((match = SCSS_USE_REGEX.exec(fileContent)) !== null) {        
+      const usesPath = match[1];
+      const usesLine = match[0];
+      
+      uses.push([usesPath, usesLine]);
+    }    
+  
+    return [uses];
   }
 
-  detectImports(code){
-    const regex = /@import\s+['"](.+?\.(css|scss))['"];?/g;   
-    return regex.test(code);
+  detectImports(code){        
+    return CSS_IMPORT_REGEX.test(code);
   }
   
   writeCssFile(scssFilePath, cssContent) {    
@@ -153,7 +139,51 @@ class RWSPlugin {
     });
   }
 
+ readSCSSFilesFromDirectory(dirPath) {
+    let scssFiles = [];
+  
+    try {
+      const files = fs.readdirSync(dirPath);
+  
+      files.forEach(file => {
+        const filePath = path.join(dirPath, file);
+        const stat = fs.statSync(filePath);
+  
+        if (stat.isFile() && path.extname(file) === '.scss') {
+          scssFiles.push(filePath);
+        } else if (stat.isDirectory()) {
+          scssFiles = scssFiles.concat(readSCSSFilesFromDirectory(filePath));
+        }
+      });
+    } catch (e) {
+      console.error(`Failed to read directory ${dirPath}:`, e);
+    }
+  
+    return scssFiles;
+  };
+  
+
   getCodeFromFile(filePath){
+    filePath = filePath.replace('//', '/');   
+    
+    const fileStat = fs.statSync(filePath);
+
+    if(!fs.existsSync(filePath)){
+      throw new Error(`SCSS loader: File path "${filePath}" was not found.`);
+    }
+
+    if(filePath[filePath.length - 1] === '/' && fs.statSync(filePath).isDirectory()){
+      let collectedCode = '';
+
+      this.readSCSSFilesFromDirectory(filePath).forEach(scssPath => {
+        collectedCode += fs.readFileSync(scssPath, 'utf-8');
+      });
+
+      return collectedCode;
+    }else if(fs.statSync(filePath).isDirectory()){
+        throw new Error(`Non-directory path (not ending with "/") "${filePath}" is and should not be a directory`)
+    }    
+
     return fs.readFileSync(filePath, 'utf-8');
   }
 
@@ -162,22 +192,15 @@ class RWSPlugin {
   }
 
   compileFile(scssPath){
-    if(scssPath.split('')[0] === '~'){
-      scssPath = _self.replaceWithNodeModules(scssPath, path.dirname(scssPath));
-    }
-
-    const cwdRequest = scssPath.indexOf('@cwd');    
-
-    if( cwdRequest > -1){
-      scssPath = process.cwd() + '/' + scssPath.slice(cwdRequest+1);
-    }
+    scssPath = this.processImportPath(scssPath, path.dirname(scssPath))
 
     let scssCode = this.getCodeFromFile(scssPath);  
+
     return this.compileScssCode(scssCode, path.dirname(scssPath));
   }
 
   processImports(imports, fileRootDir, importStorage = {}, sub = false){
-    let finalCode = '';
+    const importResults = [];
 
     const getStorage = (sourceComponentPath, importedFileContent) => {
       const sourceComponentPathFormatted = sourceComponentPath.replace('/','_');
@@ -191,122 +214,104 @@ class RWSPlugin {
       return '';
     } 
 
-    imports.forEach(originalImportPath => {      
-      let importPath = originalImportPath;  
-      
-      // log(`Processing '${importPath}' import in: ` + fileRootDir);  
-      
-      if(originalImportPath.split('')[0] === '~'){        
-        importPath = this.replaceWithNodeModules(importPath, path.dirname(fileRootDir), true);         
-      }    
-  
-      const cwdRequest = originalImportPath.indexOf('@cwd');    
-  
-      if( cwdRequest > -1){
-        importPath = process.cwd() + '/' + originalImportPath.slice(cwdRequest+4);
-      }
+    imports.forEach(importData => {                    
+      const originalImportPath = importData[0];
+      let importPath = this.processImportPath(originalImportPath, fileRootDir);      
+      let replacedScssContent = getStorage(importPath, this.getCodeFromFile(importPath).replace(/\/\*[\s\S]*?\*\//g, '')); 
 
-      // log(`Procesed '${importPath}' import to: ` + importPath);  
-      importPath = path.resolve(fileRootDir, importPath);      
-      
-      const replacedScssContent = getStorage(importPath, this.getCodeFromFile(importPath).replace(/\/\*[\s\S]*?\*\//g, ''));      
-          
+      const recursiveImports = this.extractScssImports(replacedScssContent)[0];
 
-      finalCode = replacedScssContent;
-
-      let recursiveCode = '';      
-
-      if(this.detectImports(finalCode)){
-        recursiveCode = this.processImports(this.extractScssImports(finalCode)[0], fileRootDir, importStorage, true);    
+      if(recursiveImports.length){           
         
-       
-      }            
+        replacedScssContent = this.replaceImports(this.processImports(recursiveImports, path.dirname(importPath), importStorage, true), replacedScssContent);              
+      }        
       
+      importResults.push({
+        line: importData[1],
+        code: replacedScssContent
+      });            
+    });    
 
-      finalCode = recursiveCode + '\n' + finalCode;
-      finalCode = this.deleteImports(finalCode);
-       
+    return importResults;
+  }
+
+  replaceImports(processedImports, code){
+    processedImports.forEach(importObj => {          
+      code = code.replace(importObj.line, importObj.code);
     });
-
-    return finalCode;
+  
+    return code;
   }
 
-  deleteImports(code = '')
-  {
-    const delregex = /@import\s+['"].+\.(scss|css)['"];\s*/g;
-    return code.replace(delregex, '');
+  processImportPath(importPath, fileRootDir){
+    const cwdRequest = importPath.indexOf('@cwd');
+
+    if(importPath.split('')[0] === '~'){      
+      return this.fillSCSSExt(this.replaceWithNodeModules(importPath, path.dirname(fileRootDir), true));         
+    } else if ( cwdRequest > -1){      
+      return this.fillSCSSExt(process.cwd() + '/' + importPath.slice(cwdRequest+4));
+    }    
+
+    if(importPath.split('')[0] === '/'){
+      return this.fillSCSSExt(importPath);  
+    }
+
+    if(importPath.split('')[0] === '.'){
+      return this.fillSCSSExt(path.resolve(fileRootDir, importPath));
+    }
+
+    const relativized = path.resolve(fileRootDir) + '/' + importPath;
+
+    if(!fs.existsSync(relativized)){
+      const partSplit = relativized.split('/');
+      partSplit[partSplit.length-1] = '_' + partSplit[partSplit.length-1] + '.scss';
+
+      const newPath = partSplit.join('/');
+
+      if(fs.existsSync(newPath)){
+        return newPath;
+      }      
+    }
+
+    return this.fillSCSSExt(relativized);
   }
 
-  compileScssCode(scssCode, fileRootDir, createFile = false){    
-    const _self = this;        
+  fillSCSSExt(scssPath){
+    if((!fs.existsSync(scssPath) || (fs.existsSync(scssPath) && fs.statSync(scssPath).isDirectory())) && fs.existsSync(`${scssPath}.scss`)){
+      return `${scssPath}.scss`;
+    }
+
+    if(fs.existsSync(`_${scssPath}.scss`)){
+      return `${scssPath}.scss`;
+    }
+
+    return scssPath;
+  }
+
+  compileScssCode(scssCode, fileRootDir, createFile = false, filePath = null){    
+    const _self = this;                  
+      const [scssImports] = this.extractScssImports(scssCode);                         
+
+      if(scssImports && scssImports.length){                
+        scssCode = this.replaceImports(this.processImports(scssImports, fileRootDir), scssCode);                       
+      }
+
+      const uses = this.extractScssUses(scssCode)[0];
+      let scssUses = '';
     
-      // scssCode = this.replaceNodeModulesImport(scssCode, fileRootDir);  
 
-
-      const [scssImports] = this.extractScssImports(scssCode);                    
-
-      let dotest = false;
-
-      if(fileRootDir.indexOf('chat-message') > -1){        
-        dotest = true;
-      }
-
-      if(scssImports && scssImports.length){
-        scssCode = this.deleteImports(scssCode);  
-        scssCode = this.processImports(scssImports, fileRootDir) + scssCode;                       
-      }
+      uses.forEach(scssUse => {
+        const useLine = scssUse[1];
+        scssUses += useLine + '\n'; 
+        scssCode = scssCode.replace(useLine, '');
+      });       
+  
+      scssCode = scssUses + scssCode;      
 
       try {
 
-        // if(fileRootDir.indexOf('chat-message') > -1){
-        //   log(`Processing 0 cnt '${fileRootDir}' import : \n`);
-          
-        //   console.log(scssCode);
-        // }  
-
         const result = sass.compileString(scssCode, { loadPaths: [fileRootDir] })
-
-
-        // if(fileRootDir.indexOf('chat-message') > -1){
-        //   log(`Processing  cnt '${fileRootDir}' import : \n` + result.css);  
-        // }
-
-        let finalCss = result.css;
-      
-        // Check for CSS imports
-        const [cssImports] = this.extractCssImports(scssCode); 
-        
-        if(cssImports && cssImports.length){
-          // finalCss = this.processImports(cssImports, fileRootDir);        
-        }
-        
-        cssImports.forEach(originalImportPath => {
-
-          let importPath = originalImportPath;
-
-          if(originalImportPath.split('')[0] === '~'){
-            //console.warn(`RWS Sass compiler did not find '${importPath}' from '${module.resource}' looking inside node_modules...`);
-            importPath = _self.replaceWithNodeModules(importPath, path.dirname(fileRootDir), true);
-
-            if(!fs.existsSync(importPath)){
-              throw new Error(`No ${importPath} found.`)
-            }
-          }
-
-          finalCss = finalCss.replace(/@import\s+['"](.+?)['"]\s*;/g, '');
-          
-          const cssContent = _self.getCodeFromFile(importPath).replace(/\/\*[\s\S]*?\*\//g, '');              
-
-          finalCss = cssContent + finalCss;
-
-          if(_self.hasFontEmbeds()){
-            finalCss = _self.embedFontsInCss(finalCss);
-          }
-        });
-
-        // if(createFile){
-        //   this.writeCssFile(scssPath, finalCss);
-        // }      
+        let finalCss = result.css;               
 
         return finalCss;
       } catch(err) {

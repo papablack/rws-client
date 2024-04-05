@@ -16,6 +16,8 @@ import { ngAttr } from './components/_attrs/angular-attr';
 import RWSClient from './client';
 import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worker';
 import IRWSUser from './interfaces/IRWSUser';
+import RWSViewComponent, { IAssetShowOptions } from './components/_component';
+
 import RWSContainer from './components/_container';
 
 import { 
@@ -24,11 +26,10 @@ import {
     RWSRouter, IRWSRouteResult
 } from './services/RoutingService';
 
-// import { RWSComponents } from './components';
-import RWSViewComponent, { IAssetShowOptions } from './components/_component';
+
 import { RWSDecoratorOptions, RWSIgnore, RWSView, RWSInject } from './components/_decorator';
 
-
+import { RWSComponents, declareRWSComponents } from './components';
 
 export default RWSClient;
 export { 
@@ -82,7 +83,7 @@ export {
 
     renderRouteComponent,
     
-    // RWSComponents,
+    RWSComponents,
 
     observable,
     attr,
@@ -93,6 +94,7 @@ export {
     RWSService,
     RWSViewComponent,   
     provideRWSDesignSystem,
+    declareRWSComponents,
 
     RWSContainer
 };

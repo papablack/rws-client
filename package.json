@@ -1,7 +1,7 @@
 {
   "name": "@rws-framework/client",
   "private": false,
-  "version": "2.1.6",
+  "version": "2.1.7",
   "main": "src/index.ts",
   "scripts": {
     "docs": "typedoc --tsconfig ./tsconfig.json"
@@ -38,6 +38,7 @@
     "resolve-url-loader": "^5.0.0",
     "sanitize-html": "^2.12.1",
     "sass": "^1.69.7",
+    "scss-loading-animations": "^1.0.1",
     "socket.io-client": "^4.7.2",
     "ts-loader": "^9.4.4",
     "tsc-watch": "^6.0.4",

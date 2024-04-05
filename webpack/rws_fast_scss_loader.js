@@ -15,7 +15,7 @@ module.exports = function(content) {
     }
 
     try {
-        const code = plugin.compileScssCode(content, path.dirname(filePath));        
+        const code = plugin.compileScssCode(content, path.dirname(filePath), null, filePath);        
 
         if (fromTs) {
             if (saveFile && code) {
