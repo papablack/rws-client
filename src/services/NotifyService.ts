@@ -12,14 +12,14 @@ class NotifyServiceInstance extends TheService {
         this.notifier = notifier;
     }
 
-    public alert(message: string, logType: NotifyLogType = 'info', onConfirm?: (params: any) => void): void
+    public alert(message: string, logType: NotifyLogType = 'info', onConfirm?: (params: any) => void, alertOptions?: any): any
     {
         if(!this.notifier){
             console.warn('No notifier added to RWS Client');
             return;
         }
         
-        this.notifier(message, logType, 'alert', onConfirm);
+        return this.notifier(message, logType, 'alert', onConfirm, alertOptions);
     }
 
     public notify(message: string, logType: NotifyLogType = 'info', onConfirm?: (params: any) => void): void

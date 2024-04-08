@@ -135,6 +135,13 @@ class WSService extends TheService {
         this.user = user;
     }
 
+    public listenForError<T extends Error | any = Error | any>(callback: (data: { error: T }) => void, method: string): void
+    {
+        this.socket().on(method, (rawData: string) => {            
+            callback(JSON.parse(rawData));
+        });
+    }
+
     public listenForMessage(callback: (data: any, isJson?: boolean) => void, method?: string): () => void 
     {
         const disableHandler = () => {
