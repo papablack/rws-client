@@ -4,6 +4,7 @@ const fs = require('fs');
 const ts = require('typescript');
 const tools = require('../_tools');
 const RWSPlugin = require("./rws_plugin");
+const htmlMinify = require('html-minifier').minify;
 
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
@@ -28,14 +29,12 @@ function toJsonString(str) {
     }
 }
 
-module.exports = function(content) { 
-    
+module.exports = async function(content) {    
     let processedContent = content;
     const filePath = this.resourcePath;
-    const options = this.getOptions() || {};
-    const tsConfigPath = options.tsConfigPath || path.resolve(process.cwd(), 'tsconfig.json');
-    const regex = /@RWSView/;
+    const isDev = this._compiler.options.dev;
 
+    const regex = /@RWSView/;
     const tsSourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true);
 
     let templatePath = 'template.html';
@@ -78,7 +77,7 @@ module.exports = function(content) {
         if(tagName){           
                         
             const lines = content.split('\n');
-            const textToInsert = `  static definition = { name: '${tagName}', template, styles${addedParams.length? ', ' + (addedParams.join(', ')) : ''} };`;
+            const textToInsert = `static definition = { name: '${tagName}', template, styles${addedParams.length? ', ' + (addedParams.join(', ')) : ''} };`;
 
             let modifiedContent = '';
             let insertIndex = -1;
@@ -101,10 +100,7 @@ module.exports = function(content) {
             let styles = 'const styles: null = null;'
 
             if(fs.existsSync(path.dirname(filePath) + '/styles')){
-                // const scssCode = fs.readFileSync(path.dirname(filePath) + '/styles/layout.scss', 'utf-8');
-                // styles = 'const styles = T.css`' + plugin.compileScssCode(scssCode, path.dirname(filePath) + '/styles') + '`;'
-
-                styles = `import styles from './${stylesPath}'`;
+                styles = `import styles from './${stylesPath}';`;
             }
             
             const templateName = 'template';
@@ -115,24 +111,32 @@ module.exports = function(content) {
             if(templateExists){
                 this.addDependency(templatePath);
 
-                template = `import './${templateName}.html';\nconst template: any = T.html\`${fs.readFileSync(templatePath, 'utf-8')}\`;`;
+                let htmlContent = fs.readFileSync(templatePath, 'utf-8');
+
+                // try {
+                //     htmlContent = await htmlMinify(htmlContent, {
+                //         collapseWhitespace: true,     
+                //     });
+                // } catch(e){
+                //     console.error(e);
+                // }
+
+                template = `import './${templateName}.html';
+                //@ts-ignore            
+                const template: any = T.html\`${htmlContent}\`;`;
             }
 
-            processedContent = ` 
-            import * as T from '@microsoft/fast-element';\n           
-            ${template}\n
-            ${styles}\n
-            ${addedParamDefs.join('\n')}
-            \n      
-            ` + replaced;                   
+            processedContent = `import * as T from '@microsoft/fast-element';\n${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replaced;
         }
+
+        // fs.writeFileSync(__dirname + '/../node_modules/.compiledev/' + decoratorData.tagName.replace('-', '_') + '.ts', processedContent); //for final RWS TS preview.
       
         return processedContent;
 
     }catch(e){
         console.error(e);
         console.warn('IN:\n\n');
-        console.log(processedContent);
+        // console.log(processedContent);
 
         return content;
     }

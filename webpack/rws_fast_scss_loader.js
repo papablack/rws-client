@@ -7,6 +7,10 @@ module.exports = function(content) {
     const plugin = new RWSPlugin();
     const filePath = this.resourcePath;
 
+    const options = this.getOptions() || { minify: false };
+
+    const isDev = this._compiler.options.dev;
+
     const saveFile = content.indexOf('@save') > -1;  
     let fromTs = false;
 
@@ -15,16 +19,18 @@ module.exports = function(content) {
     }
 
     try {
-        const code = plugin.compileScssCode(content, path.dirname(filePath), null, filePath);        
+        const code = plugin.compileScssCode(content, path.dirname(filePath), null, filePath, !isDev);        
 
         if (fromTs) {
             if (saveFile && code) {
-                plugin.writeCssFile(filePath, code);        
+                plugin.writeCssFile(filePath, code); 
+                
+                const newContext = this;
 
                 // Properly setup the context for css-loader
                 const loaderContext = {
-                    ...this,
-                    query: { sourceMap: true }, // Assuming you want source maps
+                    ...newContext,                              
+                    query: { sourceMap: isDev }, 
                     async: () => (err, output) => {
                         if (err) {
                             callback(err);

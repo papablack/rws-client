@@ -303,6 +303,32 @@ function extractComponentInfo(componentCode) {
   return {...decoratorArgs, options: decoratorOpts };
 }
 
+function getAllFilesInFolder(folderPath, ignoreFilenames = [], recursive = false) {
+  const files = [];
+  function traverseDirectory(currentPath) {
+      const entries = fs.readdirSync(currentPath, { withFileTypes: true });
+      entries.forEach(entry => {
+          const entryPath = path.join(currentPath, entry.name);
+          if (entry.isFile()) {
+              let pass = true;
+              ignoreFilenames.forEach((regEx) => {
+                  if (regEx.test(entryPath)) {
+                      pass = false;
+                  }
+              });
+              if (pass) {
+                  files.push(entryPath);
+              }
+          }
+          else if (entry.isDirectory() && recursive) {
+              traverseDirectory(entryPath);
+          }
+      });
+  }
+  traverseDirectory(folderPath);
+  return files;
+}
+
 module.exports = {
     findRootWorkspacePath,
     findPackageDir,
@@ -313,5 +339,6 @@ module.exports = {
     extractRWSViewArguments,
     extractRWSIgnoreArguments,
     findServiceFilesWithClassExtend,
-    findSuperclassFilePath
+    findSuperclassFilePath,
+    getAllFilesInFolder
 }

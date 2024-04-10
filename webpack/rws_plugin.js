@@ -288,7 +288,7 @@ class RWSPlugin {
     return scssPath;
   }
 
-  compileScssCode(scssCode, fileRootDir, createFile = false, filePath = null){    
+  compileScssCode(scssCode, fileRootDir, createFile = false, filePath = null, minify = false){
     const _self = this;                  
       const [scssImports] = this.extractScssImports(scssCode);                         
 
@@ -310,7 +310,7 @@ class RWSPlugin {
 
       try {
 
-        const result = sass.compileString(scssCode, { loadPaths: [fileRootDir] })
+        const result = sass.compileString(scssCode, { loadPaths: [fileRootDir], style: minify ? 'compressed' : 'expanded' });
         let finalCss = result.css;               
 
         return finalCss;

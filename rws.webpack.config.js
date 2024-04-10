@@ -11,6 +11,9 @@ const { Console } = require('console');
 const { Interface } = require('readline');
 const ts = require('typescript');
 const tools = require('./_tools');
+const TerserPlugin = require('terser-webpack-plugin');
+const HtmlMinifier = require('html-minifier').minify;
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 let WEBPACK_PLUGINS = [];
 
@@ -82,18 +85,18 @@ const RWSWebpackWrapper = (config) => {
     }));
   }
 
-  if(serviceWorkerPath){  
+  if (serviceWorkerPath) {
     WEBPACK_AFTER_ACTIONS.push({
       type: 'service_worker',
       actionHandler: serviceWorkerPath
-    });      
+    });
   }
 
-  if(!!config.copyToDir){      
+  if (!!config.copyToDir) {
     WEBPACK_AFTER_ACTIONS.push({
       type: 'copy',
       actionHandler: config.copyToDir
-    });  
+    });
   }
 
   if (WEBPACK_AFTER_ACTIONS.length) {
@@ -114,45 +117,59 @@ const RWSWebpackWrapper = (config) => {
     path.resolve(executionDir, 'src', 'services')
   ];
 
-  if (config.customServiceLocations) {      
-    config.customServiceLocations.forEach((serviceDir) => {        
+  if (config.customServiceLocations) {
+    config.customServiceLocations.forEach((serviceDir) => {
       servicesLocations.push(serviceDir);
-    });      
+    });
   }
 
   const optimConfig = {
-    minimizer: [
-      new JsMinimizerPlugin(),
-      new CssMinimizerPlugin()
+    minimizer: isDev ? [] : [
+      new TerserPlugin({   
+        terserOptions: {
+          keep_classnames: true, // Prevent mangling of class names
+          mangle: false, //@error breaks FAST view stuff if enabled for all assets             
+          compress: {
+            dead_code: true,
+            pure_funcs: ['console.log', 'console.info', 'console.warn']
+          },
+          output: {
+            comments: false
+          },          
+        },
+        extractComments: false
+      }),
+      new CssMinimizerPlugin(),
+
     ],
   };
 
   if (config.parted) {
-    if (config.partedComponentsLocations) {      
-      config.partedComponentsLocations.forEach((componentDir) => {        
+    if (config.partedComponentsLocations) {
+      config.partedComponentsLocations.forEach((componentDir) => {
         RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', '@rws-framework/client']))];
-      });      
+      });
     }
-    
-    RWSComponents.forEach((fileInfo) => {              
-      const isIgnored = fileInfo.isIgnored;             
 
-      if(isIgnored === true){
+    RWSComponents.forEach((fileInfo) => {
+      const isIgnored = fileInfo.isIgnored;
+
+      if (isIgnored === true) {
         // console.warn('Ignored: '+ fileInfo.filePath);
         return;
       }
 
-      automatedEntries[fileInfo.sanitName] = fileInfo.filePath;    
-    });        
+      automatedEntries[fileInfo.sanitName] = fileInfo.filePath;
+    });
 
-    fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));    
+    fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
     optimConfig.splitChunks = {
       cacheGroups: {
         vendor: {
           test: (module) => {
             let importString = module.identifier();
 
-            if(importString.split('!').length > 2){
+            if (importString.split('!').length > 2) {
               importString = importString.split('!')[2];
             }
 
@@ -162,30 +179,30 @@ const RWSWebpackWrapper = (config) => {
             const inExecDir = importString.indexOf(executionDir) > -1;
             const isNoPartedComponent = !Object.keys(automatedEntries).find(key => importString.indexOf(path.resolve(path.dirname(automatedEntries[key]))) > -1);
 
-            let isAvailableForVendors = (inNodeModules || inVendorPackage) && isNoPartedComponent;              
+            let isAvailableForVendors = (inNodeModules || inVendorPackage) && isNoPartedComponent;
 
 
             return isAvailableForVendors;
           },
           name: 'vendors',
           chunks: 'all',
-        }   
+        }
       }
-    };       
-  }else{
-    if(fs.existsSync(splitInfoJson)){
+    };
+  } else {
+    if (fs.existsSync(splitInfoJson)) {
       fs.unlinkSync(splitInfoJson);
     }
-  }  
-  
+  }
+
   const cfgExport = {
-    entry: {      
-      client: config.entry,  
-      ...automatedEntries  
+    entry: {
+      client: config.entry,
+      ...automatedEntries
     },
     mode: isDev ? 'development' : 'production',
     target: 'web',
-    devtool: config.devtool || 'inline-source-map',
+    devtool: isDev ? (config.devtool || 'inline-source-map') : false,
     output: {
       path: config.outputDir,
       filename: config.parted ? (config.partedPrefix || 'rws') + '.[name].js' : config.outputFileName,
@@ -200,7 +217,7 @@ const RWSWebpackWrapper = (config) => {
       plugins: [
         // new TsconfigPathsPlugin({configFile: config.tsConfigPath})
       ]
-    },   
+    },
     module: {
       rules: [
         {
