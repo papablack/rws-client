@@ -4,7 +4,6 @@ const fs = require('fs');
 const ts = require('typescript');
 const tools = require('../_tools');
 const RWSPlugin = require("./rws_plugin");
-const htmlMinify = require('html-minifier').minify;
 
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
