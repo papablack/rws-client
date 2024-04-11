@@ -39,7 +39,7 @@ class RWSClient {
     private _container: Container;
     private user: IRWSUser = null;
 
-    private config: IRWSConfig = { backendUrl: '', routes: {}, splitFileDir: '/', splitPrefix: 'rws' };
+    private config: IRWSConfig = { backendUrl: '', routes: {}, partedFileDir: '/', partedPrefix: 'rws' };
     protected initCallback: () => Promise<void> = async () => { };
 
     private isSetup = false;
@@ -223,14 +223,12 @@ class RWSClient {
     async loadPartedComponents(): Promise<void> {
         this.assignClientToBrowser();
 
-        const componentParts: string[] = await this.apiService.get<string[]>(this.appConfig.get('splitFileDir') + '/rws_chunks_info.json');
+        const componentParts: string[] = await this.apiService.get<string[]>(this.appConfig.get('partedDirUrlPrefix') + '/rws_chunks_info.json');
 
         const _all: Promise<string>[] = [];
         componentParts.forEach((componentName: string) => {
 
-            const scriptUrl: string = this.appConfig.get('splitFileDir') + `/${this.appConfig.get('splitPrefix')}.${componentName}.js`;  // Replace with the path to your script file
-
-
+            const scriptUrl: string = this.appConfig.get('partedDirUrlPrefix') + `/${this.appConfig.get('partedPrefix')}.${componentName}.js`;  // Replace with the path to your script file
 
             const headers: any = {};
 
@@ -290,9 +288,7 @@ class RWSClient {
 
     static defineAllComponents() {
         const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
-        // provideRWSDesignSystem().register(richWindowComponents[devStr].component);
-
-        console.log(richWindowComponents);
+        
         Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
             el.define(el as any, el.definition);
         });

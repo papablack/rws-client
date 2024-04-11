@@ -1,26 +1,15 @@
 const fs = require('fs');
 const json5 = require('json5');
 
+const _DEFAULT_CONFIG = require('./cfg/_default.cfg')._DEFAULT_CONFIG;
+const STORAGE = require('./cfg/_storage');
 
-const _STORAGE = { _loaded: false }
-
-const _DEFAULT_CONFIG = {
-    dev: false,
-    hot: false,
-    report: false,
-    backendUrl: null,
-    wsUrl: null,
-    transports: ['websocket'],    
-    parted: true,
-    partedFileDir: './build',
-    partedPrefix: 'rws',
-    publicDir: './public',
-    publicIndex: 'index.html',
-    pubUrlPrefix: '/',    
-    outputFileName: 'client.rws.js'
-}
 
 function readConfigFile(filePath){
+    if(!fs.existsSync(filePath)){
+        return _DEFAULT_CONFIG;
+    }
+
     const fileConfig = json5.parse(fs.readFileSync(filePath, 'utf-8'));
 
     return {
@@ -30,22 +19,26 @@ function readConfigFile(filePath){
 }
 
 function get(key){
-    if(!_STORAGE._loaded){
-        Object.assign(_STORAGE, readConfigFile(process.cwd() + '/.rws.json'));
+    _init();
 
-        console.log(_STORAGE);
-    }
-
-    if(Object.keys(_STORAGE).includes(key)){
-        return _STORAGE[key];
-    }
-
-    return null;
+    return STORAGE.get(key);
 }
 
+function exportConfig(){
+    _init();
+
+    return STORAGE.getAll();
+}
+
+function _init(){
+    if(!STORAGE.isLoaded()){
+        STORAGE.init(readConfigFile(process.cwd() + '/.rws.json'))        
+    }
+}
 
 module.exports = {
     readConfigFile,
+    exportConfig,
     get,
     _DEFAULT_CONFIG
 };

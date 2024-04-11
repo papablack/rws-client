@@ -1,36 +1,40 @@
 import TheService from './_service';
 import IRWSConfig from '../interfaces/IRWSConfig';
-import { RWSFillBuildConfig } from '../components/_decorators/RWSFillBuildConfig';
+import { RWSFillBuild } from '../components/_decorators/RWSFillBuild';
 
-@RWSFillBuildConfig()
-const _DEFAULTS: IRWSConfig = {
-    pubUrlPrefix: '/',
-    pubUrl : window.origin,
-    partedFileDir: '/',
-    partedPrefix: 'rws'
-}
+
+
 
 const __SENT_TO_COMPONENTS: string[] = [];
 
+@RWSFillBuild({
+    pubUrlFilePrefix: '/',
+    pubUrl: window.origin,
+    partedFileDir: '/',
+    partedPrefix: 'rws',
+})
 class ConfigService extends TheService {  
     static isLoaded: boolean = false;
-
+    _DEFAULTS: any = null;
     private data: IRWSConfig = {};    
   
     constructor() {
-        super();                     
+        super();       
     }    
   
     public get(key: keyof IRWSConfig): any
-    {     
-        
+    {         
+        if(!this._DEFAULTS){
+            throw new Error('No _DEFAULTS loaded!')
+        }        
+
         const isInData: boolean = Object.keys(this.data).includes(key);
-        const isInDefaults: boolean = Object.keys(_DEFAULTS).includes(key);
+        const isInDefaults: boolean = Object.keys(this._DEFAULTS).includes(key);
 
         if(!isInData && isInDefaults){
-            let defaultVal = _DEFAULTS[key];        
-
-            if(defaultVal[0] === '@'){
+            let defaultVal = this._DEFAULTS[key];        
+            console.log(key, 'kk')
+            if(defaultVal && defaultVal[0] === '@'){
                 defaultVal = this.data[((defaultVal as string).slice(1)) as keyof IRWSConfig];
             }
 

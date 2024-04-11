@@ -12,7 +12,8 @@ export default interface IRWSConfig {
     user?: any
     ignoreRWSComponents?: boolean
     pubUrl?: string
-    pubUrlPrefix?: string
+    pubUrlFilePrefix?: string
+    partedDirUrlPrefix?: string
     dontPushToSW?: boolean
     parted?: boolean
     partedFileDir?: string

@@ -1,22 +1,24 @@
 const path = require('path');
-const webpack = require('webpack');
 const fs = require('fs');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const JsMinimizerPlugin = require('terser-webpack-plugin');
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const webpack = require('webpack');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 const RWSAfterPlugin = require('./webpack/rws_after_plugin');
-const { Console } = require('console');
-const { Interface } = require('readline');
-const ts = require('typescript');
 const tools = require('./_tools');
 const BuildConfigurator = require('./_rws_build_configurator');
+
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlMinifier = require('html-minifier').minify;
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const JsMinimizerPlugin = require('terser-webpack-plugin');
 
-let WEBPACK_PLUGINS = [];
+const json5 = require('json5');
+
+let WEBPACK_PLUGINS = [new webpack.DefinePlugin({
+  'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportConfig())
+})];
 
 /**
  *  The RWS webpack configurator.
