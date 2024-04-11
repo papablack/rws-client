@@ -1,12 +1,13 @@
 import TheService from './_service';
 import IRWSConfig from '../interfaces/IRWSConfig';
+import { RWSFillBuildConfig } from '../components/_decorators/RWSFillBuildConfig';
 
-
-const _DEFAULTS: {[property: string]: any} = {
-    pubPrefix: '/',
+@RWSFillBuildConfig()
+const _DEFAULTS: IRWSConfig = {
+    pubUrlPrefix: '/',
     pubUrl : window.origin,
-    splitFileDir: '/',
-    splitPrefix: 'rws'
+    partedFileDir: '/',
+    partedPrefix: 'rws'
 }
 
 const __SENT_TO_COMPONENTS: string[] = [];

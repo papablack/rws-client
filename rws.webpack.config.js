@@ -11,6 +11,7 @@ const { Console } = require('console');
 const { Interface } = require('readline');
 const ts = require('typescript');
 const tools = require('./_tools');
+const BuildConfigurator = require('./_rws_build_configurator');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlMinifier = require('html-minifier').minify;
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -46,16 +47,18 @@ let WEBPACK_PLUGINS = [];
 const RWSWebpackWrapper = (config) => {
   const executionDir = config.executionDir || process.cwd();
 
-  const isDev = config.dev;
-  const isHotReload = config.hot;
-  const isReport = config.report;
+  const isDev = config.dev || BuildConfigurator.get('dev');
+  const isHotReload = config.hot || BuildConfigurator.get('hot');
+  const isReport = config.report || BuildConfigurator.get('report');
+  const outputDir = config.outputDir || BuildConfigurator.get('outputDir');
+  const outputFileName = config.outputFileName || BuildConfigurator.get('outputFileName');
 
-  const publicDir = config.publicDir || null;
-  const serviceWorkerPath = config.serviceWorker || null;
+  const publicDir = config.publicDir  || BuildConfigurator.get('publicDir');
+  const serviceWorkerPath = config.serviceWorker  || BuildConfigurator.get('serviceWorker');
 
   const WEBPACK_AFTER_ACTIONS = config.actions || [];
 
-  const publicIndex = config.publicIndex || 'index.html';
+  const publicIndex = config.publicIndex || BuildConfigurator.get('publicIndex');
 
   const aliases = config.aliases = {};
 

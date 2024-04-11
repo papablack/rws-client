@@ -12,11 +12,11 @@ export default interface IRWSConfig {
     user?: any
     ignoreRWSComponents?: boolean
     pubUrl?: string
-    pubPrefix?: string
+    pubUrlPrefix?: string
     dontPushToSW?: boolean
     parted?: boolean
-    splitFileDir?: string
-    splitPrefix?: string
+    partedFileDir?: string
+    partedPrefix?: string
     routing_enabled?: boolean
     _noLoad?: boolean    
 }
