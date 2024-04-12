@@ -106,15 +106,15 @@ class RWSClient {
 
         if (Object.keys(config).length) {
             this.appConfig.mergeConfig(this.config);
-        }
-
-        console.log(this.isSetup, this.config, this.appConfig);
+        }        
 
         if (this.config.user && !this.config.dontPushToSW) {
             this.pushUserToServiceWorker(this.user);
         }
 
         await startClient(this.appConfig, this.wsService, this.notifyService, this.routingService);
+
+        RWSClient.defineAllComponents();
 
         await this.initCallback();
 
@@ -223,33 +223,17 @@ class RWSClient {
     async loadPartedComponents(): Promise<void> {
         this.assignClientToBrowser();
 
-        const componentParts: string[] = await this.apiService.get<string[]>(this.appConfig.get('partedDirUrlPrefix') + '/rws_chunks_info.json');
+        const componentParts: string[] = await this.apiService.get<string[]>(this.appConfig.get('partedDirUrlPrefix') + '/rws_chunks_info.json');        
 
-        const _all: Promise<string>[] = [];
-        componentParts.forEach((componentName: string) => {
-
-            const scriptUrl: string = this.appConfig.get('partedDirUrlPrefix') + `/${this.appConfig.get('partedPrefix')}.${componentName}.js`;  // Replace with the path to your script file
-
-            const headers: any = {};
-
-            headers['Content-Type'] = 'application/javascript';
-
-            _all.push(this.apiService.pureGet(scriptUrl, {
-                headers
-            }));
-        });
-
-        (await Promise.all(_all)).forEach((scriptCnt: string, key: number) => {
+        componentParts.forEach((componentName: string, key: number) => {
             const script: HTMLScriptElement = document.createElement('script');
-            script.textContent = scriptCnt;
+            script.src = `${this.appConfig.get('partedDirUrlPrefix')}/${this.appConfig.get('partedPrefix')}.${componentName}.js`;
             script.async = true;
             script.type = 'text/javascript';
             document.body.appendChild(script);
 
             console.log(`Appended ${componentParts[key]} component`);
-        });
-
-        RWSClient.defineAllComponents();
+        });        
     }   
     
     async onDOMLoad(): Promise<void> {

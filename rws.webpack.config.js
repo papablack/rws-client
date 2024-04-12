@@ -16,58 +16,50 @@ const JsMinimizerPlugin = require('terser-webpack-plugin');
 
 const json5 = require('json5');
 
-let WEBPACK_PLUGINS = [new webpack.DefinePlugin({
-  'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportConfig())
-})];
 
-/**
- *  The RWS webpack configurator.
- * 
- *  Example usage in importing file:
- * 
- *  RWSWebpackWrapper({
-    dev: true,
-    hot: false,
-    tsConfigPath: executionDir + '/tsconfig.json',
-    entry: `${executionDir}/src/index.ts`,
-    executionDir: executionDir,
-    publicDir:  path.resolve(executionDir, 'public'),
-    outputDir:  path.resolve(executionDir, 'build'),
-    outputFileName: 'jtrainer.client.js',
-    copyToDir: {
-      '../public/js/' : [
-        './build/jtrainer.client.js',
-        './build/jtrainer.client.js.map',
-        './src/styles/compiled/main.css'
-      ]
-    },
-    plugins: [
-    
-    ],
-  });
- */
 const RWSWebpackWrapper = (config) => {
   const executionDir = config.executionDir || process.cwd();
 
   const isDev = config.dev || BuildConfigurator.get('dev');
   const isHotReload = config.hot || BuildConfigurator.get('hot');
   const isReport = config.report || BuildConfigurator.get('report');
+  const isParted = config.parted || BuildConfigurator.get('parted');
+  const partedPrefix = config.partedPrefix || BuildConfigurator.get('partedPrefix');
+  const partedDirUrlPrefix = config.partedDirUrlPrefix || BuildConfigurator.get('partedDirUrlPrefix');
+  
+
+  const partedComponentsLocations = config.partedComponentsLocations || BuildConfigurator.get('partedComponentsLocations');
+  const customServiceLocations = config.customServiceLocations || BuildConfigurator.get('customServiceLocations');
   const outputDir = config.outputDir || BuildConfigurator.get('outputDir');
   const outputFileName = config.outputFileName || BuildConfigurator.get('outputFileName');
-
   const publicDir = config.publicDir  || BuildConfigurator.get('publicDir');
   const serviceWorkerPath = config.serviceWorker  || BuildConfigurator.get('serviceWorker');
 
-  const WEBPACK_AFTER_ACTIONS = config.actions || [];
-
   const publicIndex = config.publicIndex || BuildConfigurator.get('publicIndex');
 
+  let WEBPACK_PLUGINS = [
+    new webpack.DefinePlugin({
+      'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportConfig())
+    }),
+    new webpack.BannerPlugin({
+      banner: `if(!window.RWS){ 
+        console.log('ABC');
+        const script = document.createElement('script');
+        script.src = '${partedDirUrlPrefix}/${partedPrefix}.vendors.js';        
+        script.type = 'text/javascript';
+        document.body.appendChild(script);
+      }`.replace('\n', ''),
+      raw: true,
+      entryOnly: true,
+      // include: 'client'
+    })
+  ];
+
+  const WEBPACK_AFTER_ACTIONS = config.actions || [];
+
   const aliases = config.aliases = {};
-
   aliases.fs = false;
-
   const modules_setup = [path.resolve(__dirname, 'node_modules'), 'node_modules'];
-
   const overridePlugins = config.plugins || []
 
   if (isHotReload) {
@@ -97,10 +89,12 @@ const RWSWebpackWrapper = (config) => {
     });
   }
 
-  if (!!config.copyToDir) {
+  const assetsToCopy = config.copyAssets || BuildConfigurator.get('copyAssets');
+
+  if (!!assetsToCopy) {
     WEBPACK_AFTER_ACTIONS.push({
       type: 'copy',
-      actionHandler: config.copyToDir
+      actionHandler: assetsToCopy
     });
   }
 
@@ -122,8 +116,8 @@ const RWSWebpackWrapper = (config) => {
     path.resolve(executionDir, 'src', 'services')
   ];
 
-  if (config.customServiceLocations) {
-    config.customServiceLocations.forEach((serviceDir) => {
+  if (customServiceLocations) {
+    customServiceLocations.forEach((serviceDir) => {
       servicesLocations.push(serviceDir);
     });
   }
@@ -149,9 +143,9 @@ const RWSWebpackWrapper = (config) => {
     ],
   };
 
-  if (config.parted) {
-    if (config.partedComponentsLocations) {
-      config.partedComponentsLocations.forEach((componentDir) => {
+  if (isParted) {
+    if (partedComponentsLocations) {
+      partedComponentsLocations.forEach((componentDir) => {
         RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', '@rws-framework/client']))];
       });
     }
@@ -209,8 +203,8 @@ const RWSWebpackWrapper = (config) => {
     target: 'web',
     devtool: isDev ? (config.devtool || 'inline-source-map') : false,
     output: {
-      path: config.outputDir,
-      filename: config.parted ? (config.partedPrefix || 'rws') + '.[name].js' : config.outputFileName,
+      path: outputDir,
+      filename: isParted ? (partedPrefix || 'rws') + '.[name].js' : outputFileName,
       sourceMapFilename: '[file].map',
     },
     resolve: {

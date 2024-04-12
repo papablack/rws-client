@@ -29,7 +29,7 @@ import {
 
 import { RWSDecoratorOptions, RWSIgnore, RWSView, RWSInject } from './components/_decorator';
 
-import { RWSComponents, declareRWSComponents } from './components';
+import { declareRWSComponents } from './components';
 
 export default RWSClient;
 export { 
@@ -82,8 +82,6 @@ export {
     ngAttr,    
 
     renderRouteComponent,
-    
-    RWSComponents,
 
     observable,
     attr,

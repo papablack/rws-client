@@ -3,12 +3,6 @@ import { RouterComponent } from './router/component';
 import { RWSProgress } from './progress/component';
 import { RWSLoader } from './loader/component';
 
-const RWSComponents = { 
-    RWSUploader,
-    RouterComponent,
-    RWSProgress,
-    RWSLoader
-};
 
 function declareRWSComponents(parted: boolean = false): void
 {
@@ -20,4 +14,4 @@ function declareRWSComponents(parted: boolean = false): void
     }
 }
 
-export { RWSComponents, declareRWSComponents };
+export { declareRWSComponents };
