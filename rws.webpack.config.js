@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
-
+const uglify = require('uglify-js')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -18,32 +18,32 @@ const json5 = require('json5');
 
 
 const RWSWebpackWrapper = (config) => {
-  const executionDir = config.executionDir || process.cwd();
+const executionDir = config.executionDir || process.cwd();
 
-  const isDev = config.dev || BuildConfigurator.get('dev');
-  const isHotReload = config.hot || BuildConfigurator.get('hot');
-  const isReport = config.report || BuildConfigurator.get('report');
-  const isParted = config.parted || BuildConfigurator.get('parted');
-  const partedPrefix = config.partedPrefix || BuildConfigurator.get('partedPrefix');
-  const partedDirUrlPrefix = config.partedDirUrlPrefix || BuildConfigurator.get('partedDirUrlPrefix');
-  
+const isDev = BuildConfigurator.get('dev') || config.dev;
+const isHotReload = BuildConfigurator.get('hot') || config.hot;
+const isReport = BuildConfigurator.get('report') || config.report;
 
-  const partedComponentsLocations = config.partedComponentsLocations || BuildConfigurator.get('partedComponentsLocations');
-  const customServiceLocations = config.customServiceLocations || BuildConfigurator.get('customServiceLocations');
-  const outputDir = config.outputDir || BuildConfigurator.get('outputDir');
-  const outputFileName = config.outputFileName || BuildConfigurator.get('outputFileName');
-  const publicDir = config.publicDir  || BuildConfigurator.get('publicDir');
-  const serviceWorkerPath = config.serviceWorker  || BuildConfigurator.get('serviceWorker');
+const isParted = BuildConfigurator.get('parted') || config.parted;
+const partedPrefix = BuildConfigurator.get('partedPrefix') || config.partedPrefix;
+const partedDirUrlPrefix = BuildConfigurator.get('partedDirUrlPrefix') || config.partedDirUrlPrefix;
 
-  const publicIndex = config.publicIndex || BuildConfigurator.get('publicIndex');
+const partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations') || config.partedComponentsLocations;
+const customServiceLocations = BuildConfigurator.get('customServiceLocations') || config.customServiceLocations;
+const outputDir = BuildConfigurator.get('outputDir') || config.outputDir;
+const outputFileName = BuildConfigurator.get('outputFileName') || config.outputFileName;
+const publicDir = BuildConfigurator.get('publicDir') || config.publicDir;
+const serviceWorkerPath = BuildConfigurator.get('serviceWorker') || config.serviceWorker;
+
+const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
+
 
   let WEBPACK_PLUGINS = [
     new webpack.DefinePlugin({
       'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportConfig())
     }),
     new webpack.BannerPlugin({
-      banner: `if(!window.RWS){ 
-        console.log('ABC');
+      banner: `if(!window.RWS){         
         const script = document.createElement('script');
         script.src = '${partedDirUrlPrefix}/${partedPrefix}.vendors.js';        
         script.type = 'text/javascript';
@@ -52,7 +52,8 @@ const RWSWebpackWrapper = (config) => {
       raw: true,
       entryOnly: true,
       // include: 'client'
-    })
+    }),
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/)
   ];
 
   const WEBPACK_AFTER_ACTIONS = config.actions || [];
@@ -75,7 +76,7 @@ const RWSWebpackWrapper = (config) => {
   WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, new webpack.optimize.ModuleConcatenationPlugin(), ...overridePlugins];
 
 
-  if (isDev && isReport) {
+  if (isReport) {
     WEBPACK_PLUGINS.push(new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       openAnalyzer: false,
@@ -123,6 +124,7 @@ const RWSWebpackWrapper = (config) => {
   }
 
   const optimConfig = {
+    minimize: true,
     minimizer: isDev ? [] : [
       new TerserPlugin({   
         terserOptions: {
@@ -136,10 +138,10 @@ const RWSWebpackWrapper = (config) => {
             comments: false
           },          
         },
-        extractComments: false
+        extractComments: false,
+        parallel: true,
       }),
       new CssMinimizerPlugin(),
-
     ],
   };
 

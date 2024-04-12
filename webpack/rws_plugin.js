@@ -124,19 +124,6 @@ class RWSPlugin {
     const _self = this;
 
     return;
-
-    compiler.hooks.thisCompilation.tap('RWSSassPlugin', (compilation) => {
-      compilation.hooks.buildModule.tap('RWSSassPlugin', (module) => {
-        if (module.resource && /\.scss$/.test(module.resource)) {       
-          
-          let scssPath = module.resource;   
-
-          this.compileFile(scssPath, true).catch((e) => {
-            throw e;
-          })
-        }
-      });
-    });
   }
 
  readSCSSFilesFromDirectory(dirPath) {
