@@ -63,7 +63,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         @RWSInject(NotifyService) protected notifyService: NotifyServiceInstance
     ) {
         super();       
-        applyConstructor(this);
+        applyConstructor(this);        
     }
 
     connectedCallback() {        
@@ -71,7 +71,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         applyConstructor(this);
      
         // console.trace(this.config);
-
+        // console.log(this.routingService);
         if (!(this.constructor as IWithCompose<this>).definition && (this.constructor as IWithCompose<this>).autoLoadFastElement) {
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }

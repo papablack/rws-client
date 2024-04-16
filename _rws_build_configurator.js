@@ -12,8 +12,7 @@ function readConfigFile(filePath){
 
     const fileConfig = json5.parse(fs.readFileSync(filePath, 'utf-8'));
 
-    return {
-        ..._DEFAULT_CONFIG,
+    return {        
         ...fileConfig
     }
 }
@@ -24,7 +23,11 @@ function get(key){
     return STORAGE.get(key);
 }
 
-function exportConfig(){
+function exportDefaultConfig(){
+    return _DEFAULT_CONFIG;
+}
+
+function exportBuildConfig(){
     _init();
 
     return STORAGE.getAll();
@@ -38,7 +41,8 @@ function _init(){
 
 module.exports = {
     readConfigFile,
-    exportConfig,
+    exportDefaultConfig,
+    exportBuildConfig,
     get,
     _DEFAULT_CONFIG
 };

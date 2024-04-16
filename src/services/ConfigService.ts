@@ -7,15 +7,13 @@ import { RWSFillBuild } from '../components/_decorators/RWSFillBuild';
 
 const __SENT_TO_COMPONENTS: string[] = [];
 
-@RWSFillBuild({
-    pubUrlFilePrefix: '/',
-    pubUrl: window.origin,
-    partedFileDir: '/',
-    partedPrefix: 'rws',
-})
+@RWSFillBuild()
 class ConfigService extends TheService {  
     static isLoaded: boolean = false;
-    _DEFAULTS: any = null;
+    
+    _DEFAULTS: Partial<IRWSConfig> = {};
+    _BUILD_OVERRIDE: IRWSConfig = {};
+
     private data: IRWSConfig = {};    
   
     constructor() {
@@ -23,24 +21,32 @@ class ConfigService extends TheService {
     }    
   
     public get(key: keyof IRWSConfig): any
-    {         
+    {       
+                
         if(!this._DEFAULTS){
             throw new Error('No _DEFAULTS loaded!')
         }        
 
-        const isInData: boolean = Object.keys(this.data).includes(key);
+        
         const isInDefaults: boolean = Object.keys(this._DEFAULTS).includes(key);
+        const isInData: boolean = Object.keys(this.data).includes(key);
+        const isInBuildVars: boolean = Object.keys(this._BUILD_OVERRIDE).includes(key);
 
-        if(!isInData && isInDefaults){
-            let defaultVal = this._DEFAULTS[key];        
-            console.log(key, 'kk')
+        if(!isInData){        
+            let defaultVal = null;
+
+            if(isInDefaults){
+                defaultVal = this._DEFAULTS[key];                   
+            }            
+            
+            if(isInBuildVars && !!this._BUILD_OVERRIDE[key]){
+                defaultVal = this._BUILD_OVERRIDE[key];
+            }
+                        
             if(defaultVal && defaultVal[0] === '@'){
                 defaultVal = this.data[((defaultVal as string).slice(1)) as keyof IRWSConfig];
             }
-
             return defaultVal;
-        } else if(!isInData && !isInDefaults) {
-            return null;
         }
         
 

@@ -17,7 +17,7 @@ type InjectDecoratorReturnType = (target: any, key?: string | number | undefined
 function RWSInject<T extends RWSViewComponent>(dependencyClass: Key): InjectDecoratorReturnType {
     return (target: IWithCompose<T>, key?: keyof IWithCompose<T>, parameterIndex?: number) => {
         const loadedDependency = RWSContainer().get(dependencyClass);    
-        const paramNames = getFunctionParamNames(target.prototype.constructor);
+        const paramNames = getFunctionParamNames(target.prototype.constructor);        
         target.prototype.constructor._toInject[paramNames[parameterIndex]] = loadedDependency;
     };
 }
@@ -63,8 +63,8 @@ const applyConstructor = (component: RWSViewComponent): void => {
     }
     
     const existingInjectedDependencies = (topConstructor as IWithCompose<RWSViewComponent>)._toInject;
-
     Object.keys(existingInjectedDependencies).forEach((depKey: string) => {
+        
         const loadedDependency = existingInjectedDependencies[depKey];
         if(!(component as any)[depKey]){
             (component as any)[depKey] = loadedDependency;

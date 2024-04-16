@@ -39,7 +39,7 @@ class RWSClient {
     private _container: Container;
     private user: IRWSUser = null;
 
-    private config: IRWSConfig = { backendUrl: '', routes: {}, partedFileDir: '/', partedPrefix: 'rws' };
+    private config: IRWSConfig = {};
     protected initCallback: () => Promise<void> = async () => { };
 
     private isSetup = false;
@@ -112,11 +112,9 @@ class RWSClient {
             this.pushUserToServiceWorker(this.user);
         }
 
-        await startClient(this.appConfig, this.wsService, this.notifyService, this.routingService);
+        await startClient(this.appConfig, this.wsService, this.notifyService, this.routingService);        
 
-        RWSClient.defineAllComponents();
-
-        await this.initCallback();
+        await this.initCallback();        
 
         return this;
     }
@@ -226,13 +224,15 @@ class RWSClient {
         const componentParts: string[] = await this.apiService.get<string[]>(this.appConfig.get('partedDirUrlPrefix') + '/rws_chunks_info.json');        
 
         componentParts.forEach((componentName: string, key: number) => {
+            const partUrl = `${this.appConfig.get('partedDirUrlPrefix')}/${this.appConfig.get('partedPrefix')}.${componentName}.js`;
+
             const script: HTMLScriptElement = document.createElement('script');
-            script.src = `${this.appConfig.get('partedDirUrlPrefix')}/${this.appConfig.get('partedPrefix')}.${componentName}.js`;
+            script.src = partUrl;
             script.async = true;
             script.type = 'text/javascript';
             document.body.appendChild(script);
 
-            console.log(`Appended ${componentParts[key]} component`);
+            console.log(`Appended ${componentParts[key]} component (${partUrl})`);
         });        
     }   
     
@@ -272,7 +272,18 @@ class RWSClient {
 
     static defineAllComponents() {
         const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
-        
+        console.log('defining', richWindowComponents)
+
+        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
+            el.define(el as any, el.definition);
+        });
+    }
+
+    
+    defineComponents(){
+        const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
+        console.log('defining', richWindowComponents)
+
         Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
             el.define(el as any, el.definition);
         });

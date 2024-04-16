@@ -28,13 +28,15 @@ class RWSRouter {
     }
 
     public fireHandler(route: IRWSRouteResult): RouteReturn
-    {     const handler = route.handler();
+    {     
+        const handler = route.handler();
         return [handler[0], handler[1], this.utilsService.mergeDeep(route.params, handler[2])];
     }
 
     public handleRoute(url: string): RouteReturn
     {
         const currentRoute = this.find(url);    
+        console.log('CR', currentRoute);
 
         if (history.pushState) {
             window.history.pushState({ path: url }, '', url);

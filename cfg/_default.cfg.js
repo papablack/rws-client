@@ -15,7 +15,7 @@ const _DEFAULT_CONFIG_VARS = {
     pubUrlFilePrefix: '/',
     //Universal configs
     transports: ['websocket'],    
-    parted: true,        
+    parted: false,        
 }
 
 const _DEFAULT_CONFIG = Object.freeze(_DEFAULT_CONFIG_VARS);

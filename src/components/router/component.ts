@@ -3,7 +3,7 @@ import { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from '../../services/Rout
 import RWSViewComponent, { IRWSViewComponent } from '../_component';
 import {RWSView} from '../_decorator';
 
-@RWSView('rws-router', { ignorePackaging: true })
+@RWSView('rws-router')
 export class RouterComponent extends RWSViewComponent {    
     static autoLoadFastElement = false;
     private routing: RWSRouter;
@@ -15,19 +15,24 @@ export class RouterComponent extends RWSViewComponent {
 
     connectedCallback() {
         super.connectedCallback();   
+
+
+        
         this.routing = this.routingService.apply(this);   
             
-        if(this.currentUrl){
+        if(this.currentUrl){            
             this.handleRoute(this.routing.handleRoute(this.currentUrl));      
         }           
     }
 
-    currentUrlChanged(oldValue: string, newValue: string){  
-        if(!this.routing){
-            this.routing = this.routingService.apply(this);       
+    currentUrlChanged(oldValue: string, newValue: string){          
+        if(newValue){            
+            if(!this.routing){
+                this.routing = this.routingService.apply(this);       
 
-        }     
-        this.handleRoute(this.routing.handleRoute(newValue));
+            }     
+            this.handleRoute(this.routing.handleRoute(newValue));
+        }
     }
 
     private handleRoute(route: RouteReturn){

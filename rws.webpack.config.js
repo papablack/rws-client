@@ -40,21 +40,28 @@ const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
 
   let WEBPACK_PLUGINS = [
     new webpack.DefinePlugin({
-      'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportConfig())
-    }),
-    new webpack.BannerPlugin({
-      banner: `if(!window.RWS){         
-        const script = document.createElement('script');
-        script.src = '${partedDirUrlPrefix}/${partedPrefix}.vendors.js';        
-        script.type = 'text/javascript';
-        document.body.appendChild(script);
-      }`.replace('\n', ''),
-      raw: true,
-      entryOnly: true,
-      // include: 'client'
+      'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
+      'process.env._RWS_BUILD_OVERRIDE': JSON.stringify(BuildConfigurator.exportBuildConfig())
     }),
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/)
   ];
+
+  console.log('PARTED', isParted);
+
+  // if(isParted){
+  //   WEBPACK_PLUGINS.push(new webpack.BannerPlugin({
+  //     banner: `if(!window.RWS_PARTS_LOADED){         
+  //       const script = document.createElement('script');
+  //       script.src = '${partedDirUrlPrefix}/${partedPrefix}.vendors.js';        
+  //       script.type = 'text/javascript';
+  //       document.body.appendChild(script);
+  //       window.RWS_PARTS_LOADED = true;
+  //     }`.replace('\n', ''),
+  //     raw: true,
+  //     entryOnly: true,
+  //     // include: 'client'
+  //   }));
+  // }
 
   const WEBPACK_AFTER_ACTIONS = config.actions || [];
 
@@ -125,7 +132,18 @@ const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
 
   const optimConfig = {
     minimize: true,
-    minimizer: isDev ? [] : [
+    minimizer: isDev ? [
+      new TerserPlugin({   
+        terserOptions: {      
+          mangle: false, //@error breaks FAST view stuff if enabled for all assets             
+          output: {
+            comments: false
+          },          
+        },
+        extractComments: false,
+        parallel: true,
+      })
+    ] : [
       new TerserPlugin({   
         terserOptions: {
           keep_classnames: true, // Prevent mangling of class names
