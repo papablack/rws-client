@@ -272,7 +272,6 @@ class RWSClient {
 
     static defineAllComponents() {
         const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
-        console.log('defining', richWindowComponents)
 
         Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
             el.define(el as any, el.definition);
@@ -282,7 +281,6 @@ class RWSClient {
     
     defineComponents(){
         const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
-        console.log('defining', richWindowComponents)
 
         Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
             el.define(el as any, el.definition);

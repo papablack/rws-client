@@ -24,7 +24,7 @@ class ConfigService extends TheService {
     {       
                 
         if(!this._DEFAULTS){
-            throw new Error('No _DEFAULTS loaded!')
+            throw new Error('No _DEFAULTS loaded!');
         }        
 
         
@@ -46,6 +46,7 @@ class ConfigService extends TheService {
             if(defaultVal && defaultVal[0] === '@'){
                 defaultVal = this.data[((defaultVal as string).slice(1)) as keyof IRWSConfig];
             }
+            
             return defaultVal;
         }
         
