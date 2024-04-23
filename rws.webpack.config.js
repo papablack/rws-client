@@ -7,7 +7,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 const RWSAfterPlugin = require('./webpack/rws_after_plugin');
 const tools = require('./_tools');
-const _default_cfg = require('./cfg/_default.cfg');
+const { _DEFAULT_CONFIG } = require('./cfg/_default.cfg');
 const RWSConfigBuilder = require('@rws-framework/console').RWSConfigBuilder;
 
 const TerserPlugin = require('terser-webpack-plugin');
@@ -21,7 +21,7 @@ const json5 = require('json5');
 const RWSWebpackWrapper = (config) => {
 const executionDir = config.executionDir || process.cwd();
 
-const BuildConfigurator = new RWSConfigBuilder(executionDir + '/.rws.json', _default_cfg);
+const BuildConfigurator = new RWSConfigBuilder(executionDir + '/.rws.json', _DEFAULT_CONFIG);
 
 const isDev = BuildConfigurator.get('dev') || config.dev;
 const isHotReload = BuildConfigurator.get('hot') || config.hot;

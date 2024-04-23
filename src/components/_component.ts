@@ -5,11 +5,10 @@ import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
 import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
 import ApiService, { ApiServiceInstance } from '../services/ApiService';
 import NotifyService, { NotifyServiceInstance } from '../services/NotifyService';
-import RoutingService, { RoutingServiceInstance } from '../services/RoutingService';
 import WSService, { WSServiceInstance } from '../services/WSService';
 import { IRWSViewComponent, IAssetShowOptions } from '../interfaces/IRWSViewComponent';
 import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../interfaces/RWSWindow';
-import {RWSInject, applyConstructor} from './_decorator';
+import { applyConstructor, RWSInject } from './_decorator';
 
 import 'reflect-metadata';
 
@@ -34,6 +33,7 @@ export interface IWithCompose<T extends RWSViewComponent> {
     define<TType extends (...params: any[]) => any>(type: TType, nameOrDef?: string | PartialFASTElementDefinition | undefined): TType;
     _verbose: boolean;
     _toInject: {[key: string]: any};
+    _depKeys: {[key: string]: string[]};
 }
 
 abstract class RWSViewComponent extends FoundationElement implements IRWSViewComponent {
@@ -46,28 +46,29 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     static autoLoadFastElement = true;
     static _defined: { [key: string]: boolean } = {};
     static _toInject: any[] = [];
+    static _depKeys: {[key: string]: string[]} = {_all: []};
     static _verbose: boolean = false;
+
+    @RWSInject(ConfigService, true) protected config: ConfigServiceInstance;    
+    @RWSInject(DOMService, true) protected domService: DOMServiceInstance;
+    @RWSInject(UtilsService, true) protected utilsService: UtilsServiceInstance;
+    @RWSInject(ApiService, true) protected apiService: ApiServiceInstance;
+    @RWSInject(WSService, true) protected wsService: WSServiceInstance;
+    @RWSInject(NotifyService, true) protected notifyService: NotifyServiceInstance;
 
     @observable trashIterator: number = 0;
     @observable fileAssets: {
         [key: string]: ViewTemplate
     } = {};    
 
-    constructor(
-        @RWSInject(ConfigService) protected config: ConfigServiceInstance,
-        @RWSInject(RoutingService) protected routingService: RoutingServiceInstance,
-        @RWSInject(DOMService) protected domService: DOMServiceInstance,
-        @RWSInject(UtilsService) protected utilsService: UtilsServiceInstance,
-        @RWSInject(ApiService) protected apiService: ApiServiceInstance,
-        @RWSInject(WSService) protected wsService: WSServiceInstance,
-        @RWSInject(NotifyService) protected notifyService: NotifyServiceInstance
-    ) {
+    constructor() {
         super();       
-        applyConstructor(this);        
+        applyConstructor(this);
+        
     }
 
     connectedCallback() {        
-        super.connectedCallback();       
+        super.connectedCallback();        
         applyConstructor(this);
      
         // console.trace(this.config);

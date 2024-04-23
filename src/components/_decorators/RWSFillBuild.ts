@@ -27,7 +27,7 @@ function extractEnvVar(envVar: string){
     return {
         extractedVars,
         extractedFrontendVars
-    }
+    };
 }
 
 function RWSFillBuild(config: Partial<IRWSConfig> = {}) {
@@ -45,7 +45,7 @@ function RWSFillBuild(config: Partial<IRWSConfig> = {}) {
                     ...extractedFrontendDefaults
                 } as IRWSConfig;        
                 
-                const extractedFrontendBuildVars = extractEnvVar(process.env._RWS_BUILD_OVERRIDE).extractedFrontendVars;;
+                const extractedFrontendBuildVars = extractEnvVar(process.env._RWS_BUILD_OVERRIDE).extractedFrontendVars;
 
                 this._BUILD_OVERRIDE = extractedFrontendBuildVars as IRWSConfig;
             }
@@ -53,4 +53,4 @@ function RWSFillBuild(config: Partial<IRWSConfig> = {}) {
     };
 }
 
-export { RWSFillBuild }
+export { RWSFillBuild };

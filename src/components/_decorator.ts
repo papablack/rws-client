@@ -1,6 +1,6 @@
-import { Key } from '@microsoft/fast-foundation';
 import RWSViewComponent, { IWithCompose } from './_component';
-import RWSContainer from './_container';
+import { RWSInject } from './_decorators/RWSInject';
+
 import 'reflect-metadata';
 
 interface RWSDecoratorOptions {
@@ -10,17 +10,7 @@ interface RWSDecoratorOptions {
     ignorePackaging?: boolean
 }
 
-type InjectDecoratorReturnType = (target: any, key?: string | number | undefined, parameterIndex?: number) => void;
-
 //const _PARAMTYPES_METADATA_KEY = 'design:paramtypes';
-
-function RWSInject<T extends RWSViewComponent>(dependencyClass: Key): InjectDecoratorReturnType {
-    return (target: IWithCompose<T>, key?: keyof IWithCompose<T>, parameterIndex?: number) => {
-        const loadedDependency = RWSContainer().get(dependencyClass);    
-        const paramNames = getFunctionParamNames(target.prototype.constructor);        
-        target.prototype.constructor._toInject[paramNames[parameterIndex]] = loadedDependency;
-    };
-}
 
 function RWSView<T extends RWSViewComponent>(name: string, data?: RWSDecoratorOptions): (type: any) => void {
     return (constructor: T) => {
@@ -31,15 +21,7 @@ function RWSIgnore(params: { mergeToApp?: boolean } = null): () => void {
     return () => { };
 }
 
-function getFunctionParamNames(func: () => any): string[] {
-    // Convert the function to its string form and extract the parameter names
-    const funcStr = func.toString().replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg, '');  
-    return funcStr.slice(funcStr.indexOf('(')+1, funcStr.indexOf(')')).split(',');
-}
-
-
-function getParentConstructor(instance: any): any 
-{
+function getParentConstructor(instance: any): any {
     const proto = Object.getPrototypeOf(instance.constructor.prototype);
     if (proto && proto.constructor) {
         return proto.constructor;
@@ -48,63 +30,34 @@ function getParentConstructor(instance: any): any
     return null;
 }
 
-const applyConstructor = (component: RWSViewComponent): void => {
-    let mainConstructor = component.constructor;
+const applyConstructor = (component: RWSViewComponent, x: boolean = false): void => {
+    const mainConstructor: any = component.constructor;
     const parent = getParentConstructor(component);
 
-    if(!mainConstructor.length){
-        mainConstructor = parent;
-    }   
-    
-    let topConstructor = mainConstructor;
+    if (parent.name !== 'RWSViewComponent' ) {
+        return;
+    }    
 
-    if( parent && parent.name === RWSViewComponent.name){ 
-        topConstructor = parent;
+    const existingInjectedDependencies = (mainConstructor as IWithCompose<RWSViewComponent>)._toInject;
+    const defaultDeps = (mainConstructor as IWithCompose<RWSViewComponent>)._depKeys['_all'] || [];
+    const depsToInject = (mainConstructor as IWithCompose<RWSViewComponent>)._depKeys[mainConstructor.name] || [];
+
+    if (x) {
+        console.log({            
+            mainConstructor: mainConstructor.name,            
+            deps: existingInjectedDependencies
+        });
     }
-    
-    const existingInjectedDependencies = (topConstructor as IWithCompose<RWSViewComponent>)._toInject;
-    Object.keys(existingInjectedDependencies).forEach((depKey: string) => {
-        
-        const loadedDependency = existingInjectedDependencies[depKey];
-        if(!(component as any)[depKey]){
+
+    Object.keys(existingInjectedDependencies).forEach((depKey: string) => {        
+        // console.log(`Checking "${mainConstructor.name}" for "${depKey}"`, [...defaultDeps, ...depsToInject]);
+
+        if ([...defaultDeps, ...depsToInject].includes(depKey)) {
+            const loadedDependency = existingInjectedDependencies[depKey];     
             (component as any)[depKey] = loadedDependency;
-        }        
-    });    
+            console.log(`Assigned service to "${mainConstructor.name}(${depKey})":`, loadedDependency);
+        }
+    });
 };
 
-const applyProp = (component: RWSViewComponent, propName: string | symbol): any => {
-    let mainConstructor = component.constructor;
-    const parent = getParentConstructor(component);
-
-    if(!mainConstructor.length){
-        mainConstructor = parent;
-    }   
-    
-    let topConstructor = mainConstructor;
-
-    if( parent && parent.name === RWSViewComponent.name){ 
-        topConstructor = parent;
-    }
-
-    if(typeof propName !== 'string'){
-        propName = propName.toString();
-    }
-    
-    const existingInjectedDependencies = (topConstructor as IWithCompose<RWSViewComponent>)._toInject;
-
-    // console.log(propName);
-    if(!Object.keys(existingInjectedDependencies).includes(propName)){
-        return null;
-    }
-
-    const loadedDependency = existingInjectedDependencies[propName];
-
-    if(!(component as any)[propName]){
-        (component as any)[propName] = loadedDependency;
-    }
-    
-
-    return loadedDependency;
-};
-
-export { RWSView, RWSDecoratorOptions, RWSIgnore, RWSInject, applyConstructor, applyProp };
+export { RWSView, RWSDecoratorOptions, RWSIgnore, RWSInject, applyConstructor };

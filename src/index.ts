@@ -27,7 +27,7 @@ import {
 } from './services/RoutingService';
 
 
-import { RWSDecoratorOptions, RWSIgnore, RWSView, RWSInject } from './components/_decorator';
+import { RWSDecoratorOptions, RWSIgnore, RWSInject, RWSView } from './components/_decorator';
 
 import { declareRWSComponents } from './components';
 

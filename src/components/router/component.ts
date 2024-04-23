@@ -1,7 +1,7 @@
 import { observable  } from '@microsoft/fast-element';
-import { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn } from '../../services/RoutingService';
+import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn, RoutingServiceInstance } from '../../services/RoutingService';
 import RWSViewComponent, { IRWSViewComponent } from '../_component';
-import {RWSView} from '../_decorator';
+import {RWSInject, RWSView} from '../_decorator';
 
 @RWSView('rws-router')
 export class RouterComponent extends RWSViewComponent {    
@@ -13,20 +13,28 @@ export class RouterComponent extends RWSViewComponent {
     @observable childComponents: HTMLElement[] = [];    
     slotEl: HTMLElement = null;
 
+    constructor(@RWSInject(RoutingService) protected routingService: RoutingServiceInstance){
+        super();
+    }
+
     connectedCallback() {
         super.connectedCallback();   
-
-
         
+       
         this.routing = this.routingService.apply(this);   
-            
+                
         if(this.currentUrl){            
             this.handleRoute(this.routing.handleRoute(this.currentUrl));      
         }           
     }
 
     currentUrlChanged(oldValue: string, newValue: string){          
-        if(newValue){            
+        if(newValue){       
+            if(!this.routingService){
+                console.log(oldValue, newValue);
+                return;
+            }   
+
             if(!this.routing){
                 this.routing = this.routingService.apply(this);       
 
