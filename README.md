@@ -996,5 +996,5 @@ are defined in backend/src/config/config
 ```
 
 ## Links
-
+- https://www.fast.design/docs/fast-element/getting-started ( Base FAST documentation, mostly valid not considering passing styles and templates as RWS handles it with Webpack loaders )
 - https://www.webcomponents.org (open-source WebComponents repository)
