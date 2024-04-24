@@ -1,0 +1,3 @@
+[submodule "MS-FAST"]
+	path = .fast
+	url = git@github.com:microsoft/fast.git

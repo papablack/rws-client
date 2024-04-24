@@ -1,6 +1,5 @@
 {
-    "out": "docs",
-    "exclude": ["**/node_modules/**", "**/*.spec.ts", "**/*.d.ts"],       
+    "out": "docs",    
     "plugin": ["typedoc-theme-hierarchy", "typedoc-plugin-rename-defaults"],
     "theme": "hierarchy",
     "readme": "./README.md",    
@@ -9,5 +8,6 @@
     "categorizeByGroup": true,
     "name": "Realtime Web Suite Client package",
     "jsDocCompatibility": true,
-    "includes": "src/"
+    "includes": "src/",
+    "exclude": ["node_modules/"]
 }

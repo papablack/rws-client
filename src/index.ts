@@ -14,7 +14,7 @@ import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/S
 import { sanitizedAttr } from './components/_attrs/sanitize-html';import WSService, {WSServiceInstance, WSStatus} from './services/WSService';
 import { ngAttr } from './components/_attrs/angular-attr';
 import RWSClient from './client';
-import RWSServiceWorker, { SWMsgType } from './service_worker/src/_service_worker';
+
 import IRWSUser from './interfaces/IRWSUser';
 import RWSViewComponent, { IAssetShowOptions } from './components/_component';
 
@@ -85,10 +85,7 @@ export {
 
     observable,
     attr,
-
-    RWSServiceWorker,
-    SWMsgType,
-
+    
     RWSService,
     RWSViewComponent,   
     provideRWSDesignSystem,

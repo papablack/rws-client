@@ -77,7 +77,7 @@ async function buildSwCmd(){
   
   try {
     console.log(chalk.yellow('[RWS Client]'), 'Installing service worker...');
-    await tools.runCommand(`${webpackCmd} --config ${path.resolve(moduleDir,'src','service_worker')}/webpack.config.js`, executionDir, false, { env: { SWPATH: firstArg } });
+    await tools.runCommand(`${webpackCmd} --config ${path.resolve(moduleDir, 'service_worker')}/webpack.config.js`, executionDir, false, { env: { SWPATH: firstArg } });
     console.log(chalk.green('[RWS Client]'), 'Service worker installed.');
   }catch(e){
     console.error('runerror',e);

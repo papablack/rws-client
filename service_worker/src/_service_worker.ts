@@ -1,8 +1,8 @@
-import IRWSUser from '../../interfaces/IRWSUser';
-import RWSContainer from '../../components/_container';
+import IRWSUser from '../../src/interfaces/IRWSUser';
+import RWSContainer from '../../src/components/_container';
 
 //@4DI
-import { WSServiceInstance } from '../../services/WSService';
+import { WSServiceInstance } from '../../src/services/WSService';
 import { Container } from '@microsoft/fast-foundation';
 
 type SWMsgType = {

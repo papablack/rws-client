@@ -11,17 +11,18 @@
       "resolveJsonModule": true,
       "outDir": "dist/src",
       "strictNullChecks": false,
+      "skipLibCheck": true,
       "allowSyntheticDefaultImports": true,  
       "sourceMap": true,    
       "declaration": true,     
-      "lib": ["DOM", "ESNext", "WebWorker"],
+      "lib": ["DOM", "ESNext"],
     },
     "include": [
-      "src", 
-      // "declarations.d.ts"
+      "src",             
+      "docs-typings.d.ts",
+      "node_modules/@microsoft"
     ],
-    "exclude": [      
-      "node_modules",
-      "**/*.spec.ts"
+    "exclude": [                
+      
     ]
   }
