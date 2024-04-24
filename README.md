@@ -15,7 +15,8 @@ Realtime Web Suit is a web-component powered, MS FAST powered fullstack-oriented
 9. [Notifier](#notifier)
 10. [Service Worker](#service-worker)
 11. [Example: WebChat Component](#example-webchat-component)
-12. [Links](#links)
+12. [Other configs](#other-configs)
+13. [Links](#links)
 
 ## Overview
 
@@ -46,16 +47,21 @@ or to watch for dev
 ```bash
 yarn watch
 ```
+or to just start server
+```bash
+yarn server
+```
+
 then start engine in the site javascript (can be inline):
 
 ```javascript
-window.RWSClient.start(CFG).then();
+window.RWS.client.start(CFG); // it is async function
 ```
 
 *or for initial setup then start on certain event (example)* 
 
 ```javascript
-window.RWSClient.setup(CFG).then(() => {    
+window.RWS.client.setup(CFG).then(() => {     // it is async function
     $.on('loaded', function(data){
         const optionalNewCfg = { backendRoutes: data.backendRoutes };
         window.RWSClient.start(optionalNewCfg).then();
@@ -63,38 +69,86 @@ window.RWSClient.setup(CFG).then(() => {
 });
 ```
 
-example config with interface:
+### default config for RWS:
 
 ```javascript
-const CFG = {
-    backendUrl: 'http://localhost:1337',
-    wsUrl: 'http://localhost:1338',
-    transports: ['websocket'],
-    user: rwsUser,
-    parted: true,
-    splitFileDir: '/lib/rws',
-    splitPrefix: 'myapp'     
+const _DEFAULT_CONFIG_VARS = {
+    //Build configs
+    dev: false,
+    hot: false,
+    report: false,   
+    publicDir: './public',
+    publicIndex: 'index.html',      
+    outputFileName: 'client.rws.js',
+    outputDir: process.cwd() + '/build',
+    //Frontend RWS client configs  
+    backendUrl: null,
+    wsUrl: null,
+    partedDirUrlPrefix: '/lib/rws',
+    partedPrefix: 'rws',
+    pubUrlFilePrefix: '/',
+    //Universal configs
+    transports: ['websocket'],    
+    parted: false,        
+}
+
+```
+
+*The options description:*
+
+|  **Option**  | **Description** |  **Default**  |
+|--------------|-----------------|---------------|
+| backendUrl | Url for backend integration (API calls) | null |
+| wsUrl | Url for backend integration (Websocket calls) | null |
+| backendRoutes | Backend routes object imported from backend node for integration with API calls | null |
+| apiPrefix | Prefix for API calls | / |
+| routes | Routes for frontend routing | {} |
+| transports | Websockets transports method | ['websockets'] |
+| user | User object for backend auth / frontend data source | null |
+| ignoreRWSComponents | Do not declare base RWS components (uploader, progress) | false |
+| pubUrlFilePrefix | the url for accessing files from browser URL | / |
+| pubUrl | the url for accessing public dir from browser URL | / |
+| outputDir | build dir | ./build |
+| outputFileName | output file name | rws.client.js |
+| publicDir | public dir for HTML serving | ./public |
+| tsConfigPath | tsconfig.json path | ./tsconfig.njson |
+| entry | default TS entry for transpilation | ./src/index.ts |
+| parted | "Parted" mode if enabled. "Monolith" if disabled. Parted mode outputs every component as separate js file and asynchronously adds them to browser. Monolith is single file js build. | false |
+| partedPrefix | parted file prefix ([prefix].[cmp name].js) | rws |
+| partedDirUrlPrefix | URL for generated js parted files directory | / |
+| copyAssets | An option for defining structure that will be copied after build | {} |
+
+*copyAssets example*
+
+```json
+"copyAssets": {
+    "./public/js/": [ // target directory
+      "./build/", // copy this directory to target
+      "./src/styles/compiled/main.css" //copy this file to target
+    ]
 }
 ```
 
-### The FRONT config interface:
+### The FRONT config TS interface:
 
 ```typescript
 interface IRWSConfig {
     defaultLayout?: typeof RWSViewComponent
-    backendUrl?: string // url to backend request/response gateway
-    wsUrl?: string // url to backend websockets gateway
-     backendRoutes?: any[] // routes from backend
-    apiPrefix?: string // f.e /api after host
-    routes?: IFrontRoutes, //override front routes
-    transports?: string[], //ws transports setup
-    user?: any, //user data if logged
-    ignoreRWSComponents?: boolean //do not register base RWS components
-    pubUrl?: string //the url for accessing public dir from browser URL (default: /)
-    pubPrefix?: string 
-    parted?: boolean //sets async partitioning mode for components. Those wil be parted and loaded in BG.
-    splitFileDir?: string //the url for accessing split dir from browser URL (default: /)
-    splitPrefix?: string // prefix for parted file (`${pubPrefix}.${cmpName}.ts`)
+    backendUrl?: string
+    wsUrl?: string
+    backendRoutes?: any[]
+    apiPrefix?: string
+    routes?: IFrontRoutes
+    transports?: string[]
+    user?: any
+    ignoreRWSComponents?: boolean
+    pubUrl?: string
+    pubUrlFilePrefix?: string
+    partedDirUrlPrefix?: string
+    dontPushToSW?: boolean
+    parted?: boolean
+    partedFileDir?: string
+    partedPrefix?: string
     routing_enabled?: boolean
     _noLoad?: boolean    
 }
@@ -103,50 +157,18 @@ interface IRWSConfig {
 
 ```javascript
 const path = require('path');
-const fs = require('fs');
-const { spawn } = require('child_process');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const RWSWebpackWrapper  = require('rws-js-client/rws.webpack.config');
-const { RuntimeGlobals } = require('webpack');
+
+const RWSWebpackWrapper  = require('@rws-framework/client/rws.webpack.config');
 
 
 const executionDir = process.cwd();
 
-const libdir = path.resolve(executionDir, '..', '..', 'target', 'app', 'lib', 'rws');
-const pubdir = path.resolve(executionDir, '..', '..', 'target', 'app');
-
-if(!fs.existsSync(libdir)){
-  fs.mkdirSync(libdir);
-}
-
-const copies = {
-  [libdir]: [
-    './build',
-    './src/styles/compiled/main.rws.css',
-  ],
-  [pubdir]: [
-    './public/service_worker.js',
-    './public/service_worker.js.map'
-  ]
-}
-
-const myappFrontPath = path.resolve(__dirname, '../myapp/frontend');
-
-module.exports = RWSWebpackWrapper({
-  dev: true,
-  hot: false,
+module.exports = RWSWebpackWrapper({  
   tsConfigPath: executionDir + '/tsconfig.json',
-  entry: `${executionDir}/src/index.ts`,
-  executionDir: executionDir,
+  entry: `${executionDir}/src/index.ts`,  
   publicDir:  path.resolve(executionDir, 'public'),
   outputDir:  path.resolve(executionDir, 'build'),
-  outputFileName: 'junction.client.js',
-  copyToDir: copies,
-  serviceWorker: './src/service_worker/MyServiceWorker.ts',
-  parted: true,
-  partedPrefix: 'myapp',
-  partedComponentsLocations: ['../myapp', './src'],
-  customServiceLocations: ['${myappFrontPath}/src/services']
+  outputFileName: 'jtrainer.client.js'
 });
 ```
 
@@ -156,12 +178,27 @@ module.exports = RWSWebpackWrapper({
 
 ### RWSClient
 ##
-`RWSClient` is the heart of the framework, managing configuration and initialization. It sets up routes, backend connections, and other essential framework services.
+`RWS.client` is the heart of the framework, managing configuration and initialization. It sets up routes, backend connections, and other essential framework services.
 
 
 ### RoutingService
-##
+
 `RoutingService` handles the navigation and routing within your application. It ensures that URL changes reflect the correct component rendering.
+
+**Depreciation Notice**
+
+***RoutingService will be moved to @rws-framework/browser-router near future***
+
+### WSService
+
+`WSService` handles Websockets messenging to the backend.
+
+**Depreciation Notice**
+***WSService will be moved to @rws-framework/nest-interconnectors in near future***
+
+### APIService
+
+`APIService` handles API requests to the backend.
 
 Implementing the Framework
 
@@ -172,66 +209,85 @@ The main file (`index.ts`) is where you initialize the RWSClient. Here, you conf
 Following is example of full usage of the framework
 
 ```typescript
-import RWSClient, { NotifyUiType, NotifyLogType } from '@rws-framework/client';
-//@ts-ignore
-import alertify from 'alertifyjs';
+async function initializeApp() {           
+    const theClient = RWSContainer().get(RWSClient);    
 
-import './styles/main.rws.scss';
-import { backendRoutes } from './backendImport';
-import { provideFASTDesignSystem, allComponents } from '@microsoft/fast-components';
-
-// For single file output (will inject itself to DI on import):
-//import initComponents from './application/_initComponents'
-
-async function initializeApp() {       
-    const theClient = RWSContainer().get(RWSClient);
-    
+    theClient.addRoutes(frontendRoutes);
     theClient.setBackendRoutes(backendRoutes());
+
+    theClient.enableRouting();
     
     theClient.onInit(async () => {        
 
         // For single file output:
-        //initComponents();
+        initComponents(theClient.appConfig.get('parted'));  // start components for monolith mode      
+        theClient.defineComponents(); // start RWS conponents
 
-        provideFASTDesignSystem().register(allComponents);
+        //custom outside components registering
+        provideFASTDesignSystem()
+            .register(fastButton())
+            .register(fastTab())
+            .register(fastSlider())
+            .register(fastSelect())
+            .register(fastDivider())
+            .register(fastMenu())
+            .register(fastMenuItem())
+        ;
 
+        // Service worker code
         // const swFilePath: string = `${theClient.appConfig.get('pubUrl')}/service_worker.js`;          
 
-        await theClient.swService.registerServiceWorker();        
+        // await theClient.swService.registerServiceWorker();        
 
-        if(theClient.getUser()){
-            theClient.pushUserToServiceWorker({...theClient.getUser(), instructor: false});  
-        }
+        //if(theClient.getUser()){
+            // theClient.pushUserToServiceWorker({...theClient.getUser(), instructor: false});  
+        //}
 
     });
 
-    theClient.setNotifier((message: string, logType: NotifyLogType, uiType: NotifyUiType = 'notification', onConfirm: (params: any) => void) => {
+    theClient.setNotifier((message: string, logType: NotifyLogType, uiType: NotifyUiType = 'notification', onConfirm: (params: any) => void, notifierOptions: any = {}) => {
         switch(uiType){
-            case 'notification':
-                let notifType = 'success';
+        case 'notification':
+            let notifType = 'success';
 
-                if(logType === 'error'){
-                    notifType = 'error';
+            if(logType === 'error'){
+                notifType = 'error';
+            }
+
+            if(logType === 'warning'){
+                notifType = 'warning';
+            }
+
+            return alertify.notify(message, notifType, 5, onConfirm);
+               
+        case 'alert':                
+            const alertObj = alertify.alert('Junction AI Notification', message, onConfirm);
+
+            Object.keys(notifierOptions).forEach(key => {
+                const optionValue = notifierOptions[key];
+
+                if(key === 'width'){
+                    
+                    alertObj.elements.dialog.style = `max-width: ${optionValue};`;
+                    
+                    return;
                 }
 
-                if(logType === 'warning'){
-                    notifType = 'warning';
-                }
+                alertObj.set(key, optionValue);
+            });
 
-                alertify.notify(message, notifType, 5, onConfirm);
-                return;
-            case 'alert':
-                alertify.alert('Junction AI Notification', message, onConfirm);
-                return;    
-            case 'silent':
-                if(logType == 'warning'){
-                    console.warn(message);
-                }else if(logType == 'error'){
-                    console.error(message);
-                }else{
-                    console.log(message);
-                }            
-                return;    
+            alertObj.show();
+
+            return alertObj;    
+        case 'silent':
+            if(logType == 'warning'){
+                console.warn(message);
+            }else if(logType == 'error'){
+                console.error(message);
+            }else{
+                console.log(message);
+            }            
+            return;    
         }
     });
     
@@ -244,6 +300,8 @@ initializeApp().catch(console.error);
 ## Component Initialization
 
 In `application/_initComponents.ts`, you initialize the custom components used in your application. If components added in here will include other components they dont need to be listed here. A component imported in this mode needs to be imported once.
+
+**This should be conditioned not to execute imported code when using parted mode.**
 
 ### Default component structure
 
@@ -292,41 +350,21 @@ component-dir/
 Only if parted mode is false.
 
 ```typescript
-import jTrainerComponents from '../../../jtrainer/frontend/src/application/_initComponents';
+import { ChatNav } from '../components/chat-nav/component';
+import { DefaultLayout } from '../components/default-layout/component';
+import { RWSIcon } from '../components/rws-icon/component';
+import { LineSplitter } from '../components/line-splitter/component';
+import { WebChat } from '../components/webchat/component';
 
-import { WebChat } from '../../../jtrainer/frontend/src/components/webchat/component';
-import { JunctionTrainer } from '../../../jtrainer/frontend/src/components/trainer/component';
-
-import { BookLoader } from '../components/book-loader/component'
-import { ChatLoader } from '../components/chat-loader/component'
-
-import { registerRWSComponents } from '@rws-framework/client';
-
-export default () => {
-    jTrainerComponents();
-    WebChat;
-    JunctionTrainer;
-    BookLoader;    
-    ChatLoader;
-
-    RWSClientInstance.defineAllComponents();
-}
-
-```
-
-```typescript
-//index.ts
-
- const theClient = new RWSClient();
-
-    
-    theClient.addRoutes(routes);    //routes are optional
-    
-    theClient.onInit(async () => {
-        initComponents(); //user components from _initComponents.ts (dont run and import when parted: true)
-        provideFASTDesignSystem().register(allComponents); // @microsoft/fast-components ready components init
-    });    
-
+export default (partedMode: boolean = false) => {
+    if(!partedMode){
+        WebChat;
+        LineSplitter;
+        DefaultLayout;
+        ChatNav;
+        RWSIcon;        
+    }
+};
 ```
 
 **Component needs to extend RWSViewComponent and use @RWSView decorator**:
@@ -379,12 +417,8 @@ Default services: https://github.com/papablack/rws-client/blob/7d16d9c6d83c81c9f
 
 ```typescript
 import { 
-    NotifyService, RWSView, RWSViewComponent, 
-    WSService, ApiService, ConfigService, 
-    ConfigServiceInstance, UtilsServiceInstance, ApiServiceInstance, 
-    UtilsService, DOMServiceInstance, DOMService, 
-    NotifyServiceInstance, WSServiceInstance, RoutingService, 
-    RoutingServiceInstance, RWSInject
+    RWSView, RWSViewComponent, RWSInject,
+    DateService, DateServiceInstance
 } from 'rws-js-client';
 
 import DateService, {DateServiceInstance} from '../../my-custom-services/DateService';
@@ -392,18 +426,14 @@ import DateService, {DateServiceInstance} from '../../my-custom-services/DateSer
 
 @RWSView('your-tag')
 class YourComponent extends RWSViewComponent {
+    //usage in props:
+    private @RWSInject(ServiceFASTDIPointer) serviceProperty: ServiceClassType; 
+
+    //usage in constructor:
     constructor(
-        @RWSInject(DateService) protected dateService: DateServiceInstance, //custom service - default services from RWSViewComponent below
-        @RWSInject(ConfigService) protected config: ConfigServiceInstance,
-        @RWSInject(RoutingService) protected routingService: RoutingServiceInstance,
-        @RWSInject(DOMService) protected domService: DOMServiceInstance,
-        @RWSInject(UtilsService) protected utilsService: UtilsServiceInstance,
-        @RWSInject(ApiService) protected apiService: ApiServiceInstance,
-        @RWSInject(WSService) protected wsService: WSServiceInstance,
-        @RWSInject(NotifyService) protected notifyService: NotifyServiceInstance
+        private @RWSInject(DateService) protected dateService: DateServiceInstance
     ) {
-        super(config, routingService, domService, utilsService, apiService, wsService, notifyService);
-        applyConstructor(this);   //fix-incoming: DI constructor data inheritance problem - applyConstructor in super is bugged. Need tmp workaround.
+        super();
     }
 
     someMethod(url: string): void
@@ -412,6 +442,20 @@ class YourComponent extends RWSViewComponent {
     }
 }
  
+```
+
+Custom service needs to export .getSingleton() as default export and have service class exported as classic export for TS typing:
+
+```typescript
+import { RWSService } from '@rws-framework/client';
+
+
+class DateService extends RWSService {
+    //(...)
+}
+
+export default DateService.getSingleton(); // Fast DI service pointer (it points to instanced service in DI container)
+export { DateService as DateServiceInstance }; // the custom service class type
 ```
 
 ## Frontend routes
@@ -524,14 +568,6 @@ Ensure that a notifier is set in the RWS Client to use the `NotifyService` effec
 ## Service Worker
 
 If you pass ```{serviceWorker: 'service_worker_class_path.ts'}``` to RWS Webpack wrapper function param, the code will build ServiceWorker to pubDir.
-
-**Remember to have lib field set in tesconfig.json**
-
-```json
-{
- "lib": ["DOM", "ESNext", "WebWorker"]
-}
-```
 
 example ServiceWorker class:
 
@@ -661,6 +697,8 @@ class MyServiceWorker extends RWSServiceWorker {
 
 MyServiceWorker.create();
 ```
+
+**We point to this file in webpack / .rws.json "service_worker" option**
 
 ## Example: WebChat Component
 
@@ -914,6 +952,47 @@ are defined in backend/src/config/config
         'send_msg' : ChatSocket,
         'process_book' : TrainSocket,
     }
+```
+
+## Other configs
+
+### example tsconfig.json
+
+```json
+{
+    "compilerOptions": {
+      "baseUrl": "../",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "target": "ES2018",
+      "module": "es2022",       
+      "moduleResolution": "node",     
+      "strict": true,
+      "esModuleInterop": true,
+      "sourceMap": true,
+      "outDir": "dist",
+      "strictNullChecks": false,    
+      "allowSyntheticDefaultImports": true,    
+      "lib": ["DOM", "ESNext", "WebWorker"], 
+      "paths": {        
+      }       
+    },
+    "include": [
+      "src",          
+      "../node_modules/@rws-framework/client/declarations.d.ts", //TEMPORARILY NEEDED TO WORK
+    ],  
+    "exclude": [
+      "../node_modules/@rws-framework/client/src/tests"    
+    ]
+  }
+```
+
+**Remember to have lib field set in tsconfig.json**
+
+```json
+{
+ "lib": ["DOM", "ESNext"]
+}
 ```
 
 ## Links

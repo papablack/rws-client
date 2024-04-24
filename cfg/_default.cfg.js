@@ -10,7 +10,7 @@ const _DEFAULT_CONFIG_VARS = {
     //Frontend RWS client configs  
     backendUrl: null,
     wsUrl: null,
-    partedDirUrlPrefix: '/lib/rws',
+    partedDirUrlPrefix: '/',
     partedPrefix: 'rws',
     pubUrlFilePrefix: '/',
     //Universal configs
