@@ -25,22 +25,21 @@ function addToComponentInjection(targetComponentName: string, constructor: any, 
         const loadedDependency = loadDep<TheRWSService>(dependencyClass);
         constructor._toInject[depKey] = loadedDependency;
     }
-
-    console.log(targetComponentName);
 }
 
 function RWSInject<T extends RWSViewComponent>(dependencyClass: Key, defaultService: boolean = false): InjectDecoratorReturnType {
     return (target: IWithCompose<T>, key?: keyof IWithCompose<T>, parameterIndex?: number) => {   
         if(key){
-            const targetConstructor = typeof target === 'function' ? target : (target as any).constructor;  
-            console.log('propt', target.name);
-            addToComponentInjection(target.name, targetConstructor, key as string, dependencyClass, defaultService);
+            const targetConstructor = typeof target === 'function' ? target : (target as any).constructor;              
+            addToComponentInjection(targetConstructor.name, targetConstructor, key as string, dependencyClass, defaultService);
         } else{
+
             const targetConstructor = (target as any).prototype.constructor;    
+          
             const paramNames = getFunctionParamNames(targetConstructor);               
-            const depKey = paramNames[parameterIndex];
-    
-            addToComponentInjection(target.name, targetConstructor, depKey, dependencyClass, defaultService);
+            const depKey = paramNames[parameterIndex];       
+            
+            addToComponentInjection(targetConstructor.name, targetConstructor, depKey, dependencyClass, defaultService);
         }        
     };
 }

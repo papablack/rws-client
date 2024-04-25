@@ -42,13 +42,6 @@ const applyConstructor = (component: RWSViewComponent, x: boolean = false): void
     const defaultDeps = (mainConstructor as IWithCompose<RWSViewComponent>)._depKeys['_all'] || [];
     const depsToInject = (mainConstructor as IWithCompose<RWSViewComponent>)._depKeys[mainConstructor.name] || [];
 
-    if (x) {
-        console.log({            
-            mainConstructor: mainConstructor.name,            
-            deps: existingInjectedDependencies
-        });
-    }
-
     Object.keys(existingInjectedDependencies).forEach((depKey: string) => {        
         // console.log(`Checking "${mainConstructor.name}" for "${depKey}"`, [...defaultDeps, ...depsToInject]);
 
