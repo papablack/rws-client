@@ -6,7 +6,7 @@ const _DEFAULT_CONFIG_VARS = {
     publicDir: './public',
     publicIndex: 'index.html',      
     outputFileName: 'client.rws.js',
-    outputDir: process.cwd() + '/build',
+    outputDir: './build',
     //Frontend RWS client configs  
     backendUrl: null,
     wsUrl: null,

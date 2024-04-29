@@ -9,9 +9,9 @@ const RWSAfterPlugin = require('./webpack/rws_after_plugin');
 const tools = require('./_tools');
 const { _DEFAULT_CONFIG } = require('./cfg/_default.cfg');
 const RWSConfigBuilder = require('@rws-framework/console').RWSConfigBuilder;
+const RWSPath = require('@rws-framework/console').rwsPath;
 
 const TerserPlugin = require('terser-webpack-plugin');
-const HtmlMinifier = require('html-minifier').minify;
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const JsMinimizerPlugin = require('terser-webpack-plugin');
 
@@ -19,26 +19,33 @@ const json5 = require('json5');
 
 
 const RWSWebpackWrapper = (config) => {
-const executionDir = config.executionDir || process.cwd();
+  console.log('.rws.json', RWSPath.findPackageDir(process.cwd()) + '/.rws.json');
+  const BuildConfigurator = new RWSConfigBuilder(RWSPath.findPackageDir(process.cwd()) + '/.rws.json', _DEFAULT_CONFIG);
 
-const BuildConfigurator = new RWSConfigBuilder(executionDir + '/.rws.json', _DEFAULT_CONFIG);
+  config.packageDir = RWSPath.findPackageDir(process.cwd());
 
-const isDev = BuildConfigurator.get('dev') || config.dev;
-const isHotReload = BuildConfigurator.get('hot') || config.hot;
-const isReport = BuildConfigurator.get('report') || config.report;
+  let executionDir = BuildConfigurator.get('executionDir') || config.executionDir || process.cwd();
 
-const isParted = BuildConfigurator.get('parted') || config.parted;
-const partedPrefix = BuildConfigurator.get('partedPrefix') || config.partedPrefix;
-const partedDirUrlPrefix = BuildConfigurator.get('partedDirUrlPrefix') || config.partedDirUrlPrefix;
+  if (executionDir[0] === '.') {
+    executionDir = path.resolve(RWSPath.findPackageDir(process.cwd()), executionDir);
+  }
 
-const partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations') || config.partedComponentsLocations;
-const customServiceLocations = BuildConfigurator.get('customServiceLocations') || config.customServiceLocations;
-const outputDir = BuildConfigurator.get('outputDir') || config.outputDir;
-const outputFileName = BuildConfigurator.get('outputFileName') || config.outputFileName;
-const publicDir = BuildConfigurator.get('publicDir') || config.publicDir;
-const serviceWorkerPath = BuildConfigurator.get('serviceWorker') || config.serviceWorker;
+  const isDev = BuildConfigurator.get('dev') || config.dev;
+  const isHotReload = BuildConfigurator.get('hot') || config.hot;
+  const isReport = BuildConfigurator.get('report') || config.report;
 
-const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
+  const isParted = BuildConfigurator.get('parted') || config.parted;
+  const partedPrefix = BuildConfigurator.get('partedPrefix') || config.partedPrefix;
+  const partedDirUrlPrefix = BuildConfigurator.get('partedDirUrlPrefix') || config.partedDirUrlPrefix;
+
+  const partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations') || config.partedComponentsLocations;
+  const customServiceLocations = BuildConfigurator.get('customServiceLocations') || config.customServiceLocations;
+  const outputDir = BuildConfigurator.get('outputDir') || config.outputDir;
+  const outputFileName = BuildConfigurator.get('outputFileName') || config.outputFileName;
+  const publicDir = BuildConfigurator.get('publicDir') || config.publicDir;
+  const serviceWorkerPath = BuildConfigurator.get('serviceWorker') || config.serviceWorker;
+
+  const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
 
 
   let WEBPACK_PLUGINS = [
@@ -98,16 +105,16 @@ const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
     });
   }
 
-  const assetsToCopy = config.copyAssets || BuildConfigurator.get('copyAssets');
+  const assetsToCopy = BuildConfigurator.get('copyAssets') || config.copyAssets;
 
-  if (!!assetsToCopy) {
+  if (!!assetsToCopy) {    
     WEBPACK_AFTER_ACTIONS.push({
       type: 'copy',
       actionHandler: assetsToCopy
     });
   }
 
-  if (WEBPACK_AFTER_ACTIONS.length) {
+  if (WEBPACK_AFTER_ACTIONS.length) {    
     WEBPACK_PLUGINS.push(new RWSAfterPlugin({ actions: WEBPACK_AFTER_ACTIONS }));
   }
 
@@ -134,18 +141,18 @@ const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
   const optimConfig = {
     minimize: true,
     minimizer: isDev ? [
-      new TerserPlugin({   
-        terserOptions: {      
+      new TerserPlugin({
+        terserOptions: {
           mangle: false, //@error breaks FAST view stuff if enabled for all assets             
           output: {
             comments: false
-          },          
+          },
         },
         extractComments: false,
         parallel: true,
       })
     ] : [
-      new TerserPlugin({   
+      new TerserPlugin({
         terserOptions: {
           keep_classnames: true, // Prevent mangling of class names
           mangle: false, //@error breaks FAST view stuff if enabled for all assets             
@@ -155,7 +162,7 @@ const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
           },
           output: {
             comments: false
-          },          
+          },
         },
         extractComments: false,
         parallel: true,
@@ -215,6 +222,8 @@ const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
     }
   }
 
+  tools.setupTsConfig(path.resolve(config.tsConfigPath));
+  
   const cfgExport = {
     entry: {
       client: config.entry,
@@ -267,7 +276,7 @@ const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
               loader: 'ts-loader',
               options: {
                 allowTsInNodeModules: true,
-                configFile: path.resolve(config.tsConfigPath)
+                configFile: path.resolve(config.tsConfigPath)             
               }
             },
             {

@@ -2,7 +2,7 @@ const rwsAfterCopy = require('./after/copy');
 const rwsAfterSW = require('./after/sw');
 
 
-const _DEFAULT_CONFIG = {actions: []}
+const _DEFAULT_CONFIG = {actions: [], executionDir: process.cwd(), packageDir: process.cwd()}
 
 const _DEFAULT_ACTION = {
     type: 'copy',
@@ -67,8 +67,8 @@ class RWSAfterPlugin {
         switch (actionType){
             case 'copy': {
                 const copyFiles = typeof action === 'function' ? await action() : action;
-    
-                await rwsAfterCopy(copyFiles);
+              
+                await rwsAfterCopy(copyFiles, this.config);
                 return;
             };
 
@@ -92,8 +92,7 @@ class RWSAfterPlugin {
             }
 
             default:
-                console.warn('RWSAfterPlugin::_runActionType could not act upon input. Please resolve.');
-                console.log({ actionType, action })
+                console.warn('RWSAfterPlugin::_runActionType could not act upon input. Please resolve.');                
                 return;            
         }        
     }

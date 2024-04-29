@@ -33,6 +33,7 @@
     "dragula": "^3.7.3",
     "he": "^1.2.0",
     "json5": "^2.2.3",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "partial-json-parser": "^1.0.0",
     "reflect-metadata": "^0.1.13",
@@ -50,7 +51,6 @@
     "v4": "^0.0.1"
   },
   "devDependencies": {
-    "@open-wc/dev-server-hmr": "^0.1.2-next.0",
     "@types/dragula": "^3.7.4",
     "@types/express-fileupload": "^1.4.4",
     "@types/glob": "^8.1.0",
@@ -59,16 +59,12 @@
     "@types/sanitize-html": "^2.11.0",
     "@types/socket.io-client": "^3.0.0",
     "@types/uuid": "^9.0.7",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
+    "@typescript-eslint/parser": "^5.0.0",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.8.1",
-    "css-minimizer-webpack-plugin": "^5.0.1",
-    "dts-bundle": "^0.7.3",
-    "eslint": "^8.57.0",
-    "eslint-plugin-unused-imports": "^3.1.0",
+    "css-minimizer-webpack-plugin": "^5.0.1",    
+    "eslint": "^6.0.0",
     "file-loader": "^6.2.0",
-    "html-minifier": "^4.0.0",
     "html-webpack-plugin": "^5.5.3",
     "loader-utils": "^3.2.1",
     "mini-css-extract-plugin": "^2.7.6",
@@ -88,12 +84,17 @@
     "typedoc-plugin-rename-defaults": "^0.7.0",
     "typedoc-theme-hierarchy": "^4.1.2",
     "typescript": "^5.1.6",
-    "typescript-eslint": "^7.2.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "^4.10.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
     "webpack-node-externals": "^3.0.0"
+  },
+  "resolutions": {
+    "lodash": "^4.17.21"
+  },
+  "overrides": {
+    "lodash": "^4.17.21"
   }
 }

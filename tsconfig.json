@@ -19,8 +19,7 @@
     },
     "include": [
       "src",             
-      "docs-typings.d.ts",
-      "node_modules/@microsoft"
+      "types/docs-typings.d.ts"      
     ],
     "exclude": [                
       

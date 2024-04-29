@@ -303,7 +303,7 @@ class RWSPlugin {
         return finalCss;
       } catch(err) {
         console.error('SASS Error in', fileRootDir);
-        // console.log(err);
+        
         console.error(err);
         throw err;        
         return '';

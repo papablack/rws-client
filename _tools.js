@@ -3,6 +3,7 @@ const fs = require('fs');
 const ts = require('typescript');
 const { spawn } = require('child_process');
 const JSON5 = require('json5');
+const chalk = require('chalk');
 
 function findRootWorkspacePath(currentPath) {        
   const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');        
@@ -329,6 +330,57 @@ function getAllFilesInFolder(folderPath, ignoreFilenames = [], recursive = false
   return files;
 }
 
+function setupTsConfig(tsConfigPath)
+{
+  
+  if(!fs.existsSync(tsConfigPath)){
+    throw new Error(`Typescript config file "${tsConfigPath}" does not exist`);
+  }
+
+  const tsConfigContents = fs.readFileSync(tsConfigPath, 'utf-8');  
+
+  try{
+    const tsConfig = JSON.parse(tsConfigContents);  
+
+    const declarationsPath = path.resolve(__dirname, 'types') + '/declarations.d.ts';
+    const testsPath = path.resolve(__dirname, 'tests');
+  
+    let changed = false;  
+  
+    if(!Object.keys(tsConfig).includes('include')){
+      tsConfig['include'] = [];
+    }
+  
+    if(!Object.keys(tsConfig).includes('exclude')){
+      tsConfig['exclude'] = [];
+    }
+  
+    if(!tsConfig['include'].includes(declarationsPath)){
+      console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript declarations to project tsconfig.json');
+      tsConfig['include'].push(declarationsPath);
+      changed = true;
+    }
+  
+    if(!tsConfig['exclude'].includes(testsPath)){
+      console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript exclusions to project tsconfig.json');
+      tsConfig['exclude'].push(testsPath);
+      changed = true;
+    }
+  
+    if(changed){
+      fs.writeFileSync(tsConfigPath, JSON.stringify(tsConfig, null, 2));
+      console.log(chalk.yellowBright('Typescript config file'), `"${chalk.blueBright(tsConfigPath)}"`, chalk.yellowBright('has been changed'));
+    }
+
+    return true;
+  } catch (e) {
+    console.log(chalk.red('Error in tsconfig.json:'));
+    console.log(chalk.blueBright(e.message));
+
+    return false;
+  }
+}
+
 module.exports = {
     findRootWorkspacePath,
     findPackageDir,
@@ -340,5 +392,6 @@ module.exports = {
     extractRWSIgnoreArguments,
     findServiceFilesWithClassExtend,
     findSuperclassFilePath,
-    getAllFilesInFolder
+    getAllFilesInFolder,
+    setupTsConfig
 }

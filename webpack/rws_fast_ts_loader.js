@@ -135,8 +135,6 @@ module.exports = async function(content) {
     }catch(e){
         console.error(e);
         console.warn('IN:\n\n');
-        // console.log(processedContent);
-
         return content;
     }
 };
