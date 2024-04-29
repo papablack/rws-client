@@ -335,7 +335,7 @@ function setupTsConfig(tsConfigPath)
   
   if(!fs.existsSync(tsConfigPath)){
     throw new Error(`Typescript config file "${tsConfigPath}" does not exist`);
-  }
+  }  
 
   const tsConfigContents = fs.readFileSync(tsConfigPath, 'utf-8');  
 

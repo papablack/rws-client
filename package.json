@@ -1,7 +1,7 @@
 {
   "name": "@rws-framework/client",
   "private": false,
-  "version": "2.4.3",
+  "version": "2.5.0",
   "main": "src/index.ts",
   "scripts": {
     "docs": "typedoc --tsconfig ./tsconfig.json"
@@ -54,11 +54,10 @@
     "@types/dragula": "^3.7.4",
     "@types/express-fileupload": "^1.4.4",
     "@types/glob": "^8.1.0",
-    "@types/he": "^1.2.3",
-    "@types/json5": "^2.2.0",
-    "@types/sanitize-html": "^2.11.0",
-    "@types/socket.io-client": "^3.0.0",
+    "@types/he": "^1.2.3",    
+    "@types/sanitize-html": "^2.11.0",    
     "@types/uuid": "^9.0.7",
+    "@types/eslint": "^6.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.8.1",

@@ -18,17 +18,12 @@ const JsMinimizerPlugin = require('terser-webpack-plugin');
 const json5 = require('json5');
 
 
-const RWSWebpackWrapper = (config) => {
-  console.log('.rws.json', RWSPath.findPackageDir(process.cwd()) + '/.rws.json');
+const RWSWebpackWrapper = (config) => {  
   const BuildConfigurator = new RWSConfigBuilder(RWSPath.findPackageDir(process.cwd()) + '/.rws.json', _DEFAULT_CONFIG);
 
   config.packageDir = RWSPath.findPackageDir(process.cwd());
 
-  let executionDir = BuildConfigurator.get('executionDir') || config.executionDir || process.cwd();
-
-  if (executionDir[0] === '.') {
-    executionDir = path.resolve(RWSPath.findPackageDir(process.cwd()), executionDir);
-  }
+  const executionDir = RWSPath.relativize(BuildConfigurator.get('executionDir') || config.executionDir || process.cwd(), config.packageDir);
 
   const isDev = BuildConfigurator.get('dev') || config.dev;
   const isHotReload = BuildConfigurator.get('hot') || config.hot;
@@ -40,7 +35,8 @@ const RWSWebpackWrapper = (config) => {
 
   const partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations') || config.partedComponentsLocations;
   const customServiceLocations = BuildConfigurator.get('customServiceLocations') || config.customServiceLocations;
-  const outputDir = BuildConfigurator.get('outputDir') || config.outputDir;
+  const outputDir = RWSPath.relativize(BuildConfigurator.get('outputDir') || config.outputDir, config.packageDir);
+
   const outputFileName = BuildConfigurator.get('outputFileName') || config.outputFileName;
   const publicDir = BuildConfigurator.get('publicDir') || config.publicDir;
   const serviceWorkerPath = BuildConfigurator.get('serviceWorker') || config.serviceWorker;
@@ -222,7 +218,11 @@ const RWSWebpackWrapper = (config) => {
     }
   }
 
-  tools.setupTsConfig(path.resolve(config.tsConfigPath));
+  const tsValidated = tools.setupTsConfig(path.resolve(config.tsConfigPath));
+
+  if(!tsValidated){
+    throw new Error('RWS Webpack build failed.');
+  }
   
   const cfgExport = {
     entry: {

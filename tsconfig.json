@@ -20,8 +20,5 @@
     "include": [
       "src",             
       "types/docs-typings.d.ts"      
-    ],
-    "exclude": [                
-      
     ]
   }
