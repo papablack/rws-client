@@ -3,7 +3,9 @@ const fs = require('fs');
 const ts = require('typescript');
 const { spawn } = require('child_process');
 const JSON5 = require('json5');
+const md5 = require('md5');
 const chalk = require('chalk');
+const { rwsPath } = require('@rws-framework/console');
 
 function findRootWorkspacePath(currentPath) {        
   const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');        
@@ -330,7 +332,7 @@ function getAllFilesInFolder(folderPath, ignoreFilenames = [], recursive = false
   return files;
 }
 
-function setupTsConfig(tsConfigPath)
+function setupTsConfig(tsConfigPath, executionDir)
 {
   
   if(!fs.existsSync(tsConfigPath)){
@@ -344,26 +346,36 @@ function setupTsConfig(tsConfigPath)
 
     const declarationsPath = path.resolve(__dirname, 'types') + '/declarations.d.ts';
     const testsPath = path.resolve(__dirname, 'tests');
+    const declarationsPathMD5 = md5(fs.readFileSync(declarationsPath, 'utf-8'));
+    const testsPathMD5 = md5(fs.readFileSync(testsPath, 'utf-8'));
   
+    const included = [];
+
     let changed = false;  
   
     if(!Object.keys(tsConfig).includes('include')){
       tsConfig['include'] = [];
+    }else{
+      tsConfig['include'] = tsConfig['include'].map((inc) => fs.existsSync(rwsPath.relativize(tsConfig['include'], executionDir)))
     }
   
     if(!Object.keys(tsConfig).includes('exclude')){
       tsConfig['exclude'] = [];
     }
   
-    if(!tsConfig['include'].includes(declarationsPath)){
+    if(!tsConfig['include'].includes(declarationsPath) && !included.includes(declarationsPathMD5)){
       console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript declarations to project tsconfig.json');
       tsConfig['include'].push(declarationsPath);
+      included.push(md5(fs.readFileSync(declarationsPath, 'utf-8')));
       changed = true;
     }
+    
   
-    if(!tsConfig['exclude'].includes(testsPath)){
+    if(!tsConfig['exclude'].includes(testsPath) && !included.includes(testsPathMD5)){
       console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript exclusions to project tsconfig.json');
       tsConfig['exclude'].push(testsPath);
+      included.push();
+
       changed = true;
     }
   

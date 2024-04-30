@@ -218,7 +218,7 @@ const RWSWebpackWrapper = (config) => {
     }
   }
 
-  const tsValidated = tools.setupTsConfig(path.resolve(config.tsConfigPath));
+  const tsValidated = tools.setupTsConfig(path.resolve(config.tsConfigPath, executionDir));
 
   if(!tsValidated){
     throw new Error('RWS Webpack build failed.');
