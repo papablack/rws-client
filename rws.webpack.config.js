@@ -16,6 +16,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const JsMinimizerPlugin = require('terser-webpack-plugin');
 
 const json5 = require('json5');
+const { rwsPath } = require('@rws-framework/console');
 
 
 const RWSWebpackWrapper = (config) => {  
@@ -43,7 +44,9 @@ const RWSWebpackWrapper = (config) => {
 
   const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
 
-
+  
+  const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);  
+  
   let WEBPACK_PLUGINS = [
     new webpack.DefinePlugin({
       'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
@@ -218,7 +221,7 @@ const RWSWebpackWrapper = (config) => {
     }
   }
 
-  const tsValidated = tools.setupTsConfig(path.resolve(config.tsConfigPath, executionDir));
+  const tsValidated = tools.setupTsConfig(tsConfigPath, executionDir);
 
   if(!tsValidated){
     throw new Error('RWS Webpack build failed.');
@@ -276,7 +279,7 @@ const RWSWebpackWrapper = (config) => {
               loader: 'ts-loader',
               options: {
                 allowTsInNodeModules: true,
-                configFile: path.resolve(config.tsConfigPath)             
+                configFile: path.resolve(tsConfigPath)             
               }
             },
             {

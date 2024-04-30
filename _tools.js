@@ -339,19 +339,23 @@ function setupTsConfig(tsConfigPath, executionDir)
     throw new Error(`Typescript config file "${tsConfigPath}" does not exist`);
   }  
 
+  console.log('tspath', tsConfigPath);
+
   const tsConfigContents = fs.readFileSync(tsConfigPath, 'utf-8');  
 
   try{
-    const tsConfig = JSON.parse(tsConfigContents);  
+    let tsConfig = JSON.parse(tsConfigContents);  
 
     const declarationsPath = path.resolve(__dirname, 'types') + '/declarations.d.ts';
     const testsPath = path.resolve(__dirname, 'tests');
     const declarationsPathMD5 = md5(fs.readFileSync(declarationsPath, 'utf-8'));
-    const testsPathMD5 = md5(fs.readFileSync(testsPath, 'utf-8'));
+    const testsPathMD5 =  fs.existsSync(testsPath) ? md5(fs.readFileSync(testsPath, 'utf-8')) : null;
   
-    const included = [];
+    const includedMD5 = [];
 
     let changed = false;  
+
+    const included = [];
   
     if(!Object.keys(tsConfig).includes('include')){
       tsConfig['include'] = [];
@@ -363,19 +367,18 @@ function setupTsConfig(tsConfigPath, executionDir)
       tsConfig['exclude'] = [];
     }
   
-    if(!tsConfig['include'].includes(declarationsPath) && !included.includes(declarationsPathMD5)){
+    if(!included.includes(declarationsPath) && !includedMD5.includes(declarationsPathMD5)){
       console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript declarations to project tsconfig.json');
-      tsConfig['include'].push(declarationsPath);
-      included.push(md5(fs.readFileSync(declarationsPath, 'utf-8')));
+      included.push(declarationsPath);
+      includedMD5.push(md5(fs.readFileSync(declarationsPath, 'utf-8')));
       changed = true;
     }
-    
   
-    if(!tsConfig['exclude'].includes(testsPath) && !included.includes(testsPathMD5)){
+    tsConfig['include'] = included;
+  
+    if(testsPathMD5 && (!tsConfig['exclude'].includes(testsPath) && !included.includes(testsPathMD5))){
       console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript exclusions to project tsconfig.json');
-      tsConfig['exclude'].push(testsPath);
-      included.push();
-
+      tsConfig['exclude'].push(testsPath);      
       changed = true;
     }
   

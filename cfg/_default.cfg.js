@@ -7,6 +7,7 @@ const _DEFAULT_CONFIG_VARS = {
     publicIndex: 'index.html',      
     outputFileName: 'client.rws.js',
     outputDir: './build',
+    tsConfigPath: './tsconfig.json',
     //Frontend RWS client configs  
     backendUrl: null,
     wsUrl: null,
