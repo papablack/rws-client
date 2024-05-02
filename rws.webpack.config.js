@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const uglify = require('uglify-js')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
+const chalk = require('chalk');
 const RWSAfterPlugin = require('./webpack/rws_after_plugin');
 const tools = require('./_tools');
 const { _DEFAULT_CONFIG } = require('./cfg/_default.cfg');
@@ -19,6 +19,7 @@ const json5 = require('json5');
 const { rwsPath } = require('@rws-framework/console');
 
 
+
 const RWSWebpackWrapper = (config) => {  
   const BuildConfigurator = new RWSConfigBuilder(RWSPath.findPackageDir(process.cwd()) + '/.rws.json', _DEFAULT_CONFIG);
 
@@ -26,17 +27,17 @@ const RWSWebpackWrapper = (config) => {
 
   const executionDir = RWSPath.relativize(BuildConfigurator.get('executionDir') || config.executionDir || process.cwd(), config.packageDir);
 
-  const isDev = BuildConfigurator.get('dev') || config.dev;
-  const isHotReload = BuildConfigurator.get('hot') || config.hot;
-  const isReport = BuildConfigurator.get('report') || config.report;
+  const isDev = BuildConfigurator.get('dev', config.dev);
+  const isHotReload = BuildConfigurator.get('hot', config.hot) ;
+  const isReport = BuildConfigurator.get('report', config.report);
+  const isParted = BuildConfigurator.get('parted', config.parted || false);
 
-  const isParted = BuildConfigurator.get('parted') || config.parted;
-  const partedPrefix = BuildConfigurator.get('partedPrefix') || config.partedPrefix;
-  const partedDirUrlPrefix = BuildConfigurator.get('partedDirUrlPrefix') || config.partedDirUrlPrefix;
+  const partedPrefix = BuildConfigurator.get('partedPrefix', config.partedPrefix);
+  const partedDirUrlPrefix = BuildConfigurator.get('partedDirUrlPrefix', config.partedDirUrlPrefix);
 
-  const partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations') || config.partedComponentsLocations;
-  const customServiceLocations = BuildConfigurator.get('customServiceLocations') || config.customServiceLocations;
-  const outputDir = RWSPath.relativize(BuildConfigurator.get('outputDir') || config.outputDir, config.packageDir);
+  const partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations', config.partedComponentsLocations);
+  const customServiceLocations = BuildConfigurator.get('customServiceLocations', config.customServiceLocations);
+  const outputDir = RWSPath.relativize(BuildConfigurator.get('outputDir', config.outputDir), config.packageDir);
 
   const outputFileName = BuildConfigurator.get('outputFileName') || config.outputFileName;
   const publicDir = BuildConfigurator.get('publicDir') || config.publicDir;
@@ -47,6 +48,24 @@ const RWSWebpackWrapper = (config) => {
   
   const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);  
   
+
+  RWSPath.removeDirectory(outputDir, true);
+
+  console.log(chalk.green('Build started with'))
+  console.log({    
+    executionDir,
+    tsConfigPath,
+    outputDir,
+    dev: isDev,
+    publicDir,
+    parted: isParted,
+    partedPrefix,
+    partedDirUrlPrefix     
+  });
+  
+
+  //AFTER OPTION DEFINITIONS
+
   let WEBPACK_PLUGINS = [
     new webpack.DefinePlugin({
       'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
@@ -54,21 +73,6 @@ const RWSWebpackWrapper = (config) => {
     }),
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/)
   ];
-
-  // if(isParted){
-  //   WEBPACK_PLUGINS.push(new webpack.BannerPlugin({
-  //     banner: `if(!window.RWS_PARTS_LOADED){         
-  //       const script = document.createElement('script');
-  //       script.src = '${partedDirUrlPrefix}/${partedPrefix}.vendors.js';        
-  //       script.type = 'text/javascript';
-  //       document.body.appendChild(script);
-  //       window.RWS_PARTS_LOADED = true;
-  //     }`.replace('\n', ''),
-  //     raw: true,
-  //     entryOnly: true,
-  //     // include: 'client'
-  //   }));
-  // }
 
   const WEBPACK_AFTER_ACTIONS = config.actions || [];
 
@@ -117,7 +121,7 @@ const RWSWebpackWrapper = (config) => {
     WEBPACK_PLUGINS.push(new RWSAfterPlugin({ actions: WEBPACK_AFTER_ACTIONS }));
   }
 
-  const splitInfoJson = config.outputDir + '/rws_chunks_info.json'
+  const rwsInfoJson = outputDir + '/rws_info.json'
   const automatedEntries = {};
 
   const foundRWSUserClasses = tools.findComponentFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', '@rws-framework/client']);
@@ -139,18 +143,7 @@ const RWSWebpackWrapper = (config) => {
 
   const optimConfig = {
     minimize: true,
-    minimizer: isDev ? [
-      new TerserPlugin({
-        terserOptions: {
-          mangle: false, //@error breaks FAST view stuff if enabled for all assets             
-          output: {
-            comments: false
-          },
-        },
-        extractComments: false,
-        parallel: true,
-      })
-    ] : [
+    minimizer: [
       new TerserPlugin({
         terserOptions: {
           keep_classnames: true, // Prevent mangling of class names
@@ -171,6 +164,8 @@ const RWSWebpackWrapper = (config) => {
   };
 
   if (isParted) {
+    WEBPACK_PLUGINS.push(new webpack.BannerPlugin(tools.getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix)));
+
     if (partedComponentsLocations) {
       partedComponentsLocations.forEach((componentDir) => {
         RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', '@rws-framework/client']))];
@@ -188,7 +183,8 @@ const RWSWebpackWrapper = (config) => {
       automatedEntries[fileInfo.sanitName] = fileInfo.filePath;
     });
 
-    fs.writeFileSync(splitInfoJson, JSON.stringify(Object.keys(automatedEntries), null, 2));
+    fs.writeFileSync(rwsInfoJson, JSON.stringify({ components: Object.keys(automatedEntries) }, null, 2));
+
     optimConfig.splitChunks = {
       cacheGroups: {
         vendor: {
@@ -215,10 +211,6 @@ const RWSWebpackWrapper = (config) => {
         }
       }
     };
-  } else {
-    if (fs.existsSync(splitInfoJson)) {
-      fs.unlinkSync(splitInfoJson);
-    }
   }
 
   const tsValidated = tools.setupTsConfig(tsConfigPath, executionDir);
@@ -226,7 +218,7 @@ const RWSWebpackWrapper = (config) => {
   if(!tsValidated){
     throw new Error('RWS Webpack build failed.');
   }
-  
+
   const cfgExport = {
     entry: {
       client: config.entry,

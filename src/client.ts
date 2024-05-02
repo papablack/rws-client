@@ -32,7 +32,7 @@ interface IHotModule extends NodeModule {
     }
 }
 
-
+type RWSInfoType = { components: string[] };
 type RWSEventListener = (event: CustomEvent) => void;
 
 class RWSClient {
@@ -221,9 +221,9 @@ class RWSClient {
     async loadPartedComponents(): Promise<void> {
         this.assignClientToBrowser();
 
-        const componentParts: string[] = await this.apiService.get<string[]>(this.appConfig.get('partedDirUrlPrefix') + '/rws_chunks_info.json');        
+        const componentParts: RWSInfoType = await this.apiService.get<RWSInfoType>(this.appConfig.get('partedDirUrlPrefix') + '/rws_info.json');        
 
-        componentParts.forEach((componentName: string, key: number) => {
+        componentParts.components.forEach((componentName: string, key: number) => {
             const partUrl = `${this.appConfig.get('partedDirUrlPrefix')}/${this.appConfig.get('partedPrefix')}.${componentName}.js`;
 
             const script: HTMLScriptElement = document.createElement('script');
@@ -232,7 +232,7 @@ class RWSClient {
             script.type = 'text/javascript';
             document.body.appendChild(script);
 
-            console.log(`Appended ${componentParts[key]} component (${partUrl})`);
+            console.log(`Appended ${componentParts.components[key]} component (${partUrl})`);
         });        
     }   
     

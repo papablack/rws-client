@@ -46,10 +46,9 @@ class ConfigService extends TheService {
             if(defaultVal && defaultVal[0] === '@'){
                 defaultVal = this.data[((defaultVal as string).slice(1)) as keyof IRWSConfig];
             }
-            
+
             return defaultVal;
-        }
-        
+        }        
 
         return this.data[key as keyof IRWSConfig];
     }
