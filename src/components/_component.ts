@@ -82,7 +82,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
                 if (this.fileAssets[file]) {
                     return;
                 }
-                this.utilsService.getFileContents(this.config.get('pubUrlFilePrefix') + file).then((response: string) => {
+                this.apiService.pureGet(this.config.get('pubUrlFilePrefix') + file).then((response: string) => {
                     this.fileAssets = { ...this.fileAssets, [file]: html`${response}` };
                 });
             });

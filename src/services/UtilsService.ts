@@ -3,19 +3,7 @@ import ApiService, {ApiServiceInstance} from './ApiService';
 
 import { RawSourceMap  } from 'source-map';
 
-class UtilsService extends TheService {
-    private apiService: ApiServiceInstance;
-
-    constructor(@ApiService apiService: ApiServiceInstance){
-        super();
-        this.apiService = apiService;
-    }
-
-    async getFileContents(filePath: string): Promise<string>
-    {    
-        return this.apiService.pureGet(filePath);
-    }
-    
+class UtilsService extends TheService {    
     mergeDeep<T>(target: T | any, source: T  | any): T 
     {
         const isObject = (obj: any) => obj && typeof obj === 'object';
