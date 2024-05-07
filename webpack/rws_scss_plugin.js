@@ -15,7 +15,7 @@ const log = (args) => {
     console.log(args);
   }
 }
-class RWSPlugin {
+class RWSScssPlugin {
   autoCompile = [];
 
   constructor(params){
@@ -326,4 +326,4 @@ class RWSPlugin {
   }
 }
 
-module.exports = RWSPlugin;
+module.exports = RWSScssPlugin;

@@ -1,5 +1,5 @@
 import IRWSConfig from './interfaces/IRWSConfig';
-import startClient from './run';
+
 import RWSNotify from './types/RWSNotify';
 
 import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
@@ -14,7 +14,7 @@ import { IBackendRoute } from './services/ApiService';
 import IRWSUser from './interfaces/IRWSUser';
 import RWSWindow, { RWSWindowComponentRegister, loadRWSRichWindow } from './interfaces/RWSWindow';
 
-import { DI, Container } from '@microsoft/fast-foundation';
+import { DI, Container, Registration } from '@microsoft/fast-foundation';
 
 import {
     IFrontRoutes
@@ -22,6 +22,11 @@ import {
 
 import RWSViewComponent, { IWithCompose } from './components/_component';
 import RWSContainer from './components/_container';
+import TheRWSService from './services/_service';
+
+import ComponentHelper, { ComponentHelperStatic } from './client/components';
+import ServicesHelper from './client/services';
+import ConfigHelper from './client/config';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -36,19 +41,20 @@ type RWSInfoType = { components: string[] };
 type RWSEventListener = (event: CustomEvent) => void;
 
 class RWSClient {
-    private _container: Container;
-    private user: IRWSUser = null;
+    protected _container: Container;
+    protected user: IRWSUser = null;
+    
+    protected config: IRWSConfig = {};
+    protected isSetup = false;
+    protected devStorage: { [key: string]: any } = {};    
+    protected customServices: { [serviceName: string]: TheRWSService} = {};
+    protected defaultServices: { [serviceName: string]: TheRWSService} = {};
 
-    private config: IRWSConfig = {};
-    protected initCallback: () => Promise<void> = async () => { };
+    private componentHelper = ComponentHelper.bind(this)();
+    private servicesHelper = ServicesHelper.bind(this)();
+    private configHelper = ConfigHelper.bind(this)();
 
-    private isSetup = false;
-    protected devStorage: { [key: string]: any } = {};
-
-    private cfgSetupListener: RWSEventListener = (event: CustomEvent<{ callId: string }>) => {
-        console.log('Received custom event from web component:', event.detail);
-        // this.broadcastConfigForViewComponents();
-    };
+    protected initCallback: () => Promise<void> = async () => { };    
 
     constructor(
         @ConfigService public appConfig: ConfigServiceInstance,
@@ -61,62 +67,32 @@ class RWSClient {
         @NotifyService public notifyService: NotifyServiceInstance
     ) {
         this._container = RWSContainer();
-        this.user = this.getUser();
+        this.user = this.getUser();      
+        
+        this.loadServices();
 
         this.pushDataToServiceWorker('SET_WS_URL', { url: this.appConfig.get('wsUrl') }, 'ws_url');
 
         if (this.user) {
             this.pushUserToServiceWorker({ ...this.user, instructor: false });
-        }
+        }        
     }
 
     async setup(config: IRWSConfig = {}): Promise<IRWSConfig> {
-        if (this.isSetup) {
-            return this.config;
-        }
-
-        this.config = { ...this.config, ...config };
-        this.appConfig.mergeConfig(this.config);
-
-        // this.on<IRWSConfig>('rws_cfg_call', this.cfgSetupListener);
-
-        const hotModule: IHotModule = (module as IHotModule);
-
-        if (hotModule.hot) {
-            hotModule.hot.accept('./print.js', function () {
-                console.log('Accepting the updated module!');
-            });
-        }
-
-        if (this.appConfig.get('parted')) {
-            await this.loadPartedComponents();            
-        }
-
-
-        this.isSetup = true;
-        return this.config;
+        return this.configHelper.setup(config);
     }
 
     async start(config: IRWSConfig = {}): Promise<RWSClient> {
-        this.config = { ...this.config, ...config };
+        return this.configHelper.start(config);
+    }
 
-        if (!this.isSetup) {
-            this.config = await this.setup(this.config);
-        }
+    private loadServices(){
+        return this.servicesHelper.loadServices();
+    }
 
-        if (Object.keys(config).length) {
-            this.appConfig.mergeConfig(this.config);
-        }        
-
-        if (this.config.user && !this.config.dontPushToSW) {
-            this.pushUserToServiceWorker(this.user);
-        }
-
-        await startClient(this.appConfig, this.wsService, this.notifyService, this.routingService);        
-
-        await this.initCallback();        
-
-        return this;
+    get(key: string): any | null
+    {
+        return this.configHelper.get(key);
     }
 
     addRoutes(routes: IFrontRoutes) {
@@ -146,53 +122,20 @@ class RWSClient {
     }
 
     pushDataToServiceWorker(type: string, data: any, asset_type: string = 'data_push'): void {
-        let tries = 0;
+        this.configHelper.pushDataToServiceWorker(type, data, asset_type);
 
-        const doIt: () => void = () => {
-            try {
-                this.swService.sendDataToServiceWorker(type, data, asset_type);
-            } catch (e) {
-                if (tries < 3) {
-                    setTimeout(() => { doIt(); }, 300);
-                    tries++;
-                }
-            }
-        };
-
-        doIt();
     }
 
     pushUserToServiceWorker(userData: any) {
-        this.setUser(userData);
-        this.pushDataToServiceWorker('SET_USER', userData, 'logged_user');
+        this.configHelper.pushUserToServiceWorker(userData);
     }
 
     getUser(): IRWSUser {
-
-        const localSaved = localStorage.getItem('the_rws_user');
-
-        if (localSaved) {
-            this.setUser(JSON.parse(localSaved) as IRWSUser);
-        }
-
-        return this.user;
+        return this.configHelper.getUser();
     }
 
     setUser(user: IRWSUser): RWSClient {
-        if (!user || !user?.jwt_token) {
-            console.warn('[RWS Client Warning]', 'Passed user is not valid', user);
-            return this;
-        }
-
-        this.user = user;
-
-        this.apiService.setToken(this.user.jwt_token);
-        this.wsService.setUser(this.user);
-
-        localStorage.setItem('the_rws_user', JSON.stringify(this.user));
-
-
-        return this;
+        return this.configHelper.setUser(user);
     }
 
     getConfig(): ConfigServiceInstance {
@@ -219,29 +162,11 @@ class RWSClient {
     }
 
     async loadPartedComponents(): Promise<void> {
-        this.assignClientToBrowser();
-
-        const componentParts: RWSInfoType = await this.apiService.get<RWSInfoType>(this.appConfig.get('partedDirUrlPrefix') + '/rws_info.json');        
-
-        componentParts.components.forEach((componentName: string, key: number) => {
-            const partUrl = `${this.appConfig.get('partedDirUrlPrefix')}/${this.appConfig.get('partedPrefix')}.${componentName}.js`;
-
-            const script: HTMLScriptElement = document.createElement('script');
-            script.src = partUrl;
-            script.async = true;
-            script.type = 'text/javascript';
-            document.body.appendChild(script);
-
-            console.log(`Appended ${componentParts.components[key]} component (${partUrl})`);
-        });        
+        return this.componentHelper.loadPartedComponents();
     }   
     
     async onDOMLoad(): Promise<void> {
-        return new Promise<void>((resolve) => {
-            document.addEventListener('DOMContentLoaded', () => {
-                resolve();
-            });
-        });
+        return this.domService.onDOMLoad()
     }
 
     assignClientToBrowser(): void {
@@ -261,30 +186,17 @@ class RWSClient {
         return window;
     }
 
-
-    private broadcastConfigForViewComponents(): void {
-        document.dispatchEvent(new CustomEvent<{ config: IRWSConfig }>('rws_cfg_broadcast', { detail: { config: this.appConfig.getData() } }));
-    }
-
     static getDI(): typeof DI {
         return DI;
     }
 
     static defineAllComponents() {
-        const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
-
-        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
-            el.define(el as any, el.definition);
-        });
+        ComponentHelperStatic.defineAllComponents();
     }
 
     
     defineComponents(){
-        const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
-
-        Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
-            el.define(el as any, el.definition);
-        });
+        ComponentHelperStatic.defineAllComponents();
     }
 }
 

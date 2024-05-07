@@ -2,6 +2,7 @@ import { IFrontRoutes } from '../services/RoutingService';
 import RWSViewComponent from '../components/_component';
 
 export default interface IRWSConfig {
+    dev?: boolean
     defaultLayout?: typeof RWSViewComponent
     backendUrl?: string
     wsUrl?: string

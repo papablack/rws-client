@@ -1,10 +1,10 @@
-const RWSPlugin = require("./rws_plugin");
+const RWSCssPlugin = require("../rws_scss_plugin");
 const path = require('path');
 const cssLoader = require('css-loader');
 
 module.exports = function(content) {
     const callback = this.async();
-    const plugin = new RWSPlugin();
+    const plugin = new RWSCssPlugin();
     const filePath = this.resourcePath;
 
     const options = this.getOptions() || { minify: false };

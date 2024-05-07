@@ -7,7 +7,8 @@ interface RWSDecoratorOptions {
     template?: string,
     styles?: string,
     fastElementOptions?: any,
-    ignorePackaging?: boolean
+    ignorePackaging?: boolean,
+    oreoMode?: boolean
 }
 
 //const _PARAMTYPES_METADATA_KEY = 'design:paramtypes';

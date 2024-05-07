@@ -18,17 +18,15 @@ const JsMinimizerPlugin = require('terser-webpack-plugin');
 const json5 = require('json5');
 const { rwsPath } = require('@rws-framework/console');
 
-
-
-const RWSWebpackWrapper = (config) => {  
-  const BuildConfigurator = new RWSConfigBuilder(RWSPath.findPackageDir(process.cwd()) + '/.rws.json', _DEFAULT_CONFIG);
+const RWSWebpackWrapper = (config) => {
+  const BuildConfigurator = new RWSConfigBuilder(RWSPath.findPackageDir(process.cwd()) + '/.rws.json', {..._DEFAULT_CONFIG, ...config});
 
   config.packageDir = RWSPath.findPackageDir(process.cwd());
 
   const executionDir = RWSPath.relativize(BuildConfigurator.get('executionDir') || config.executionDir || process.cwd(), config.packageDir);
 
   const isDev = BuildConfigurator.get('dev', config.dev);
-  const isHotReload = BuildConfigurator.get('hot', config.hot) ;
+  const isHotReload = BuildConfigurator.get('hot', config.hot);
   const isReport = BuildConfigurator.get('report', config.report);
   const isParted = BuildConfigurator.get('parted', config.parted || false);
 
@@ -45,14 +43,14 @@ const RWSWebpackWrapper = (config) => {
 
   const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
 
-  
-  const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);  
-  
+
+  const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);
+
 
   RWSPath.removeDirectory(outputDir, true);
 
   console.log(chalk.green('Build started with'))
-  console.log({    
+  console.log({
     executionDir,
     tsConfigPath,
     outputDir,
@@ -60,9 +58,9 @@ const RWSWebpackWrapper = (config) => {
     publicDir,
     parted: isParted,
     partedPrefix,
-    partedDirUrlPrefix     
+    partedDirUrlPrefix
   });
-  
+
 
   //AFTER OPTION DEFINITIONS
 
@@ -91,7 +89,7 @@ const RWSWebpackWrapper = (config) => {
     }));
   }
 
-  WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, new webpack.optimize.ModuleConcatenationPlugin(), ...overridePlugins];
+  WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, ...overridePlugins];
 
 
   if (isReport) {
@@ -110,14 +108,14 @@ const RWSWebpackWrapper = (config) => {
 
   const assetsToCopy = BuildConfigurator.get('copyAssets') || config.copyAssets;
 
-  if (!!assetsToCopy) {    
+  if (!!assetsToCopy) {
     WEBPACK_AFTER_ACTIONS.push({
       type: 'copy',
       actionHandler: assetsToCopy
     });
   }
 
-  if (WEBPACK_AFTER_ACTIONS.length) {    
+  if (WEBPACK_AFTER_ACTIONS.length) {
     WEBPACK_PLUGINS.push(new RWSAfterPlugin({ actions: WEBPACK_AFTER_ACTIONS }));
   }
 
@@ -141,9 +139,11 @@ const RWSWebpackWrapper = (config) => {
     });
   }
 
-  const optimConfig = {
-    minimize: true,
-    minimizer: [
+  const optimConfig = {};
+
+  if(!isDev){
+    optimConfig.minimize = true;
+    optimConfig.minimizer = [
       new TerserPlugin({
         terserOptions: {
           keep_classnames: true, // Prevent mangling of class names
@@ -160,8 +160,9 @@ const RWSWebpackWrapper = (config) => {
         parallel: true,
       }),
       new CssMinimizerPlugin(),
-    ],
-  };
+    ];
+  }
+  
 
   if (isParted) {
     WEBPACK_PLUGINS.push(new webpack.BannerPlugin(tools.getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix)));
@@ -215,7 +216,7 @@ const RWSWebpackWrapper = (config) => {
 
   const tsValidated = tools.setupTsConfig(tsConfigPath, executionDir);
 
-  if(!tsValidated){
+  if (!tsValidated) {
     throw new Error('RWS Webpack build failed.');
   }
 
@@ -237,31 +238,26 @@ const RWSWebpackWrapper = (config) => {
       modules: modules_setup,
       alias: {
         ...aliases
-      },
-      plugins: [
-        // new TsconfigPathsPlugin({configFile: config.tsConfigPath})
-      ]
+      }
     },
     module: {
-      rules: [
+      rules: [    
         {
           test: /\.html$/,
           use: [
-            path.resolve(__dirname, './webpack/rws_fast_html_loader.js')
+            path.resolve(__dirname, './webpack/loaders/rws_fast_html_loader.js')
           ],
         },
         {
           test: /\.css$/,
           use: [
-            'css-loader',
-            // path.resolve(__dirname, './webpack/rws_fast_css_loader.js')
+            'css-loader',            
           ],
         },
         {
           test: /\.scss$/,
-          use: [
-            // 'css-loader',
-            path.resolve(__dirname, './webpack/rws_fast_scss_loader.js'),
+          use: [            
+            path.resolve(__dirname, './webpack/loaders/rws_fast_scss_loader.js'),
           ],
         },
         {
@@ -271,12 +267,12 @@ const RWSWebpackWrapper = (config) => {
               loader: 'ts-loader',
               options: {
                 allowTsInNodeModules: true,
-                configFile: path.resolve(tsConfigPath)             
+                configFile: path.resolve(tsConfigPath)
               }
             },
             {
-              loader: path.resolve(__dirname, './webpack/rws_fast_ts_loader.js'),
-            }
+              loader: path.resolve(__dirname, './webpack/loaders/rws_fast_ts_loader.js'),
+            }            
           ],
           exclude: /node_modules\/(?!\@rws-framework\/client)/,
         }
@@ -285,6 +281,15 @@ const RWSWebpackWrapper = (config) => {
     plugins: WEBPACK_PLUGINS,
     optimization: optimConfig,
   }
+
+  // if(isDev){
+    cfgExport.module.rules.push({
+      test: /\.js$/,
+      use: [
+        path.resolve(__dirname, './webpack/loaders/rws_uncomments_loader.js'),                 
+      ],
+    })
+  // }
 
   if (isHotReload) {
     cfgExport.devServer = {

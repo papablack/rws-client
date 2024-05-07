@@ -35,7 +35,8 @@ type IBackendRoute = IHTTProute | IPrefixedHTTProutes;
 
 const _DEFAULT_CONTENT_TYPE = 'application/json';
 
-class ApiServiceInstance extends TheService {
+class ApiService extends TheService {
+    static _DEFAULT: boolean = true;
     private token?: string;    
 
     constructor(@ConfigService private config: ConfigServiceInstance) {
@@ -238,5 +239,5 @@ class ApiServiceInstance extends TheService {
     }
 }
 
-export default ApiServiceInstance.getSingleton();
-export { IBackendRoute, RequestOptions, ApiServiceInstance, IHTTProute, IPrefixedHTTProutes };
+export default ApiService.getSingleton();
+export { IBackendRoute, RequestOptions, ApiService as ApiServiceInstance, IHTTProute, IPrefixedHTTProutes };

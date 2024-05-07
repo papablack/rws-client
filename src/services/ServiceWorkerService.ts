@@ -2,6 +2,7 @@ import RWSService from '@rws-framework/client/src/services/_service';
 
 
 class ServiceWorkerService extends RWSService {   
+    static _DEFAULT: boolean = true;
     async registerServiceWorker(): Promise<void>
     {
         await ServiceWorkerService.registerServiceWorker();

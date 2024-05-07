@@ -9,7 +9,8 @@ type DOMOutputType<T extends Element> = NodeListOf<T> | T | null;
 declare let trustedTypes: TrustedTypePolicyFactory;
 
 
-class DOMServiceInstance extends RWSService {
+class DOMService extends RWSService {
+    static _DEFAULT: boolean = true;
     parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): DOMOutputType<T> {    
         if(input.length > 1 || directReturn) {
             return input;
@@ -83,9 +84,18 @@ class DOMServiceInstance extends RWSService {
 
         return sanitized;
     }
+
+    async onDOMLoad(): Promise<void>
+    {
+        return new Promise<void>((resolve) => {
+            document.addEventListener('DOMContentLoaded', () => {
+                resolve();
+            });
+        });
+    }
 }
 
-const DOMService = DOMServiceInstance.getSingleton();
 
-export default DOMService;
-export { DOMOutputType, DOMServiceInstance, TagsProcessorType }; 
+
+export default DOMService.getSingleton();
+export { DOMOutputType, DOMService, TagsProcessorType, DOMService as DOMServiceInstance }; 

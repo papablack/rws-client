@@ -9,6 +9,7 @@ import ConfigService, { ConfigServiceInstance } from './ConfigService';
 type IFrontRoutes = Record<string, unknown>; 
 
 class RoutingService extends TheService {
+    static _DEFAULT: boolean = true;
     private router: Router<any>;
     private routes: IFrontRoutes;
 

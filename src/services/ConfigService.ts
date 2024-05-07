@@ -9,6 +9,7 @@ const __SENT_TO_COMPONENTS: string[] = [];
 
 @RWSFillBuild()
 class ConfigService extends TheService {  
+    static _DEFAULT: boolean = false;
     static isLoaded: boolean = false;
     
     _DEFAULTS: Partial<IRWSConfig> = {};
@@ -32,19 +33,29 @@ class ConfigService extends TheService {
         const isInData: boolean = Object.keys(this.data).includes(key);
         const isInBuildVars: boolean = Object.keys(this._BUILD_OVERRIDE).includes(key);
 
+        let isDev = false;
+
+        if((Object.keys(this._BUILD_OVERRIDE).includes('dev'))){
+            isDev = Object.keys(this._BUILD_OVERRIDE).includes('dev') && this._BUILD_OVERRIDE.dev;
+        }
+
         if(!isInData){        
             let defaultVal = null;
 
             if(isInDefaults){
                 defaultVal = this._DEFAULTS[key];                   
-            }            
-            
-            if(isInBuildVars && !!this._BUILD_OVERRIDE[key]){
-                defaultVal = this._BUILD_OVERRIDE[key];
-            }
+            }                             
                         
             if(defaultVal && defaultVal[0] === '@'){
                 defaultVal = this.data[((defaultVal as string).slice(1)) as keyof IRWSConfig];
+            }
+
+            if(isInBuildVars && Object.keys(this._BUILD_OVERRIDE).includes(key)){
+                if(isDev){
+                    console.warn(`.rws.json override [${key}]:`), this._BUILD_OVERRIDE[key];
+                }
+
+                defaultVal = this._BUILD_OVERRIDE[key];
             }
 
             return defaultVal;

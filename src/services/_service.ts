@@ -10,6 +10,8 @@ export interface IWithDI<T> {
 
 export default abstract class TheRWSService {
     _RELOADABLE: boolean = false;
+    static _IN_CLIENT: boolean = false;
+    static _DEFAULT: boolean = false;
 
     constructor() {    
     }
@@ -46,5 +48,15 @@ export default abstract class TheRWSService {
         richWindow.RWS._registered[this.name] = interf;
 
         return interf;
+    }
+
+    isDefault(): boolean
+    {
+        return (this as any).constructor._DEFAULT;
+    }
+    
+    isInClient(): boolean
+    {
+        return (this as any).constructor._IN_CLIENT;
     }
 }

@@ -2,30 +2,13 @@
 const path = require('path');
 const fs = require('fs');
 const ts = require('typescript');
-const tools = require('../_tools');
-const RWSPlugin = require("./rws_plugin");
+const tools = require('../../_tools');
+
 
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
     stylesPath: 'styles.scss',
     fastOptions: {  shadowOptions: { mode: 'open' }  }
-}
-
-function toJsonString(str) {
-    // Replace single quotes with double quotes
-    str = str.replace(/'/g, '"');
-
-    // Add double quotes around keys
-    str = str.replace(/([a-zA-Z0-9_]+)(?=\s*:)/g, '"$1"');
-
-    try {
-        // Parse the string as JSON and then stringify it to get a JSON string
-        const jsonObj = JSON.parse(str);
-        return JSON.stringify(jsonObj);
-    } catch (error) {
-        console.error("Error in parsing:", error);
-        return null;
-    }
 }
 
 module.exports = async function(content) {    
@@ -95,7 +78,7 @@ module.exports = async function(content) {
 
             replaced = modifiedContent;
             replaced = replaced.replace(`@RWSView('${tagName}')`, '');
-            const plugin = new RWSPlugin();
+            
             let styles = 'const styles: null = null;'
 
             if(fs.existsSync(path.dirname(filePath) + '/styles')){
@@ -112,13 +95,9 @@ module.exports = async function(content) {
 
                 let htmlContent = fs.readFileSync(templatePath, 'utf-8');
 
-                // try {
-                //     htmlContent = await htmlMinify(htmlContent, {
-                //         collapseWhitespace: true,     
-                //     });
-                // } catch(e){
-                //     console.error(e);
-                // }
+                if(!isDev){
+                    htmlContent = htmlContent.replace(/\n/g, '');
+                }
 
                 template = `import './${templateName}.html';
                 //@ts-ignore            

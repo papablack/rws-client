@@ -172,7 +172,7 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
       if (content.includes(text)) {
         const compInfo = extractComponentInfo(content);
         if (compInfo) {
-          const { tagName, className, options, isIgnored } = compInfo;
+          const { tagName, className, options, isIgnored, isOreo } = compInfo;
 
           if (isIgnored) {
             return;
@@ -187,7 +187,8 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
             className,
             sanitName: className.toLowerCase(),
             content,
-            isIgnored: options?.ignorePackaging
+            isIgnored: options?.ignorePackaging,
+            isOreo: options?.oreoMode
           });
         }
       }
@@ -341,44 +342,45 @@ function setupTsConfig(tsConfigPath, executionDir) {
 
   try {
     let tsConfig = JSON.parse(tsConfigContents);
-
+    
     const declarationsPath = path.resolve(__dirname, 'types') + '/declarations.d.ts';
     const testsPath = path.resolve(__dirname, 'tests');
     const declarationsPathMD5 = md5(fs.readFileSync(declarationsPath, 'utf-8'));
     const testsPathMD5 = fs.existsSync(testsPath) ? md5(fs.readFileSync(testsPath, 'utf-8')) : null;
 
+    const relativeDeclarationsPath = path.relative(path.dirname(tsConfigPath), declarationsPath);
+    const relativeTestsPath = path.relative(path.dirname(tsConfigPath), testsPath);
+
     const includedMD5 = [];
 
-    let changed = false;
+    let changed = false;    
 
-    const included = [];
 
     if (!Object.keys(tsConfig).includes('include')) {
       tsConfig['include'] = [];
     } else {
-      tsConfig['include'] = tsConfig['include'].map((inc) => fs.existsSync(rwsPath.relativize(tsConfig['include'], executionDir)))
-    }
+      tsConfig['include'] = tsConfig['include'].filter((inc) => fs.existsSync(rwsPath.relativize(inc, executionDir)))
+    }    
 
     if (!Object.keys(tsConfig).includes('exclude')) {
       tsConfig['exclude'] = [];
-    }
+    }  
 
-    if (!included.includes(declarationsPath) && !includedMD5.includes(declarationsPathMD5)) {
+       
+    if (!tsConfig['include'].includes(relativeDeclarationsPath)) {
       console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript declarations to project tsconfig.json');
-      included.push(declarationsPath);
-      includedMD5.push(md5(fs.readFileSync(declarationsPath, 'utf-8')));
+      tsConfig['include'].push(relativeDeclarationsPath);
+      includedMD5.push(md5(fs.readFileSync(declarationsPath, 'utf-8')));      
       changed = true;
-    }
+    }    
 
-    tsConfig['include'] = included;
-
-    if (testsPathMD5 && (!tsConfig['exclude'].includes(testsPath) && !included.includes(testsPathMD5))) {
+    if ((!tsConfig['exclude'].includes(relativeTestsPath))) {
       console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript exclusions to project tsconfig.json');
-      tsConfig['exclude'].push(testsPath);
+      tsConfig['exclude'].push(relativeTestsPath);      
       changed = true;
     }
 
-    if (changed) {
+    if (changed) {      
       fs.writeFileSync(tsConfigPath, JSON.stringify(tsConfig, null, 2));
       console.log(chalk.yellowBright('Typescript config file'), `"${chalk.blueBright(tsConfigPath)}"`, chalk.yellowBright('has been changed'));
     }

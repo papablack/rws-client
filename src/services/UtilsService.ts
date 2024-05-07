@@ -4,6 +4,7 @@ import ApiService, {ApiServiceInstance} from './ApiService';
 import { RawSourceMap  } from 'source-map';
 
 class UtilsService extends TheService {    
+    static _DEFAULT: boolean = true;
     mergeDeep<T>(target: T | any, source: T  | any): T 
     {
         const isObject = (obj: any) => obj && typeof obj === 'object';
