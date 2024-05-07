@@ -411,6 +411,12 @@ class YourComponent extends RWSViewComponent {
  
 ```
 
+A default service can be used in legacy like this:
+
+```javascript
+window.RWS.client.get('ApiService').dateMethodFromRWS();
+```
+
 Default services: https://github.com/papablack/rws-client/blob/7d16d9c6d83c81c9fe470eb0f507756bc6c71b35/src/components/_component.ts#L58
 
 ## Custom service usage:
@@ -451,11 +457,20 @@ import { RWSService } from '@rws-framework/client';
 
 
 class DateService extends RWSService {
+    static _IN_CLIENT: boolean = true //If set engine will let legacy use the service through RWSClient.get method
     //(...)
 }
 
 export default DateService.getSingleton(); // Fast DI service pointer (it points to instanced service in DI container)
 export { DateService as DateServiceInstance }; // the custom service class type
+```
+
+**Custom service for legacy**
+
+If service has static **_IN_CLIENT** set for **true** you can use it like this:
+
+```javascript
+window.RWS.client.get('DateService').dateMethodFromRWS();
 ```
 
 ## Frontend routes
