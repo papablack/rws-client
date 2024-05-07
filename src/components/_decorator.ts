@@ -49,7 +49,6 @@ const applyConstructor = (component: RWSViewComponent, x: boolean = false): void
         if ([...defaultDeps, ...depsToInject].includes(depKey)) {
             const loadedDependency = existingInjectedDependencies[depKey];     
             (component as any)[depKey] = loadedDependency;
-            console.log(`Assigned service to "${mainConstructor.name}(${depKey})":`, loadedDependency);
         }
     });
 };
