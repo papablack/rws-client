@@ -18,7 +18,7 @@ function RWSView<T extends RWSViewComponent>(name: string, data?: RWSDecoratorOp
     };
 }
 
-function RWSIgnore(params: { mergeToApp?: boolean } = null): () => void {
+function RWSIgnore(params: { mergeToApp?: boolean } | null = null): () => void {
     return () => { };
 }
 

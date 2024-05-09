@@ -3,9 +3,8 @@ const fs = require('fs');
 const ts = require('typescript');
 const { spawn } = require('child_process');
 const JSON5 = require('json5');
-const md5 = require('md5');
-const chalk = require('chalk');
-const { rwsPath } = require('@rws-framework/console');
+
+const { setupTsConfig } = require('./cfg/tsconfigSetup');
 
 function findRootWorkspacePath(currentPath) {
   const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');
@@ -332,71 +331,9 @@ function getAllFilesInFolder(folderPath, ignoreFilenames = [], recursive = false
   return files;
 }
 
-function setupTsConfig(tsConfigPath, executionDir) {
-
-  if (!fs.existsSync(tsConfigPath)) {
-    throw new Error(`Typescript config file "${tsConfigPath}" does not exist`);
-  }
-
-  const tsConfigContents = fs.readFileSync(tsConfigPath, 'utf-8');
-
-  try {
-    let tsConfig = JSON.parse(tsConfigContents);
-    
-    const declarationsPath = path.resolve(__dirname, 'types') + '/declarations.d.ts';
-    const testsPath = path.resolve(__dirname, 'tests');
-    const declarationsPathMD5 = md5(fs.readFileSync(declarationsPath, 'utf-8'));
-    const testsPathMD5 = fs.existsSync(testsPath) ? md5(fs.readFileSync(testsPath, 'utf-8')) : null;
-
-    const relativeDeclarationsPath = path.relative(path.dirname(tsConfigPath), declarationsPath);
-    const relativeTestsPath = path.relative(path.dirname(tsConfigPath), testsPath);
-
-    const includedMD5 = [];
-
-    let changed = false;    
-
-
-    if (!Object.keys(tsConfig).includes('include')) {
-      tsConfig['include'] = [];
-    } else {
-      tsConfig['include'] = tsConfig['include'].filter((inc) => fs.existsSync(rwsPath.relativize(inc, executionDir)))
-    }    
-
-    if (!Object.keys(tsConfig).includes('exclude')) {
-      tsConfig['exclude'] = [];
-    }  
-
-       
-    if (!tsConfig['include'].includes(relativeDeclarationsPath)) {
-      console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript declarations to project tsconfig.json');
-      tsConfig['include'].push(relativeDeclarationsPath);
-      includedMD5.push(md5(fs.readFileSync(declarationsPath, 'utf-8')));      
-      changed = true;
-    }    
-
-    if ((!tsConfig['exclude'].includes(relativeTestsPath))) {
-      console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript exclusions to project tsconfig.json');
-      tsConfig['exclude'].push(relativeTestsPath);      
-      changed = true;
-    }
-
-    if (changed) {      
-      fs.writeFileSync(tsConfigPath, JSON.stringify(tsConfig, null, 2));
-      console.log(chalk.yellowBright('Typescript config file'), `"${chalk.blueBright(tsConfigPath)}"`, chalk.yellowBright('has been changed'));
-    }
-
-    return true;
-  } catch (e) {
-    console.log(chalk.red('Error in tsconfig.json:'));
-    console.log(chalk.blueBright(e.message));
-
-    return false;
-  }
-}
-
 function getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix) {
   return {
-    banner: `if(!window.RWS_PARTS_LOADED){         
+    banner: `if(!window.RWS_PARTS_LOADED){
             const script = document.createElement('script');
             script.src = '${partedDirUrlPrefix}/${partedPrefix}.vendors.js';        
             script.type = 'text/javascript';
