@@ -3,7 +3,7 @@ import RoutingService, { RWSRouter, _ROUTING_EVENT_NAME, RouteReturn, RoutingSer
 import RWSViewComponent, { IRWSViewComponent } from '../_component';
 import {RWSInject, RWSView} from '../_decorator';
 
-@RWSView('rws-router')
+@RWSView('rws-router', { ignorePackaging: true})
 export class RouterComponent extends RWSViewComponent {    
     static autoLoadFastElement = false;
     private routing: RWSRouter;
