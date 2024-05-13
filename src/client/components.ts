@@ -8,17 +8,27 @@ async function loadPartedComponents(this: RWSClientInstance): Promise<void> {
 
     const componentParts: RWSInfoType = await this.apiService.get<RWSInfoType>(this.appConfig.get('partedDirUrlPrefix') + '/rws_info.json');        
 
+    const componentsPromises: Promise<string>[] = [];
+
     componentParts.components.forEach((componentName: string, key: number) => {
         const partUrl = `${this.appConfig.get('partedDirUrlPrefix')}/${this.appConfig.get('partedPrefix')}.${componentName}.js`;
+        componentsPromises.push(this.apiService.pureGet(partUrl, {
+            headers: {
+                'Content-Type': 'script'
+            } as any
+        }));
+        console.log(`Appended ${componentParts.components[key]} component (${partUrl})`);
 
+    }); 
+    
+    const downloadedComponents = await Promise.all(componentsPromises);
+
+    downloadedComponents.forEach((componentCode: string, key: number) => {
         const script: HTMLScriptElement = document.createElement('script');
-        script.src = partUrl;
-        script.async = true;
+        script.textContent = componentCode;     
         script.type = 'text/javascript';
         document.body.appendChild(script);
-
-        console.log(`Appended ${componentParts.components[key]} component (${partUrl})`);
-    });        
+    });     
 }   
 
 function defineAllComponents() {
