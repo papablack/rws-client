@@ -4,12 +4,28 @@ const fs = require('fs');
 const ts = require('typescript');
 const tools = require('../../_tools');
 
-
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
     stylesPath: 'styles.scss',
     fastOptions: {  shadowOptions: { mode: 'open' }  }
 }
+
+const ERROR_HANDLER_CODE = (htmlContent) => {
+    return `
+    async function handleError(error: Error | any) {      
+      const errorMessage = \`RWS HTML Error:\n\${error.stack}\`;
+      console.error('RWS HTML error', errorMessage);      
+      return T.html\`<div class="rws-error"><h1>RWS HTML template error</h1>\${errorMessage}</div>\`;
+    }
+
+    try {        
+        //@ts-ignore
+        rwsTemplate = T.html\`${htmlContent}\`;
+      } catch (error: Error | any) {
+        rwsTemplate = handleError(error);
+      }
+    `;
+};
 
 module.exports = async function(content) {    
     let processedContent = content;
@@ -59,7 +75,7 @@ module.exports = async function(content) {
         if(tagName){           
                         
             const lines = content.split('\n');
-            const textToInsert = `static definition = { name: '${tagName}', template, styles${addedParams.length? ', ' + (addedParams.join(', ')) : ''} };`;
+            const textToInsert = `static definition = { name: '${tagName}', template: rwsTemplate, styles${addedParams.length? ', ' + (addedParams.join(', ')) : ''} };`;
 
             let modifiedContent = '';
             let insertIndex = -1;
@@ -94,14 +110,17 @@ module.exports = async function(content) {
                 this.addDependency(templatePath);
 
                 let htmlContent = fs.readFileSync(templatePath, 'utf-8');
+                const originalContent = htmlContent;
 
                 if(!isDev){
                     htmlContent = htmlContent.replace(/\n/g, '');
                 }
 
-                template = `import './${templateName}.html';
-                //@ts-ignore            
-                const template: any = T.html\`${htmlContent}\`;`;
+                template = `import './${templateName}.html';            
+                let rwsTemplate:any = null;
+                
+                ${ERROR_HANDLER_CODE(originalContent)}
+              `;              
             }
 
             processedContent = `import * as T from '@microsoft/fast-element';\n${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replaced;
