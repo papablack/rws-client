@@ -220,7 +220,8 @@ const RWSWebpackWrapper = (config) => {
     throw new Error('RWS Webpack build failed.');
   }
 
-  const cfgExport = {    
+  const cfgExport = {  
+    context: executionDir,  
     entry: {
       client: config.entry,
       ...automatedEntries
@@ -233,7 +234,7 @@ const RWSWebpackWrapper = (config) => {
       filename: isParted ? (partedPrefix || 'rws') + '.[name].js' : outputFileName,
       sourceMapFilename: '[file].map',
     },
-    resolve: {
+    resolve: {      
       extensions: ['.ts', '.js'],
       modules: modules_setup,
       alias: {

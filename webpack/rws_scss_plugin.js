@@ -44,7 +44,11 @@ class RWSScssPlugin {
       const importPath = match[1];
       const importLine = match[0];
 
-      imports.push([this.processImportPath(importPath, path.dirname(importRootPath)), importLine]);
+      if(fs.statSync(importRootPath).isFile()){        
+        importRootPath = path.dirname(importRootPath);
+      }      
+
+      imports.push([this.processImportPath(importPath, importRootPath), importLine]);
     }
 
     return [imports, fileContent];
@@ -155,7 +159,7 @@ class RWSScssPlugin {
     filePath = filePath.replace('//', '/');
 
     if (!fs.existsSync(filePath)) {
-      const processedImportPath = this.processImportPath(filePath, path.dirname(filePath));
+      const processedImportPath = this.processImportPath(filePath, path.dirname(filePath));      
 
       if (!fs.existsSync(processedImportPath)) {
         throw new Error(`SCSS loader: File path "${filePath}" was not found.`);
@@ -209,9 +213,8 @@ class RWSScssPlugin {
     imports.forEach(importData => {
       const originalImportPath = importData[0];
       let importPath = this.processImportPath(originalImportPath, fileRootDir);
-
       let replacedScssContent = getStorage(importPath, this.getCodeFromFile(importPath).replace(/\/\*[\s\S]*?\*\//g, ''));
-
+      
       const recursiveImports = this.extractScssImports(replacedScssContent, importPath)[0];
 
       if (recursiveImports.length) {
@@ -286,18 +289,18 @@ class RWSScssPlugin {
       return this.fillSCSSExt(importPath, noext);
     }
 
-    if(fileRootDir){
-      if (importPath.split('')[0] === '.') {
-        return this.fillSCSSExt(path.resolve(fileRootDir, importPath), noext);
-      }
-
+    if(fileRootDir){   
       const relativized = path.resolve(fileRootDir) + '/' + importPath;
+
+      if (importPath.split('')[0] === '.') {
+        return this.fillSCSSExt(relativized, noext);
+      }
 
       if (!fs.existsSync(relativized)) {
         const partSplit = relativized.split('/');
         partSplit[partSplit.length - 1] = '_' + partSplit[partSplit.length - 1] + '.scss';
 
-        const newPath = this.underscorePath(relativized);
+        const newPath = this.underscorePath(relativized);        
 
         if (fs.existsSync(newPath)) {
           return newPath;
