@@ -55,9 +55,11 @@ export class RouterComponent extends RWSViewComponent {
             component: childComponent
         });
         
-        const newComponent = document.createElement((childComponent as any).definition.name);        
-        newComponent.routeParams = routeParams;
-
+        const newComponent = document.createElement((childComponent as any).definition.name);  
+        if(Object.keys(routeParams).length){
+            newComponent.routeParams = routeParams;
+        }              
+        
         if(this.currentComponent){
             this.getShadowRoot().removeChild(this.currentComponent);
             

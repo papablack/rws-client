@@ -220,7 +220,7 @@ const RWSWebpackWrapper = (config) => {
     throw new Error('RWS Webpack build failed.');
   }
 
-  const cfgExport = {
+  const cfgExport = {    
     entry: {
       client: config.entry,
       ...automatedEntries
@@ -253,7 +253,7 @@ const RWSWebpackWrapper = (config) => {
           use: [
             'css-loader',            
           ],
-        },
+        },        
         {
           test: /\.scss$/,
           use: [            
