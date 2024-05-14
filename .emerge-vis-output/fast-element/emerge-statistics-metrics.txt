@@ -7,13 +7,13 @@ the following statistics were collected in ts check on fast element
 |                       skipped_files | 46                |
 |                        parsing_hits | 46                |
 |              extracted_file_results | 28                |
-|       file_results_creation_runtime | 00:00:00 + 44 ms  |
+|       file_results_creation_runtime | 00:00:00 + 45 ms  |
 |    number-of-methods-metric-runtime | 00:00:00 + 1 ms   |
 | source-lines-of-code-metric-runtime | 00:00:00 + 2 ms   |
-|            t-f-i-d-f-metric-runtime | 00:00:00 + 63 ms  |
+|            t-f-i-d-f-metric-runtime | 00:00:00 + 67 ms  |
 |           fan-in-out-metric-runtime | 00:00:00 + 0 ms   |
 |   louvain-modularity-metric-runtime | 00:00:00 + 9 ms   |
-|                       total_runtime | 00:00:00 + 125 ms |
+|                       total_runtime | 00:00:00 + 132 ms |
 +-------------------------------------+-------------------+
 
 the following overall metrics were collected in ts check on fast element
@@ -21,8 +21,8 @@ the following overall metrics were collected in ts check on fast element
 |                                  metric name | value                                              |
 +----------------------------------------------+----------------------------------------------------+
 |                avg-number-of-methods-in-file | 0.36                                               |
-|                             avg-sloc-in-file | 37.54                                              |
-|                          total-sloc-in-files | 1051                                               |
+|                             avg-sloc-in-file | 37.61                                              |
+|                          total-sloc-in-files | 1053                                               |
 |                  avg-fan-in-dependency-graph | 0.96                                               |
 |                 avg-fan-out-dependency-graph | 0.96                                               |
 |                  max-fan-in-dependency-graph | 9                                                  |
@@ -31,7 +31,7 @@ the following overall metrics were collected in ts check on fast element
 |            max-fan-out-name-dependency-graph | ./fast-element/dist/dts/components/controller.d.ts |
 |         louvain-communities-dependency-graph | 17                                                 |
 |          louvain-modularity-dependency-graph | 0.59                                               |
-| louvain-biggest-communities-dependency-graph | 0.16, 0.14, 0.12, 0.1, 0.08                        |
+| louvain-biggest-communities-dependency-graph | 0.17, 0.13, 0.12, 0.08, 0.08                       |
 +----------------------------------------------+----------------------------------------------------+
 
 the following local metrics were collected in ts check on fast element
@@ -39,10 +39,10 @@ the following local metrics were collected in ts check on fast element
 |                                                        result | local metrics                                                 |
 +---------------------------------------------------------------+---------------------------------------------------------------+
 |                         ./fast-element/dist/fast-element.d.ts | number-of-methods-in-file: 5                                  |
-|                                                               | sloc-in-file: 476                                             |
-|                                                               | tag_source: 0.2950593883700795                                |
-|                                                               | tag_binding: 0.2228640061093154                               |
-|                                                               | tag_node: 0.21972507644580389                                 |
+|                                                               | sloc-in-file: 477                                             |
+|                                                               | tag_source: 0.29464798813260923                               |
+|                                                               | tag_binding: 0.2225532676320772                               |
+|                                                               | tag_node: 0.21941871456683665                                 |
 |                                                               | fan-in-dependency-graph: 0                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
 |                                                               | file_result_dependency_graph_louvain-modularity-in-file: 10   |
@@ -61,24 +61,24 @@ the following local metrics were collected in ts check on fast element
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                            ./fast-element/dist/dts/index.d.ts | number-of-methods-in-file: 0                                  |
 |                                                               | sloc-in-file: 26                                              |
-|                                                               | tag_styletarget: 0.24588892039511312                          |
-|                                                               | tag_mutable: 0.24588892039511312                              |
-|                                                               | tag_enablearrayobservation: 0.24588892039511312               |
-|                                                               | tag_elementstylefactory: 0.24588892039511312                  |
-|                                                               | tag_elementsfilter: 0.24588892039511312                       |
-|                                                               | tag_elements: 0.24588892039511312                             |
-|                                                               | tag_csspartial: 0.24588892039511312                           |
+|                                                               | tag_styletarget: 0.23877647444382094                          |
+|                                                               | tag_prependtoadoptedstylesheetssymbol: 0.23877647444382094    |
+|                                                               | tag_mutable: 0.23877647444382094                              |
+|                                                               | tag_enablearrayobservation: 0.23877647444382094               |
+|                                                               | tag_elementstylefactory: 0.23877647444382094                  |
+|                                                               | tag_elementsfilter: 0.23877647444382094                       |
+|                                                               | tag_elements: 0.23877647444382094                             |
 |                                                               | fan-in-dependency-graph: 0                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
 |                                                               | file_result_dependency_graph_louvain-modularity-in-file: 12   |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                              ./fast-element/dist/dts/dom.d.ts | number-of-methods-in-file: 0                                  |
 |                                                               | sloc-in-file: 21                                              |
-|                                                               | tag_attribute: 0.37450552110305035                            |
-|                                                               | tag_value: 0.35632266430886395                                |
-|                                                               | tag_node: 0.29986898001465656                                 |
-|                                                               | tag_attributename: 0.26035445003527014                        |
-|                                                               | tag_placeholder: 0.21966659431036972                          |
+|                                                               | tag_attribute: 0.3745477873247145                             |
+|                                                               | tag_value: 0.3563628784361999                                 |
+|                                                               | tag_node: 0.29990282285024994                                 |
+|                                                               | tag_attributename: 0.26038383331075304                        |
+|                                                               | tag_placeholder: 0.21969138560567555                          |
 |                                                               | fan-in-dependency-graph: 0                                    |
 |                                                               | fan-out-dependency-graph: 2                                   |
 |                                                               | file_result_dependency_graph_louvain-modularity-in-file: 5    |
@@ -134,7 +134,7 @@ the following local metrics were collected in ts check on fast element
 |                                                               | tag_nameordef: 0.216833126781126                              |
 |                                                               | fan-in-dependency-graph: 0                                    |
 |                                                               | fan-out-dependency-graph: 2                                   |
-|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 6    |
+|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 7    |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                       ./fast-element/dist/dts/styles/css.d.ts | number-of-methods-in-file: 0                                  |
 |                                                               | sloc-in-file: 4                                               |
@@ -162,23 +162,22 @@ the following local metrics were collected in ts check on fast element
 |                                                               | file_result_dependency_graph_louvain-modularity-in-file: 4    |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |            ./fast-element/dist/dts/styles/element-styles.d.ts | number-of-methods-in-file: 0                                  |
-|                                                               | sloc-in-file: 41                                              |
-|                                                               | tag_styles: 0.6923552884296407                                |
-|                                                               | tag_styletarget: 0.3367687847124923                           |
-|                                                               | tag_elementstyles: 0.21275958772123027                        |
-|                                                               | tag_composablestyles: 0.21275958772123027                     |
-|                                                               | tag_target: 0.2001741809318195                                |
+|                                                               | sloc-in-file: 42                                              |
+|                                                               | tag_styles: 0.6776250622055325                                |
+|                                                               | tag_styletarget: 0.3296038500800372                           |
+|                                                               | tag_elementstyles: 0.20823301457178547                        |
+|                                                               | tag_composablestyles: 0.20823301457178547                     |
 |                                                               | fan-in-dependency-graph: 0                                    |
 |                                                               | fan-out-dependency-graph: 1                                   |
 |                                                               | file_result_dependency_graph_louvain-modularity-in-file: 3    |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |             ./fast-element/dist/dts/observation/notifier.d.ts | number-of-methods-in-file: 0                                  |
 |                                                               | sloc-in-file: 29                                              |
-|                                                               | tag_subscriber: 0.6794369195147985                            |
-|                                                               | tag_subscribers: 0.25245393879834804                          |
-|                                                               | tag_source: 0.24636874717030427                               |
-|                                                               | tag_change: 0.23355644108321197                               |
-|                                                               | tag_notification: 0.22648667783094584                         |
+|                                                               | tag_subscriber: 0.6794627069616956                            |
+|                                                               | tag_subscribers: 0.25246352047157444                          |
+|                                                               | tag_source: 0.24637809788528944                               |
+|                                                               | tag_change: 0.23356530551808288                               |
+|                                                               | tag_notification: 0.226495273939002                           |
 |                                                               | fan-in-dependency-graph: 0                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
 |                                                               | file_result_dependency_graph_louvain-modularity-in-file: 14   |
@@ -264,7 +263,7 @@ the following local metrics were collected in ts check on fast element
 |                                                               | tag_templatebinding: 0.23611919396369935                      |
 |                                                               | fan-in-dependency-graph: 0                                    |
 |                                                               | fan-out-dependency-graph: 6                                   |
-|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 7    |
+|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 6    |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |               ./fast-element/dist/dts/templating/slotted.d.ts | number-of-methods-in-file: 0                                  |
 |                                                               | sloc-in-file: 11                                              |
@@ -279,11 +278,11 @@ the following local metrics were collected in ts check on fast element
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |               ./fast-element/dist/dts/templating/binding.d.ts | number-of-methods-in-file: 0                                  |
 |                                                               | sloc-in-file: 38                                              |
-|                                                               | tag_binding: 0.5205085590867429                               |
-|                                                               | tag_bindingbehavior: 0.28542301086516897                      |
-|                                                               | tag_typeof: 0.24081747297221018                               |
-|                                                               | tag_targetname: 0.21691872887104727                           |
-|                                                               | tag_target: 0.20887588155332565                               |
+|                                                               | tag_binding: 0.5207068837263562                               |
+|                                                               | tag_bindingbehavior: 0.2855317629976344                       |
+|                                                               | tag_typeof: 0.240909229462485                                 |
+|                                                               | tag_targetname: 0.21700137944033707                           |
+|                                                               | tag_target: 0.20895546762969233                               |
 |                                                               | fan-in-dependency-graph: 0                                    |
 |                                                               | fan-out-dependency-graph: 3                                   |
 |                                                               | file_result_dependency_graph_louvain-modularity-in-file: 0    |
@@ -390,7 +389,7 @@ the following local metrics were collected in ts check on fast element
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                    ../observation/notifier.js | fan-in-dependency-graph: 2                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
-|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 1    |
+|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 6    |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                                         ../templating/view.js | fan-in-dependency-graph: 1                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
@@ -398,11 +397,11 @@ the following local metrics were collected in ts check on fast element
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |          fast-element/dist/dts/components/fast-definitions.js | fan-in-dependency-graph: 2                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
-|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 6    |
+|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 7    |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                fast-element/dist/dts/components/controller.js | fan-in-dependency-graph: 1                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
-|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 6    |
+|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 7    |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                 fast-element/dist/dts/styles/css-directive.js | fan-in-dependency-graph: 1                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
@@ -426,7 +425,7 @@ the following local metrics were collected in ts check on fast element
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                        ../observation/array-change-records.js | fan-in-dependency-graph: 1                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |
-|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 7    |
+|                                                               | file_result_dependency_graph_louvain-modularity-in-file: 6    |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
 |                  fast-element/dist/dts/templating/template.js | fan-in-dependency-graph: 5                                    |
 |                                                               | fan-out-dependency-graph: 0                                   |

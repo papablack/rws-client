@@ -1,4 +1,4 @@
-import { RWSView, RWSViewComponent } from '@rws-framework/client';
+import { RWSView, RWSViewComponent } from '../../index';
 
 @RWSView('the-loader')
 class RWSLoader extends RWSViewComponent {
