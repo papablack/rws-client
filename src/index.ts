@@ -5,26 +5,20 @@ import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
 import { provideRWSDesignSystem } from './components/_design_system';
 import RWSService from './services/_service';
 import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
-import RoutingService, { RoutingServiceInstance } from './services/RoutingService';
 import NotifyService, {NotifyServiceInstance} from './services/NotifyService';
 import DOMService, { DOMServiceInstance, DOMOutputType, TagsProcessorType }  from './services/DOMService';
 import ApiService,  { IBackendRoute, ApiServiceInstance, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
 import UtilsService, {UtilsServiceInstance} from './services/UtilsService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
-import { sanitizedAttr } from './components/_attrs/sanitize-html';import WSService, {WSServiceInstance, WSStatus} from './services/WSService';
+import { sanitizedAttr } from './components/_attrs/sanitize-html';
 import { ngAttr } from './components/_attrs/angular-attr';
-import RWSClient from './client';
-
+import { RWSPlugin, DefaultRWSPluginOptionsType } from './plugins/_plugin';
+import RWSClient, { RWSClientInstance } from './client';
+import { RWSPluginEntry } from './interfaces/IRWSConfig';
 import IRWSUser from './interfaces/IRWSUser';
 import RWSViewComponent, { IAssetShowOptions } from './components/_component';
 
 import RWSContainer from './components/_container';
-
-import { 
-    IFrontRoutes, renderRouteComponent, RouteReturn, 
-    _ROUTING_EVENT_NAME, IRoutingEvent,
-    RWSRouter, IRWSRouteResult
-} from './services/RoutingService';
 
 
 import { RWSDecoratorOptions, RWSIgnore, RWSInject, RWSView } from './components/_decorator';
@@ -33,19 +27,18 @@ import { declareRWSComponents } from './components';
 
 export default RWSClient;
 export { 
+    RWSClient,
+    RWSClientInstance,
+
+    RWSPlugin,
+    RWSPluginEntry,
+    DefaultRWSPluginOptionsType,
+    
     NotifyUiType,
     NotifyLogType,
 
-    RouteReturn,
-    _ROUTING_EVENT_NAME,
-    IRoutingEvent,
-    
-    RoutingServiceInstance,
-    RoutingService,
     ApiServiceInstance,
     ApiService,    
-    WSServiceInstance,
-    WSService,
     UtilsServiceInstance,    
     UtilsService,    
     DOMServiceInstance,
@@ -59,14 +52,10 @@ export {
     ServiceWorkerService,
 
     RWSNotify,
-    RWSRouter,
-    IFrontRoutes as IRWSFrontRoutes,
     IBackendRoute as IRWSBackendRoute,
     RWSDecoratorOptions as IRWSDecoratorOptions,
-    IRWSRouteResult,
     IHTTProute as IRWSHttpRoute,
-    IPrefixedHTTProutes as IRWSPrefixedHTTProutes,
-    WSStatus as IRWSWebsocketStatus,
+    IPrefixedHTTProutes as IRWSPrefixedHTTProutes,    
     IAssetShowOptions as IRWSAssetShowOptions,
     IRWSConfig,
     IRWSUser,
@@ -80,9 +69,6 @@ export {
     RWSIgnore,
     RWSInject,
     ngAttr,    
-
-    renderRouteComponent,
-
     observable,
     attr,
     

@@ -18,7 +18,7 @@ const JsMinimizerPlugin = require('terser-webpack-plugin');
 const json5 = require('json5');
 const { rwsPath } = require('@rws-framework/console');
 
-const RWSWebpackWrapper = (config) => {
+const RWSWebpackWrapper = async (config) => {
   const BuildConfigurator = new RWSConfigBuilder(RWSPath.findPackageDir(process.cwd()) + '/.rws.json', {..._DEFAULT_CONFIG, ...config});
 
   config.packageDir = RWSPath.findPackageDir(process.cwd());
@@ -33,8 +33,8 @@ const RWSWebpackWrapper = (config) => {
   const partedPrefix = BuildConfigurator.get('partedPrefix', config.partedPrefix);
   const partedDirUrlPrefix = BuildConfigurator.get('partedDirUrlPrefix', config.partedDirUrlPrefix);
 
-  const partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations', config.partedComponentsLocations);
-  const customServiceLocations = BuildConfigurator.get('customServiceLocations', config.customServiceLocations);
+  let partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations', config.partedComponentsLocations);
+  const customServiceLocations = BuildConfigurator.get('customServiceLocations', config.customServiceLocations); //@todo: check if needed
   const outputDir = RWSPath.relativize(BuildConfigurator.get('outputDir', config.outputDir), config.packageDir);
 
   const outputFileName = BuildConfigurator.get('outputFileName') || config.outputFileName;
@@ -45,7 +45,14 @@ const RWSWebpackWrapper = (config) => {
 
 
   const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);
+  const rwsPlugins = {};
 
+  if(config.rwsPlugins){
+    for(const pluginEntry of config.rwsPlugins){
+      const pluginBuilder = (await import(`${pluginEntry}/build.js`)).default;      
+      rwsPlugins[pluginEntry] = new pluginBuilder(BuildConfigurator, config);
+    }
+  }
 
   RWSPath.removeDirectory(outputDir, true);
 
@@ -126,19 +133,6 @@ const RWSWebpackWrapper = (config) => {
   const foundRWSClientClasses = tools.findComponentFilesWithText(__dirname, '@RWSView', ['dist', 'node_modules']);
   let RWSComponents = [...foundRWSUserClasses, ...foundRWSClientClasses];
 
-  const servicePath = path.resolve(__dirname, 'src', 'services', '_service.ts');
-
-  const servicesLocations = [
-    path.resolve(__dirname, 'src', 'services'),
-    path.resolve(executionDir, 'src', 'services')
-  ];
-
-  if (customServiceLocations) {
-    customServiceLocations.forEach((serviceDir) => {
-      servicesLocations.push(serviceDir);
-    });
-  }
-
   const optimConfig = {};
 
   if(!isDev){
@@ -167,12 +161,17 @@ const RWSWebpackWrapper = (config) => {
   if (isParted) {
     WEBPACK_PLUGINS.push(new webpack.BannerPlugin(tools.getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix)));
 
+    for (const pluginKey of Object.keys(rwsPlugins)){
+      const plugin = rwsPlugins[pluginKey];
+      partedComponentsLocations = await plugin.onComponentsLocated(partedComponentsLocations);
+    }    
+
     if (partedComponentsLocations) {
       partedComponentsLocations.forEach((componentDir) => {
         RWSComponents = [...RWSComponents, ...(tools.findComponentFilesWithText(path.resolve(componentDir), '@RWSView', ['dist', 'node_modules', '@rws-framework/client']))];
       });
     }
-
+ 
     RWSComponents.forEach((fileInfo) => {
       const isIgnored = fileInfo.isIgnored;
 
@@ -181,7 +180,7 @@ const RWSWebpackWrapper = (config) => {
         return;
       }
 
-      automatedEntries[fileInfo.sanitName] = fileInfo.filePath;
+      automatedEntries[fileInfo.tagName] = fileInfo.filePath;
     });
 
     fs.writeFileSync(rwsInfoJson, JSON.stringify({ components: Object.keys(automatedEntries) }, null, 2));
@@ -218,9 +217,9 @@ const RWSWebpackWrapper = (config) => {
 
   if (!tsValidated) {
     throw new Error('RWS Webpack build failed.');
-  }
+  }  
 
-  const cfgExport = {  
+  let cfgExport = {  
     context: executionDir,  
     entry: {
       client: config.entry,
@@ -297,6 +296,11 @@ const RWSWebpackWrapper = (config) => {
       hot: true,
       static: publicDir
     }
+  }
+
+  for (const pluginKey of Object.keys(rwsPlugins)){
+    const plugin = rwsPlugins[pluginKey];
+    cfgExport = await plugin.onBuild(cfgExport);
   }
 
   return cfgExport;

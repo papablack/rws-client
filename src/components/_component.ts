@@ -5,7 +5,6 @@ import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
 import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
 import ApiService, { ApiServiceInstance } from '../services/ApiService';
 import NotifyService, { NotifyServiceInstance } from '../services/NotifyService';
-import WSService, { WSServiceInstance } from '../services/WSService';
 import { IRWSViewComponent, IAssetShowOptions } from '../interfaces/IRWSViewComponent';
 import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../interfaces/RWSWindow';
 import { applyConstructor, RWSInject } from './_decorator';
@@ -52,8 +51,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     @RWSInject(ConfigService, true) protected config: ConfigServiceInstance;    
     @RWSInject(DOMService, true) protected domService: DOMServiceInstance;
     @RWSInject(UtilsService, true) protected utilsService: UtilsServiceInstance;
-    @RWSInject(ApiService, true) protected apiService: ApiServiceInstance;
-    @RWSInject(WSService, true) protected wsService: WSServiceInstance;
+    @RWSInject(ApiService, true) protected apiService: ApiServiceInstance;    
     @RWSInject(NotifyService, true) protected notifyService: NotifyServiceInstance;
 
     @observable trashIterator: number = 0;

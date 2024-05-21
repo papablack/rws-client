@@ -63,6 +63,10 @@ class ConfigService extends TheService {
 
         return this.data[key as keyof IRWSConfig];
     }
+
+    public set<V extends keyof IRWSConfig>(key: V, value: IRWSConfig[V]){
+        this.data[key] = value;
+    }
   
     public async reloadConfig(cfgString: string): Promise<ConfigService> 
     {
@@ -111,8 +115,12 @@ class ConfigService extends TheService {
     }
 
     mergeConfig(config: IRWSConfig) {
-        const unloaded = ConfigService.isLoaded;        
+        const unloaded = ConfigService.isLoaded;     
 
+        if(!Object.keys(this.data).includes('plugins')){
+            this.data.plugins = [];
+        }
+        
         this.data = Object.assign(this.data, config);
 
         if(unloaded){

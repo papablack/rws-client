@@ -32,8 +32,8 @@ module.exports = async function(content) {
     const filePath = this.resourcePath;
     const isDev = this._compiler.options.dev;
 
-    const regex = /@RWSView/;
-    const tsSourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true);
+    const RWSViewRegex = /(@RWSView\([^)]*)\)/;
+    const tsSourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 
     let templatePath = 'template.html';
     let stylesPath = 'styles/layout.scss';
@@ -72,29 +72,7 @@ module.exports = async function(content) {
 
     
     try { 
-        if(tagName){           
-                        
-            const lines = content.split('\n');
-            const textToInsert = `static definition = { name: '${tagName}', template: rwsTemplate, styles${addedParams.length? ', ' + (addedParams.join(', ')) : ''} };`;
-
-            let modifiedContent = '';
-            let insertIndex = -1;
-
-            lines.forEach((line, index) => {           
-                modifiedContent += line + '\n';
-
-                if (regex.test(line)) {
-                    insertIndex = index + 2; // Set the position two lines below the match
-                }
-
-                if (index === insertIndex) {
-                    modifiedContent += textToInsert + '\n'; // Insert the text
-                }
-            });
-
-            replaced = modifiedContent;
-            replaced = replaced.replace(`@RWSView('${tagName}')`, '');
-            
+        if(tagName){                                   
             let styles = 'const styles: null = null;'
 
             if(fs.existsSync(path.dirname(filePath) + '/styles')){
@@ -123,16 +101,24 @@ module.exports = async function(content) {
               `;              
             }
 
-            processedContent = `import * as T from '@microsoft/fast-element';\n${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replaced;
+            const viewReg = /(@RWSView\(\s*'[^']*'\s*(,\s*\{[^}]*\})?\s*)\)/s
+
+            const replacedViewDecoratorContent = processedContent.replace(
+                viewReg,
+                `$1, ${addedParams.length ? '' : 'null, '}{ template: rwsTemplate, styles${addedParams.length? ', options: {' + (addedParams.join(', ')) + '}': ''} })`
+            );
+
+            processedContent = `import * as T from '@microsoft/fast-element';\n${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replacedViewDecoratorContent;
         }
 
-        // fs.writeFileSync(__dirname + '/../node_modules/.compiledev/' + decoratorData.tagName.replace('-', '_') + '.ts', processedContent); //for final RWS TS preview.
+        // if(filePath.indexOf('home') > -1){
+        //     fs.writeFileSync(filePath.replace('.ts','.debug.ts'), processedContent); //for final RWS TS preview.
+        // }
       
         return processedContent;
 
     }catch(e){
         console.error(e);
-        console.warn('IN:\n\n');
         return content;
     }
 };

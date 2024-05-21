@@ -163,22 +163,18 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
     const fileStat = fs.statSync(filePath);
 
     if (fileStat.isDirectory() && !ignored.includes(file)) {
-      // Recursively search this directory
       findComponentFilesWithText(filePath, text, ignored, fileList);
     } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
-      // Read file content and check for text
       const content = fs.readFileSync(filePath, 'utf8');
       if (content.includes(text)) {
-        const compInfo = extractComponentInfo(content);
+        const compInfo = extractComponentInfo(content);        
+
         if (compInfo) {
           const { tagName, className, options, isIgnored, isOreo } = compInfo;
 
           if (isIgnored) {
             return;
           }
-
-          // const fileParts = filePath.split('/');
-          // const fpLen = fileParts.length;          
 
           fileList.push({
             filePath,
@@ -205,29 +201,34 @@ function extractRWSViewArguments(sourceFile) {
   };
 
   let foundDecorator = false;
-
+  let className;
   function visit(node) {
+    if (ts.isClassDeclaration(node)) {
+      className = node.name ? node.name.getText(sourceFile) : null;
+    }
+
     if (ts.isDecorator(node) && ts.isCallExpression(node.expression)) {
       const expression = node.expression;
       const decoratorName = expression.expression.getText(sourceFile);
+
       if (decoratorName === 'RWSView') {
+        argumentsExtracted.className = className;  
+
+
         foundDecorator = true;
         const args = expression.arguments;
+        let tagName = null;
+        let options = null;
+
         if (args.length > 0 && ts.isStringLiteral(args[0])) {
-          argumentsExtracted.tagName = args[0].text;
-        }
-        if (args.length > 1) {
-          if (ts.isObjectLiteralExpression(args[1])) {
-            const argVal = args[1].getText(sourceFile);
-            argumentsExtracted.options = JSON5.parse(argVal);
-          }
+          tagName = args[0].text;
+          argumentsExtracted.tagName = tagName;
         }
 
-        if (node.parent && ts.isClassDeclaration(node.parent)) {
-          const classNode = node.parent;
-          if (classNode.name) { // ClassDeclaration.name is optional as classes can be unnamed/anonymous
-            argumentsExtracted.className = classNode.name.getText(sourceFile);
-          }
+        if (args.length > 1 && ts.isObjectLiteralExpression(args[1])) {
+          const argText = args[1].getText(sourceFile);
+          options = JSON5.parse(argText);
+          argumentsExtracted.options = options;
         }
       }
     }
@@ -286,7 +287,7 @@ function extractRWSIgnoreArguments(sourceFile) {
 }
 
 function extractComponentInfo(componentCode) {
-  const componentNameRegex = /\@RWSView/g;
+  const componentNameRegex = /(@RWSView\([^)]*)\)/;
 
   if (!componentNameRegex.test(componentCode)) {
     return;
@@ -339,7 +340,7 @@ function getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix) {
             script.type = 'text/javascript';
             document.body.appendChild(script);
             window.RWS_PARTS_LOADED = true;
-            console.log('[RWS INIT SCRIPT]', 'vendors injected...');
+            console.log('\x1b[1m[RWS]\x1b[0m', 'vendors injected for parted mode');
           }`.replace('\n', ''),
     raw: true,
     entryOnly: true,

@@ -7,8 +7,7 @@ import UtilsService, { UtilsServiceInstance } from './services/UtilsService';
 import DOMService, { DOMServiceInstance } from './services/DOMService';
 import ApiService, { ApiServiceInstance } from './services/ApiService';
 import NotifyService, { NotifyServiceInstance } from './services/NotifyService';
-import RoutingService, { RoutingServiceInstance } from './services/RoutingService';
-import WSService, { WSServiceInstance } from './services/WSService';
+
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 import { IBackendRoute } from './services/ApiService';
 import IRWSUser from './interfaces/IRWSUser';
@@ -16,17 +15,14 @@ import RWSWindow, { RWSWindowComponentRegister, loadRWSRichWindow } from './inte
 
 import { DI, Container, Registration } from '@microsoft/fast-foundation';
 
-import {
-    IFrontRoutes
-} from './services/RoutingService';
-
 import RWSViewComponent, { IWithCompose } from './components/_component';
 import RWSContainer from './components/_container';
 import TheRWSService from './services/_service';
 
-import ComponentHelper, { ComponentHelperStatic } from './client/components';
+import ComponentHelper, { ComponentHelperStatic, RWSInfoType } from './client/components';
 import ServicesHelper from './client/services';
 import ConfigHelper from './client/config';
+import { DefaultRWSPluginOptionsType, RWSPlugin } from './plugins/_plugin';
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -37,7 +33,6 @@ interface IHotModule extends NodeModule {
     }
 }
 
-type RWSInfoType = { components: string[] };
 type RWSEventListener = (event: CustomEvent) => void;
 
 class RWSClient {
@@ -45,6 +40,7 @@ class RWSClient {
     protected user: IRWSUser = null;
     
     protected config: IRWSConfig = {};
+    protected plugins: {[key: string]: RWSPlugin<DefaultRWSPluginOptionsType>} = {}
     protected isSetup = false;
     protected devStorage: { [key: string]: any } = {};    
     protected customServices: { [serviceName: string]: TheRWSService} = {};
@@ -57,12 +53,10 @@ class RWSClient {
     protected initCallback: () => Promise<void> = async () => { };    
 
     constructor(
-        @ConfigService public appConfig: ConfigServiceInstance,
-        @RoutingService public routingService: RoutingServiceInstance,
+        @ConfigService public appConfig: ConfigServiceInstance,        
         @DOMService public domService: DOMServiceInstance,
         @UtilsService public utilsService: UtilsServiceInstance,
         @ApiService public apiService: ApiServiceInstance,
-        @WSService public wsService: WSServiceInstance,
         @ServiceWorkerService public swService: ServiceWorkerServiceInstance,
         @NotifyService public notifyService: NotifyServiceInstance
     ) {
@@ -93,11 +87,7 @@ class RWSClient {
     get(key: string): any | null
     {
         return this.configHelper.get(key);
-    }
-
-    addRoutes(routes: IFrontRoutes) {
-        this.config.routes = routes;
-    }
+    }    
 
     setNotifier(notifier: RWSNotify): RWSClient {
         this.notifyService.setNotifier(notifier);
@@ -118,6 +108,11 @@ class RWSClient {
 
     async onInit(callback: () => Promise<void>): Promise<RWSClient> {
         this.initCallback = callback;
+
+        for (const plugin of RWSPlugin.getAllPlugins()){
+            plugin.onComponentsDeclare();
+        }
+
         return this;
     }
 
@@ -161,7 +156,7 @@ class RWSClient {
 
     }
 
-    async loadPartedComponents(): Promise<void> {
+    async loadPartedComponents(): Promise<RWSInfoType> {
         return this.componentHelper.loadPartedComponents();
     }   
     

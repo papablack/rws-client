@@ -1,6 +1,8 @@
 import { IRWSConfig, IRWSUser } from "../index";
 import { RWSClientInstance } from "../client";
-import startClient from '../run';
+
+import { RWSPlugin, DefaultRWSPluginOptionsType } from "../plugins/_plugin";
+import RWSWindow, {loadRWSRichWindow } from '../interfaces/RWSWindow';
 
 type RWSInfoType = { components: string[] };
 
@@ -24,9 +26,12 @@ function setUser(this: RWSClientInstance, user: IRWSUser): RWSClientInstance {
     this.user = user;
 
     this.apiService.setToken(this.user.jwt_token);
-    this.wsService.setUser(this.user);
 
     localStorage.setItem('the_rws_user', JSON.stringify(this.user));
+
+    for(const plugin of RWSPlugin.getAllPlugins()){
+        plugin.onSetUser(user);
+    }
 
     return this;
 }
@@ -66,18 +71,42 @@ function get(this: RWSClientInstance, key: string): any | null
     return null;
 }
 
+type PluginConstructor<T extends DefaultRWSPluginOptionsType> = new (options: T) => RWSPlugin<T>;
+type RWSPluginEntry<T extends DefaultRWSPluginOptionsType> = PluginConstructor<T> | [PluginConstructor<T>, T];
+
+function addPlugin<T  extends DefaultRWSPluginOptionsType>(this: RWSClientInstance, pluginEntry: RWSPluginEntry<T>){
+    const rwsWindow: RWSWindow = loadRWSRichWindow();
+    const pluginClass: PluginConstructor<T> = (Array.isArray(pluginEntry) ? pluginEntry[0] : pluginEntry) as PluginConstructor<T>;
+    const pluginOptions: T = (Array.isArray(pluginEntry) ? pluginEntry[1] : { enabled: true }) as T;
+
+    if(!Object.keys(rwsWindow.RWS.plugins).includes(pluginClass.name)){       
+        const pluginInstance: RWSPlugin<T> = new pluginClass(pluginOptions);
+        this.plugins[pluginClass.name] = pluginInstance; 
+        rwsWindow.RWS.plugins[pluginClass.name] = pluginInstance;
+    }
+}
+
 async function setup(this: RWSClientInstance, config: IRWSConfig = {}): Promise<IRWSConfig> {
     if (this.isSetup) {
         return this.config;
     }
 
     this.config = { ...this.config, ...config };
-    this.appConfig.mergeConfig(this.config);
+    this.appConfig.mergeConfig(this.config);    
+
+    if(this.config.plugins){        
+        for (const pluginEntry of this.config.plugins){
+            addPlugin.bind(this)(pluginEntry);
+        }
+    }
 
     if (this.appConfig.get('parted')) {
-        await this.loadPartedComponents();            
-    }       
+        const componentParts = await this.loadPartedComponents();
 
+        for (const plugin of RWSPlugin.getAllPlugins()){
+            plugin.onPartedComponentsLoad(componentParts);
+        }
+    }               
 
     this.isSetup = true;
     return this.config;
@@ -98,9 +127,11 @@ async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
         this.pushUserToServiceWorker(this.user);
     }
 
-    await startClient(this.appConfig, this.wsService, this.notifyService, this.routingService);        
-
     await this.initCallback();        
+
+    for (const plugin of RWSPlugin.getAllPlugins()){
+        plugin.onClientStart();
+    }
 
     return this;
 }

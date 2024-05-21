@@ -1,5 +1,9 @@
-import { IFrontRoutes } from '../services/RoutingService';
 import RWSViewComponent from '../components/_component';
+import { RWSPlugin, DefaultRWSPluginOptionsType } from '../plugins/_plugin';
+
+export type IFrontRoutes = Record<string, unknown>; 
+export type PluginConstructor<T extends DefaultRWSPluginOptionsType> = new (options: T) => RWSPlugin<T>;
+export type RWSPluginEntry<T extends DefaultRWSPluginOptionsType> = PluginConstructor<T> | [PluginConstructor<T>, T];
 
 export default interface IRWSConfig {
     dev?: boolean
@@ -19,6 +23,7 @@ export default interface IRWSConfig {
     parted?: boolean
     partedFileDir?: string
     partedPrefix?: string
+    plugins?: RWSPluginEntry<DefaultRWSPluginOptionsType>[]
     routing_enabled?: boolean
     _noLoad?: boolean    
 }

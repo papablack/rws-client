@@ -1,6 +1,6 @@
 import RWSViewComponent, { IWithCompose } from './_component';
 import { RWSInject } from './_decorators/RWSInject';
-
+import { ElementStyles, ViewTemplate } from '@microsoft/fast-element'; 
 import 'reflect-metadata';
 
 interface RWSDecoratorOptions {
@@ -13,10 +13,27 @@ interface RWSDecoratorOptions {
 
 //const _PARAMTYPES_METADATA_KEY = 'design:paramtypes';
 
-function RWSView<T extends RWSViewComponent>(name: string, data?: RWSDecoratorOptions): (type: any) => void {
-    return (constructor: T) => {
+function RWSView<Component extends RWSViewComponent>(name: string, data?: RWSDecoratorOptions, override?: { styles?: ElementStyles, template?: ViewTemplate, options?: any }): (type: any) => void {
+    return (theComponent: IWithCompose<Component>) => {
+        theComponent.definition = { name, template: null }
+
+        if(override){
+            if(override.styles){
+                theComponent.definition.styles = override.styles;
+            }
+
+            if(override.template){
+                theComponent.definition.template = override.template;
+            }
+
+            
+            if(override.options){
+                (theComponent.definition as any).options = override.options;
+            }
+        }
     };
 }
+
 
 function RWSIgnore(params: { mergeToApp?: boolean } | null = null): () => void {
     return () => { };
