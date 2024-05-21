@@ -104,6 +104,12 @@ async function initializeApp() {
     const theClient = RWSContainer().get(RWSClient);
 
    //(...)
+   
+   theClient.onInit(async () => {
+        console.log(loadRWSRichWindow().RWS);
+        RWSPlugin.getPlugin<RWSBrowserRouter>(RWSBrowserRouter).addRoutes(routes);
+        _initComponents(theClient.appConfig.get('parted'));
+    }); 
 
     theClient.setup({  
         partedPrefix: 'rws',  
