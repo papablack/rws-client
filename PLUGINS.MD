@@ -53,7 +53,7 @@ class RWSWebsocketsPlugin extends RWSPlugin<WSOptions> {
 export { RWSWebsocketsPlugin, WSService, WSServiceInstance, WSEvent, WSStatus };
 ```
 
-### JS build plugin part
+## JS build plugin part
 
 **./build.js**
 
