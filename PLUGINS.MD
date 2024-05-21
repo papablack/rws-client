@@ -12,7 +12,7 @@ Plugin systems lets users add functionality without writing too much code. Targe
 
 ***Currently there are separate frontend and build plugin parts. To be included in .rws.json***
 
-## 1. TS work plugin part
+## TS work plugin part
 
 **src/plugin.ts**
 
@@ -53,7 +53,7 @@ class RWSWebsocketsPlugin extends RWSPlugin<WSOptions> {
 export { RWSWebsocketsPlugin, WSService, WSServiceInstance, WSEvent, WSStatus };
 ```
 
-### 2. JS build plugin part
+### JS build plugin part
 
 **./build.js**
 
@@ -124,7 +124,7 @@ async function initializeApp() {
 initializeApp();
 ```
 
-## 3. Adding plugin to build order
+## Adding plugin to build order
 
 **webpack.config.ts**
 
@@ -157,7 +157,7 @@ module.exports = RWSWebpackWrapper({
   ]
 });
 ```
-## 4. Examples
+## Examples
 
 ### Example plugin package.json
 
