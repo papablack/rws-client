@@ -274,7 +274,7 @@ const RWSWebpackWrapper = async (config) => {
               loader: path.resolve(__dirname, './webpack/loaders/rws_fast_ts_loader.js'),
             }            
           ],
-          exclude: /node_modules\/(?!\@rws-framework\/client)/,
+          exclude: [/node_modules\/(?!\@rws-framework\/client)/, /\.debug\.ts$/],
         }
       ],
     },

@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const ts = require('typescript');
 const tools = require('../../_tools');
+const chalk = require('chalk');
 
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
@@ -10,27 +11,35 @@ const _defaultRWSLoaderOptions = {
     fastOptions: {  shadowOptions: { mode: 'open' }  }
 }
 
-const ERROR_HANDLER_CODE = (htmlContent) => {
-    return `
-    async function handleError(error: Error | any) {      
-      const errorMessage = \`RWS HTML Error:\n\${error.stack}\`;
-      console.error('RWS HTML error', errorMessage);      
-      return T.html\`<div class="rws-error"><h1>RWS HTML template error</h1>\${errorMessage}</div>\`;
-    }
+const ERROR_HANDLER_CODE = (htmlContent, isDev = false) => {
+    const code = `
+async function handleError(error: Error | any) {      
+  const errorMessage = \`RWS HTML Error:\n\${error.stack}\`;
+  console.error('RWS HTML error', errorMessage);      
+  return T.html\`<div class="rws-error"><h1>RWS HTML template error</h1>\${errorMessage}</div>\`;
+}
 
-    try {        
-        //@ts-ignore
-        rwsTemplate = T.html\`${htmlContent}\`;
-      } catch (error: Error | any) {
-        rwsTemplate = handleError(error);
-      }
-    `;
+try {        
+  //@ts-ignore
+  rwsTemplate = 
+T.html\`
+    ${isDev ? htmlContent : htmlContent.replace(/\n/g, '')}\`;
+} catch (error: Error | any) {
+  rwsTemplate = handleError(error);
+}`;
+
+if(!isDev){
+    return code;
+}
+
+return code.replace(/\n/g, '');
 };
 
 module.exports = async function(content) {    
     let processedContent = content;
     const filePath = this.resourcePath;
     const isDev = this._compiler.options.dev;
+    const htmlMinify = this._compiler.options.htmlMnify || true;
 
     const RWSViewRegex = /(@RWSView\([^)]*)\)/;
     const tsSourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
@@ -38,7 +47,9 @@ module.exports = async function(content) {
     let templatePath = 'template.html';
     let stylesPath = 'styles/layout.scss';
     let isIgnored = false;
+    let isDebugged = false;
     let fastOptions = _defaultRWSLoaderOptions.fastOptions;
+    
     const addedParamDefs = [];
     const addedParams = [];
 
@@ -57,6 +68,15 @@ module.exports = async function(content) {
             stylesPath = decoratorData.options.styles;
         }
 
+        
+        if(decoratorData.options.ignorePackaging){
+            isIgnored = true;
+        }
+
+        if(decoratorData.options.debugPackaging){
+            isDebugged = true;
+        }
+
         if(decoratorData.options.fastElementOptions){
             fastOptions = decoratorData.options.fastElementOptions;                   
         }        
@@ -68,8 +88,6 @@ module.exports = async function(content) {
     }    
 
     const tagName = decoratorData.tagName;
-
-
     
     try { 
         if(tagName){                                   
@@ -88,32 +106,55 @@ module.exports = async function(content) {
                 this.addDependency(templatePath);
 
                 let htmlContent = fs.readFileSync(templatePath, 'utf-8');
-                const originalContent = htmlContent;
+                const originalContent = htmlContent;        
 
-                if(!isDev){
-                    htmlContent = htmlContent.replace(/\n/g, '');
-                }
-
-                template = `import './${templateName}.html';            
-                let rwsTemplate:any = null;
-                
-                ${ERROR_HANDLER_CODE(originalContent)}
-              `;              
+                template = `
+import './${templateName}.html';            
+let rwsTemplate:any = null;
+${ERROR_HANDLER_CODE(originalContent, isDev && !htmlMinify)}
+                `;              
             }
 
-            const viewReg = /(@RWSView\(\s*'[^']*'\s*(,\s*\{[^}]*\})?\s*)\)/s
+            const viewReg = /@RWSView\(['"]([a-zA-Z0-9_-]+)['"],?.*\)\sclass\s([a-zA-Z0-9_-]+) extends RWSViewComponent/gs
 
-            const replacedViewDecoratorContent = processedContent.replace(
-                viewReg,
-                `$1, ${addedParams.length ? '' : 'null, '}{ template: rwsTemplate, styles${addedParams.length? ', options: {' + (addedParams.join(', ')) + '}': ''} })`
-            );
+            let m;
+            let className = null;
 
-            processedContent = `import * as T from '@microsoft/fast-element';\n${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replacedViewDecoratorContent;
+            while ((m = viewReg.exec(processedContent)) !== null) {
+                // This is necessary to avoid infinite loops with zero-width matches
+                if (m.index === viewReg.lastIndex) {
+                    viewReg.lastIndex++;
+                }
+                
+                // The result can be accessed through the `m`-variable.
+                m.forEach((match, groupIndex) => {
+                    if(groupIndex === 2){
+                        className = match;
+                    }                    
+                });
+            }            
+
+            if(className){                
+                const replacedViewDecoratorContent = processedContent.replace(
+                    viewReg,
+                    `@RWSView('$1', null, { template: rwsTemplate, styles${addedParams.length? ', options: {' + (addedParams.join(', ')) + '}': ''} })\nclass $2 extends RWSViewComponent `
+                );                            
+                processedContent = `${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replacedViewDecoratorContent;   
+            }            
+
+            processedContent = `import * as T from '@microsoft/fast-element';\n${processedContent}`;
         }
 
-        // if(filePath.indexOf('home') > -1){
-        //     fs.writeFileSync(filePath.replace('.ts','.debug.ts'), processedContent); //for final RWS TS preview.
-        // }
+        const debugTsPath = filePath.replace('.ts','.debug.ts');
+
+        if(fs.existsSync(debugTsPath)){
+            fs.unlinkSync(debugTsPath);
+        }
+
+        if(isDebugged){
+            console.log(chalk.red('[RWS BUILD] Debugging into: ' + debugTsPath));
+            fs.writeFileSync(debugTsPath, processedContent); //for final RWS TS preview.
+        }
       
         return processedContent;
 

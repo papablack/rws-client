@@ -47,8 +47,16 @@ function setupTsConfig(tsConfigPath, executionDir) {
         }     
 
         if (!Object.keys(tsConfig).includes('exclude')) {
-            tsConfig['exclude'] = [];
+            tsConfig['exclude'] = [];            
+            changed = true;
         }      
+        
+        const excludeString = '**/*.debug.ts';
+
+        if(!tsConfig['exclude'].includes(excludeString)){
+            tsConfig['exclude'].push(excludeString);
+            changed = true;
+        }
 
         let probablyLinked = false;
 

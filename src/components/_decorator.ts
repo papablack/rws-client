@@ -8,13 +8,14 @@ interface RWSDecoratorOptions {
     styles?: string,
     fastElementOptions?: any,
     ignorePackaging?: boolean,
+    debugPackaging?: boolean
     oreoMode?: boolean
 }
 
 //const _PARAMTYPES_METADATA_KEY = 'design:paramtypes';
 
-function RWSView<Component extends RWSViewComponent>(name: string, data?: RWSDecoratorOptions, override?: { styles?: ElementStyles, template?: ViewTemplate, options?: any }): (type: any) => void {
-    return (theComponent: IWithCompose<Component>) => {
+function RWSView<Component extends RWSViewComponent>(name: string, data?: RWSDecoratorOptions | null, override?: { styles?: ElementStyles, template?: ViewTemplate, options?: any }): (type: any, args?: any) => void {
+    return (theComponent: IWithCompose<Component>, args?: any) => {
         theComponent.definition = { name, template: null }
 
         if(override){

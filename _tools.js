@@ -158,6 +158,7 @@ function findServiceFilesWithClassExtend(dir, classPath) {
 function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
   const files = fs.readdirSync(dir);
 
+
   files.forEach(file => {
     const filePath = path.join(dir, file);
     const fileStat = fs.statSync(filePath);
@@ -166,10 +167,11 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
       findComponentFilesWithText(filePath, text, ignored, fileList);
     } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
       const content = fs.readFileSync(filePath, 'utf8');
-      if (content.includes(text)) {
+      if (content.includes(text)) {        
         const compInfo = extractComponentInfo(content);        
 
         if (compInfo) {
+      
           const { tagName, className, options, isIgnored, isOreo } = compInfo;
 
           if (isIgnored) {
@@ -182,6 +184,7 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
             className,
             sanitName: className.toLowerCase(),
             content,
+            isDebugged: options?.debugPackaging,
             isIgnored: options?.ignorePackaging,
             isOreo: options?.oreoMode
           });
@@ -201,19 +204,20 @@ function extractRWSViewArguments(sourceFile) {
   };
 
   let foundDecorator = false;
-  let className;
-  function visit(node) {
+  let className = null;
+  function visit(node) {  
     if (ts.isClassDeclaration(node)) {
       className = node.name ? node.name.getText(sourceFile) : null;
     }
 
     if (ts.isDecorator(node) && ts.isCallExpression(node.expression)) {
       const expression = node.expression;
-      const decoratorName = expression.expression.getText(sourceFile);
+      const decoratorName = expression.expression.getText(sourceFile);      
 
       if (decoratorName === 'RWSView') {
-        argumentsExtracted.className = className;  
-
+ 
+        argumentsExtracted.className = className;
+ 
 
         foundDecorator = true;
         const args = expression.arguments;
@@ -226,10 +230,11 @@ function extractRWSViewArguments(sourceFile) {
         }
 
         if (args.length > 1 && ts.isObjectLiteralExpression(args[1])) {
-          const argText = args[1].getText(sourceFile);
+          const argText = args[1].getText();
           options = JSON5.parse(argText);
-          argumentsExtracted.options = options;
+          argumentsExtracted.options = options;          
         }
+       
       }
     }
 
@@ -287,13 +292,13 @@ function extractRWSIgnoreArguments(sourceFile) {
 }
 
 function extractComponentInfo(componentCode) {
-  const componentNameRegex = /(@RWSView\([^)]*)\)/;
+  const componentNameRegex = /@RWSView/;
 
   if (!componentNameRegex.test(componentCode)) {
     return;
   }
 
-  const tsSourceFile = ts.createSourceFile(`/tmp/temp_ts`, componentCode, ts.ScriptTarget.Latest, true);
+  const tsSourceFile = ts.createSourceFile(`/tmp/temp_ts`, componentCode, ts.ScriptTarget.Latest, true);  
 
   let decoratorArgs = extractRWSViewArguments(tsSourceFile);
 
