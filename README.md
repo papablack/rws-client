@@ -16,7 +16,8 @@ Realtime Web Suit is a web-component powered, MS FAST powered fullstack-oriented
 10. [Service Worker](#service-worker)
 11. [Example: WebChat Component](#example-webchat-component)
 12. [Other configs](#other-configs)
-13. [Links](#links)
+13. [Plugins](#plugin-system)
+14. [Links](#links)
 
 ## Overview
 
@@ -1009,6 +1010,10 @@ are defined in backend/src/config/config
  "lib": ["DOM", "ESNext"]
 }
 ```
+
+## Plugin system
+
+[PLUGIN SYSTEM README](https://github.com/papablack/rws-client/blob/master/PLUGINS.md)
 
 ## Links
 - https://www.fast.design/docs/fast-element/getting-started ( Base FAST documentation, mostly valid not considering passing styles and templates as RWS handles it with Webpack loaders )
