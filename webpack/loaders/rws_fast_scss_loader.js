@@ -9,7 +9,7 @@ module.exports = function(content) {
 
     const options = this.getOptions() || { minify: false };
 
-    const isDev = this._compiler.options.dev;
+    const isDev = this._compiler.options.mode === 'development';    
 
     const saveFile = content.indexOf('@save') > -1;  
     let fromTs = false;

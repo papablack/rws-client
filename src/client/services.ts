@@ -1,4 +1,4 @@
-import { loadRWSRichWindow } from "../interfaces/RWSWindow";
+import { loadRWSRichWindow } from "../types/RWSWindow";
 import { RWSClientInstance } from "../client";
 type RWSInfoType = { components: string[] };
 

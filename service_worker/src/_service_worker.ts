@@ -1,4 +1,4 @@
-import IRWSUser from '../../src/interfaces/IRWSUser';
+import IRWSUser from '../../src/types/IRWSUser';
 import RWSContainer from '../../src/components/_container';
 
 //@4DI

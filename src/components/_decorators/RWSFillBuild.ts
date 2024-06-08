@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import IRWSConfig from '../../interfaces/IRWSConfig.js';
+import IRWSConfig from '../../types/IRWSConfig.js';
 
 function extractEnvVar(envVar: string){
     const extractedVars = JSON.parse(JSON.stringify(envVar));                                  

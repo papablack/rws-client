@@ -3,7 +3,7 @@ import {
     nullableNumberConverter,
 } from '@microsoft/fast-element';
 
-@RWSView('rws-progress')
+@RWSView('rws-progress', { debugPackaging: false })
 class RWSProgress extends RWSViewComponent {
 
     @attr({ converter: nullableNumberConverter })

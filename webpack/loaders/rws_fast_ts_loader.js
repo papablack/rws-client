@@ -4,6 +4,7 @@ const fs = require('fs');
 const ts = require('typescript');
 const tools = require('../../_tools');
 const chalk = require('chalk');
+const {html_error_proof} = require('./ts/html_error');
 
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
@@ -11,35 +12,14 @@ const _defaultRWSLoaderOptions = {
     fastOptions: {  shadowOptions: { mode: 'open' }  }
 }
 
-const ERROR_HANDLER_CODE = (htmlContent, isDev = false) => {
-    const code = `
-async function handleError(error: Error | any) {      
-  const errorMessage = \`RWS HTML Error:\n\${error.stack}\`;
-  console.error('RWS HTML error', errorMessage);      
-  return T.html\`<div class="rws-error"><h1>RWS HTML template error</h1>\${errorMessage}</div>\`;
-}
-
-try {        
-  //@ts-ignore
-  rwsTemplate = 
-T.html\`
-    ${isDev ? htmlContent : htmlContent.replace(/\n/g, '')}\`;
-} catch (error: Error | any) {
-  rwsTemplate = handleError(error);
-}`;
-
-if(!isDev){
-    return code;
-}
-
-return code.replace(/\n/g, '');
-};
+let htmlFastImports = null;
 
 module.exports = async function(content) {    
     let processedContent = content;
     const filePath = this.resourcePath;
-    const isDev = this._compiler.options.dev;
-    const htmlMinify = this._compiler.options.htmlMnify || true;
+    const isDev = this._compiler.options.mode === 'development';    
+
+    const htmlMinify = this._compiler.options.htmlMinify || true;
 
     const RWSViewRegex = /(@RWSView\([^)]*)\)/;
     const tsSourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
@@ -100,19 +80,14 @@ module.exports = async function(content) {
             const templateName = 'template';
             const templatePath = path.dirname(filePath) + `/${templateName}.html`;
             const templateExists = fs.existsSync(templatePath, 'utf-8');                   
-            let template = 'const template: null = null;';
+            let template = 'const rwsTemplate: null = null;';
 
             if(templateExists){
+                htmlFastImports = `import * as T from '@microsoft/fast-element';\nimport RWSTemplateHTML from './${templateName}.html';`;
                 this.addDependency(templatePath);
-
-                let htmlContent = fs.readFileSync(templatePath, 'utf-8');
-                const originalContent = htmlContent;        
-
                 template = `
-import './${templateName}.html';            
-let rwsTemplate:any = null;
-${ERROR_HANDLER_CODE(originalContent, isDev && !htmlMinify)}
-                `;              
+let rwsTemplate: any = T.html\`\${RWSTemplateHTML}\`;
+`;              
             }
 
             const viewReg = /@RWSView\(['"]([a-zA-Z0-9_-]+)['"],?.*\)\sclass\s([a-zA-Z0-9_-]+) extends RWSViewComponent/gs
@@ -142,7 +117,7 @@ ${ERROR_HANDLER_CODE(originalContent, isDev && !htmlMinify)}
                 processedContent = `${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replacedViewDecoratorContent;   
             }            
 
-            processedContent = `import * as T from '@microsoft/fast-element';\n${processedContent}`;
+            processedContent = `${htmlFastImports ? htmlFastImports + '\n' : ''}${processedContent}`;
         }
 
         const debugTsPath = filePath.replace('.ts','.debug.ts');
@@ -157,9 +132,10 @@ ${ERROR_HANDLER_CODE(originalContent, isDev && !htmlMinify)}
         }
       
         return processedContent;
-
     }catch(e){
-        console.error(e);
-        return content;
+        console.log(chalk.red('RWS Typescript loader error:'));
+        console.error(e);       
+        
+        throw new Error('RWS Build failed on: ' + filePath);
     }
 };

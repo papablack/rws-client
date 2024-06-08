@@ -1,7 +1,7 @@
 import RWSContainer from "../components/_container";
 import { Container } from "@microsoft/fast-foundation";
-import RWSWindow, {loadRWSRichWindow } from '../interfaces/RWSWindow';
-import IRWSUser from "../interfaces/IRWSUser";
+import RWSWindow, {loadRWSRichWindow } from '../types/RWSWindow';
+import IRWSUser from "../types/IRWSUser";
 import { RWSInfoType } from "../client/components";
 
 type DefaultRWSPluginOptionsType = { enabled: boolean };

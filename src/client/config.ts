@@ -2,7 +2,7 @@ import { IRWSConfig, IRWSUser } from "../index";
 import { RWSClientInstance } from "../client";
 
 import { RWSPlugin, DefaultRWSPluginOptionsType } from "../plugins/_plugin";
-import RWSWindow, {loadRWSRichWindow } from '../interfaces/RWSWindow';
+import RWSWindow, {loadRWSRichWindow } from '../types/RWSWindow';
 
 type RWSInfoType = { components: string[] };
 

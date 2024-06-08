@@ -1,5 +1,5 @@
 import TheService from './_service';
-import IRWSConfig from '../interfaces/IRWSConfig';
+import IRWSConfig from '../types/IRWSConfig';
 import { RWSFillBuild } from '../components/_decorators/RWSFillBuild';
 
 

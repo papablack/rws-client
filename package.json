@@ -1,7 +1,7 @@
 {
     "name": "@rws-framework/client",
     "private": false,
-    "version": "2.8.1",
+    "version": "2.8.2",
     "main": "src/index.ts",
     "scripts": {
         "docs": "typedoc --tsconfig ./tsconfig.json"
@@ -28,7 +28,7 @@
     "dependencies": {
         "@microsoft/fast-element": "^1.12.0",
         "@microsoft/fast-foundation": "^2.46.2",
-        "@rws-framework/console": "^0.3.5",
+        "@rws-framework/console": "*",
         "@types/moment": "^2.13.0",
         "dragula": "^3.7.3",
         "he": "^1.2.0",

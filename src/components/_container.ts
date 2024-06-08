@@ -1,5 +1,5 @@
 import { DI } from '@microsoft/fast-foundation';
-import {loadRWSRichWindow} from '../interfaces/RWSWindow';
+import {loadRWSRichWindow} from '../types/RWSWindow';
 
 import 'reflect-metadata';
 

@@ -1,0 +1,30 @@
+$darkreader-base-globals: (
+    'neutral-background': var(--rws-darkreader-neutral-background, #212222),
+    'neutral-text': var(--rws-darkreader-neutral-text, #eae3d9),
+    'selection-background': var(--rws-darkreader-selection-background, #165aaa),
+    'selection-text': var(--rws-darkreader-selection-text, #624e2f)
+);
+
+$darkreader-elements: ('text', 'bg', 'border', 'neutral', 'selection');
+
+@mixin darkreader-for-var($element, $variable_name, $color){
+    --darkreader-#{$element}--#{$variable_name}: #{$color};
+}
+
+@mixin darkreader-for-varmap($element, $variable-map){
+    @each $key, $value in $variable-map {
+        @include darkreader-for-var($element, $key, $value);
+    }
+}
+
+@mixin darkreader-all-for-varmap($variable-map){
+    @each $element in $darkreader-elements {
+        @include darkreader-for-varmap($element, $variable-map);
+    }
+}
+
+@mixin darkreader-global(){
+    @each $field, $color in $darkreader-base-globals {
+        --darkreader-#{$field}: #{$color};
+    }
+}

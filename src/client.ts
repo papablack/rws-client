@@ -1,4 +1,4 @@
-import IRWSConfig from './interfaces/IRWSConfig';
+import IRWSConfig from './types/IRWSConfig';
 
 import RWSNotify from './types/RWSNotify';
 
@@ -10,8 +10,8 @@ import NotifyService, { NotifyServiceInstance } from './services/NotifyService';
 
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 import { IBackendRoute } from './services/ApiService';
-import IRWSUser from './interfaces/IRWSUser';
-import RWSWindow, { RWSWindowComponentRegister, loadRWSRichWindow } from './interfaces/RWSWindow';
+import IRWSUser from './types/IRWSUser';
+import RWSWindow, { RWSWindowComponentRegister, loadRWSRichWindow } from './types/RWSWindow';
 
 import { DI, Container, Registration } from '@microsoft/fast-foundation';
 

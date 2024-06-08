@@ -1,6 +1,6 @@
 import { DI, InterfaceSymbol, Key, Registration } from '@microsoft/fast-foundation';
 import RWSContainer from '../components/_container';
-import { loadRWSRichWindow } from '../interfaces/RWSWindow';
+import { loadRWSRichWindow } from '../types/RWSWindow';
 
 export interface IWithDI<T> {
     new (...args: any[]): T;

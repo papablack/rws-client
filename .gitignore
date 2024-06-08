@@ -2,3 +2,5 @@ node_modules/
 build/
 .code-ql/
 .dev/
+
+**/*.debug.ts

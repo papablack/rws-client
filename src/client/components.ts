@@ -1,4 +1,4 @@
-import RWSWindow, { RWSWindowComponentRegister } from "../interfaces/RWSWindow";
+import RWSWindow, { RWSWindowComponentRegister } from "../types/RWSWindow";
 import { RWSClientInstance } from "../client";
 import RWSViewComponent, { IWithCompose } from "../components/_component";
 import { RWSPlugin } from "../plugins/_plugin";

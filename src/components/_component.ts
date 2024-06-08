@@ -5,8 +5,8 @@ import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
 import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
 import ApiService, { ApiServiceInstance } from '../services/ApiService';
 import NotifyService, { NotifyServiceInstance } from '../services/NotifyService';
-import { IRWSViewComponent, IAssetShowOptions } from '../interfaces/IRWSViewComponent';
-import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../interfaces/RWSWindow';
+import { IRWSViewComponent, IAssetShowOptions } from '../types/IRWSViewComponent';
+import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../types/RWSWindow';
 import { applyConstructor, RWSInject } from './_decorator';
 
 import 'reflect-metadata';

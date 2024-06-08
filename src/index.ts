@@ -1,6 +1,6 @@
 import { Transformer as HTMLTagTransformerType, Tag as HTMLTag, Attributes as HTMLAttributes } from 'sanitize-html';
 import { observable, attr } from '@microsoft/fast-element';
-import IRWSConfig from './interfaces/IRWSConfig';
+import IRWSConfig from './types/IRWSConfig';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
 import { provideRWSDesignSystem } from './components/_design_system';
 import RWSService from './services/_service';
@@ -14,8 +14,8 @@ import { sanitizedAttr } from './components/_attrs/sanitize-html';
 import { ngAttr } from './components/_attrs/angular-attr';
 import { RWSPlugin, DefaultRWSPluginOptionsType } from './plugins/_plugin';
 import RWSClient, { RWSClientInstance } from './client';
-import { RWSPluginEntry } from './interfaces/IRWSConfig';
-import IRWSUser from './interfaces/IRWSUser';
+import { RWSPluginEntry } from './types/IRWSConfig';
+import IRWSUser from './types/IRWSUser';
 import RWSViewComponent, { IAssetShowOptions } from './components/_component';
 
 import RWSContainer from './components/_container';

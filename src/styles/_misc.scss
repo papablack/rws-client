@@ -1,0 +1,9 @@
+@function px-to-em($pixels, $base-font-size: 16) {
+    @return #{calc($pixels / $base-font-size)}em;
+}  
+  
+@mixin vars($variables) {
+    @each $name, $value in $variables {
+        --#{$name}: #{$value};
+    }
+}

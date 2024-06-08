@@ -8,22 +8,22 @@ const chalk = require('chalk');
 const RWSAfterPlugin = require('./webpack/rws_after_plugin');
 const tools = require('./_tools');
 const { _DEFAULT_CONFIG } = require('./cfg/_default.cfg');
-const RWSConfigBuilder = require('@rws-framework/console').RWSConfigBuilder;
-const RWSPath = require('@rws-framework/console').rwsPath;
-
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const JsMinimizerPlugin = require('terser-webpack-plugin');
 
 const json5 = require('json5');
-const { rwsPath } = require('@rws-framework/console');
+const { rwsPath, RWSConfigBuilder } = require('@rws-framework/console');
+const { Z_ASCII } = require('zlib');
+
+console.log(rwsPath)
 
 const RWSWebpackWrapper = async (config) => {
-  const BuildConfigurator = new RWSConfigBuilder(RWSPath.findPackageDir(process.cwd()) + '/.rws.json', {..._DEFAULT_CONFIG, ...config});
+  const BuildConfigurator = new RWSConfigBuilder(rwsPath.findPackageDir(process.cwd()) + '/.rws.json', {..._DEFAULT_CONFIG, ...config});
 
-  config.packageDir = RWSPath.findPackageDir(process.cwd());
+  config.packageDir = rwsPath.findPackageDir(process.cwd());
 
-  const executionDir = RWSPath.relativize(BuildConfigurator.get('executionDir') || config.executionDir || process.cwd(), config.packageDir);
+  const executionDir = rwsPath.relativize(BuildConfigurator.get('executionDir') || config.executionDir || process.cwd(), config.packageDir);
 
   const isDev = BuildConfigurator.get('dev', config.dev);
   const isHotReload = BuildConfigurator.get('hot', config.hot);
@@ -35,7 +35,7 @@ const RWSWebpackWrapper = async (config) => {
 
   let partedComponentsLocations = BuildConfigurator.get('partedComponentsLocations', config.partedComponentsLocations);
   const customServiceLocations = BuildConfigurator.get('customServiceLocations', config.customServiceLocations); //@todo: check if needed
-  const outputDir = RWSPath.relativize(BuildConfigurator.get('outputDir', config.outputDir), config.packageDir);
+  const outputDir = rwsPath.relativize(BuildConfigurator.get('outputDir', config.outputDir), config.packageDir);
 
   const outputFileName = BuildConfigurator.get('outputFileName') || config.outputFileName;
   const publicDir = BuildConfigurator.get('publicDir') || config.publicDir;
@@ -54,7 +54,7 @@ const RWSWebpackWrapper = async (config) => {
     }
   }
 
-  RWSPath.removeDirectory(outputDir, true);
+  rwsPath.removeDirectory(outputDir, true);
 
   console.log(chalk.green('Build started with'))
   console.log({
@@ -245,6 +245,9 @@ const RWSWebpackWrapper = async (config) => {
         {
           test: /\.html$/,
           use: [
+            {
+              loader: 'html-loader'
+            },
             path.resolve(__dirname, './webpack/loaders/rws_fast_html_loader.js')
           ],
         },
@@ -274,7 +277,10 @@ const RWSWebpackWrapper = async (config) => {
               loader: path.resolve(__dirname, './webpack/loaders/rws_fast_ts_loader.js'),
             }            
           ],
-          exclude: [/node_modules\/(?!\@rws-framework\/client)/, /\.debug\.ts$/],
+          exclude: [
+            /node_modules\/(?!\@rws-framework\/client)/,
+            /\.debug\.ts$/,  
+          ],
         }
       ],
     },

@@ -13,6 +13,7 @@ interface RWSDecoratorOptions {
 }
 
 //const _PARAMTYPES_METADATA_KEY = 'design:paramtypes';
+type HtmlBinderType = (context: RWSViewComponent) => ViewTemplate;
 
 function RWSView<Component extends RWSViewComponent>(name: string, data?: RWSDecoratorOptions | null, override?: { styles?: ElementStyles, template?: ViewTemplate, options?: any }): (type: any, args?: any) => void {
     return (theComponent: IWithCompose<Component>, args?: any) => {
@@ -24,7 +25,7 @@ function RWSView<Component extends RWSViewComponent>(name: string, data?: RWSDec
             }
 
             if(override.template){
-                theComponent.definition.template = override.template;
+                theComponent.definition.template =  override.template;
             }
 
             
