@@ -2,7 +2,6 @@ import IRWSUser from '../../src/types/IRWSUser';
 import RWSContainer from '../../src/components/_container';
 
 //@4DI
-import { WSServiceInstance } from '../../src/services/WSService';
 import { Container } from '@microsoft/fast-foundation';
 
 type SWMsgType = {
@@ -14,8 +13,7 @@ type SWMsgType = {
 abstract class RWSServiceWorker<UserType extends IRWSUser> {
     protected DI: Container;
     protected user: UserType = null;
-    protected ignoredUrls: RegExp[] = [];
-    protected wsService: WSServiceInstance;
+    protected ignoredUrls: RegExp[] = [];    
     protected regExTypes: { [key: string]: RegExp };  
 
     public workerScope: ServiceWorkerGlobalScope;
@@ -28,8 +26,7 @@ abstract class RWSServiceWorker<UserType extends IRWSUser> {
     onActivate(): Promise<void> { return; }
 
     constructor(workerScope: ServiceWorkerGlobalScope, DI: Container){   
-        this.DI = DI;     
-        this.wsService = DI.get<WSServiceInstance>(WSServiceInstance);
+        this.DI = DI;             
         this.workerScope = workerScope;
 
         this.onInit().then(() => {
