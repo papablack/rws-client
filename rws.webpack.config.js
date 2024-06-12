@@ -14,9 +14,6 @@ const JsMinimizerPlugin = require('terser-webpack-plugin');
 
 const json5 = require('json5');
 const { rwsPath, RWSConfigBuilder } = require('@rws-framework/console');
-const { Z_ASCII } = require('zlib');
-
-console.log(rwsPath)
 
 const RWSWebpackWrapper = async (config) => {
   const BuildConfigurator = new RWSConfigBuilder(rwsPath.findPackageDir(process.cwd()) + '/.rws.json', {..._DEFAULT_CONFIG, ...config});
@@ -43,6 +40,7 @@ const RWSWebpackWrapper = async (config) => {
 
   const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
 
+  const devTools = isDev ? (config.devtool || 'inline-source-map') : false;
 
   const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);
   const rwsPlugins = {};
@@ -65,7 +63,8 @@ const RWSWebpackWrapper = async (config) => {
     publicDir,
     parted: isParted,
     partedPrefix,
-    partedDirUrlPrefix
+    partedDirUrlPrefix,
+    devtool: devTools
   });
 
 
@@ -227,7 +226,7 @@ const RWSWebpackWrapper = async (config) => {
     },
     mode: isDev ? 'development' : 'production',
     target: 'web',
-    devtool: isDev ? (config.devtool || 'inline-source-map') : false,
+    devtool: devTools,
     output: {
       path: outputDir,
       filename: isParted ? (partedPrefix || 'rws') + '.[name].js' : outputFileName,

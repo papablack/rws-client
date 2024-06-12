@@ -1,4 +1,4 @@
-import IRWSConfig from './types/IRWSConfig';
+import IRWSConfig, { RWSPluginEntry } from './types/IRWSConfig';
 
 import RWSNotify from './types/RWSNotify';
 
@@ -70,6 +70,11 @@ class RWSClient {
         if (this.user) {
             this.pushUserToServiceWorker({ ...this.user, instructor: false });
         }        
+    }
+
+    addPlugin(pluginEntry: RWSPluginEntry<any>)
+    {
+        this.config.plugins.push(pluginEntry);
     }
 
     async setup(config: IRWSConfig = {}): Promise<IRWSConfig> {

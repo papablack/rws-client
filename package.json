@@ -1,7 +1,7 @@
 {
     "name": "@rws-framework/client",
     "private": false,
-    "version": "2.8.3",
+    "version": "2.8.4",
     "main": "src/index.ts",
     "scripts": {
         "docs": "typedoc --tsconfig ./tsconfig.json"
@@ -74,6 +74,7 @@
         "style-loader": "^3.3.3",
         "terser-webpack-plugin": "^5.3.9",
         "ts-loader": "^9.4.4",
+        "html-loader": "^5.0.0",
         "ts-node": "^10.9.1",
         "tsconfig-paths": "^4.2.0",
         "tsconfig-paths-webpack-plugin": "^4.1.0",

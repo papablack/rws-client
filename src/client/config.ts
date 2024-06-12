@@ -139,7 +139,7 @@ async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
 function getBinds(this: RWSClientInstance) {
     return {
         start: start.bind(this),
-        setup: setup.bind(this),
+        setup: setup.bind(this),        
         get: get.bind(this),
         setUser: setUser.bind(this),
         getUser: getUser.bind(this),
