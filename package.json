@@ -49,6 +49,7 @@
         "url-router": "^13.0.0",
         "uuid": "^9.0.1",
         "v4": "^0.0.1"
+        
     },
     "devDependencies": {
         "@types/dragula": "^3.7.4",
