@@ -74,7 +74,8 @@ module.exports = async function(content) {
             let styles = 'const styles: null = null;'
 
             if(fs.existsSync(path.dirname(filePath) + '/styles')){
-                styles = `import styles from './${stylesPath}';`;
+                styles = `import componentCSS from './${stylesPath}';\n`;
+                styles += `const styles = T.css\`\${componentCSS}\`;`;
             }
             
             const templateName = 'template';

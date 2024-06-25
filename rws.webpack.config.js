@@ -134,17 +134,17 @@ const RWSWebpackWrapper = async (config) => {
 
   const optimConfig = {};
 
-  if(!isDev){
-    optimConfig.minimize = true;
-    optimConfig.minimizer = [
+  // if(!isDev){
+    optimConfig.minimize = !isDev;
+    optimConfig.minimizer = !isDev ? [
       new TerserPlugin({
         terserOptions: {
           keep_classnames: true, // Prevent mangling of class names
           mangle: false, //@error breaks FAST view stuff if enabled for all assets             
-          compress: {
+          compress: !isDev ? {
             dead_code: true,
             pure_funcs: ['console.log', 'console.info', 'console.warn']
-          },
+          } : null,
           output: {
             comments: false
           },
@@ -152,9 +152,21 @@ const RWSWebpackWrapper = async (config) => {
         extractComments: false,
         parallel: true,
       }),
-      new CssMinimizerPlugin(),
-    ];
-  }
+      new CssMinimizerPlugin()      
+    ] : [
+      new TerserPlugin({
+        terserOptions: {
+          keep_classnames: true, // Prevent mangling of class names
+          mangle: false, //@error breaks FAST view stuff if enabled for all assets            
+          output: {
+            comments: false
+          },
+        },
+        extractComments: false,
+        parallel: false,
+      })
+    ]
+  // }
   
 
   if (isParted) {
@@ -258,7 +270,7 @@ const RWSWebpackWrapper = async (config) => {
         },        
         {
           test: /\.scss$/,
-          use: [            
+          use: [                                    
             path.resolve(__dirname, './webpack/loaders/rws_fast_scss_loader.js'),
           ],
         },
@@ -277,7 +289,7 @@ const RWSWebpackWrapper = async (config) => {
             }            
           ],
           exclude: [
-            /node_modules\/(?!\@rws-framework\/client)/,
+            /node_modules\/(?!\@rws-framework\/[A-Z0-9a-z])/,
             /\.debug\.ts$/,  
           ],
         }
@@ -288,12 +300,12 @@ const RWSWebpackWrapper = async (config) => {
   }
 
   // if(isDev){
-    cfgExport.module.rules.push({
-      test: /\.js$/,
-      use: [
-        path.resolve(__dirname, './webpack/loaders/rws_uncomments_loader.js'),                 
-      ],
-    })
+    // cfgExport.module.rules.push({
+    //   test: /\.js$/,
+    //   use: [
+    //     path.resolve(__dirname, './webpack/loaders/rws_uncomments_loader.js'),                 
+    //   ],
+    // })
   // }
 
   if (isHotReload) {

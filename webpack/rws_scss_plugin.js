@@ -62,8 +62,15 @@ class RWSScssPlugin {
       const usesPath = match[1];
       const usesLine = match[0];
 
-      uses.push([usesPath, usesLine]);
+      if(!uses.find((item) => { 
+        console.log(item);
+        return item[0] == usesPath
+      }) && !usesPath !== 'sass:math'){
+        uses.push([usesPath, usesLine]);
+      }      
     }
+
+    // console.log(uses);
 
     return [uses];
   }
@@ -353,8 +360,13 @@ class RWSScssPlugin {
 
     uses.forEach(scssUse => {
       const useLine = scssUse[1];
-      scssUses += useLine + '\n';
-      scssCode = scssCode.replace(useLine, '');
+      if(scssCode.indexOf(useLine) === -1){        
+        console.log(scssCode);      
+        scssUses += useLine + '\n';
+        scssCode = scssCode.replace(useLine + '\n', '');
+      }else{
+        console.log('ommiting @use. detected in:', fileRootDir, scssUse)
+      }
     });
 
     scssCode = scssUses + scssCode;
@@ -362,7 +374,7 @@ class RWSScssPlugin {
     try {
 
       const result = sass.compileString(scssCode, { loadPaths: [fileRootDir], style: minify ? 'compressed' : 'expanded' });
-      let finalCss = result.css;
+      let finalCss = result.css.toString();
 
       return this.replaceFontUrlWithBase64(finalCss);
     } catch (err) {

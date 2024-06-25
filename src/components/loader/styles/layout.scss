@@ -1,5 +1,5 @@
 //loader
-
+//save
 $loader-color: var(--primary-color, #eb7b13);
 $loader-size: 56px;
 $loader-height: 20px;
@@ -7,8 +7,8 @@ $loader-border-size: 8px;
 $loader-gap: 12px;
 $loader-animation-duration: 1s;
 
-@import "~/scss-loading-animations/src/loaders";
+// @import "~/scss-loading-animations/src/loaders";
 
-.loader {
-  @include loader01;
-}
+// .loader {
+//   @include loader01;
+// }

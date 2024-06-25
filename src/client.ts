@@ -65,6 +65,7 @@ class RWSClient {
         
         this.loadServices();
 
+        this.config.plugins = [];
         this.pushDataToServiceWorker('SET_WS_URL', { url: this.appConfig.get('wsUrl') }, 'ws_url');
 
         if (this.user) {

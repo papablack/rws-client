@@ -21,34 +21,26 @@ module.exports = function(content) {
     try {
         const code = plugin.compileScssCode(content, path.dirname(filePath), null, filePath, !isDev);        
 
-        if (fromTs) {
-            if (saveFile && code) {
-                plugin.writeCssFile(filePath, code); 
-                
-                const newContext = this;
-
-                // Properly setup the context for css-loader
-                const loaderContext = {
-                    ...newContext,                              
-                    query: { sourceMap: isDev }, 
-                    async: () => (err, output) => {
-                        if (err) {
-                            callback(err);
-                            return;
-                        }
-                        callback(null, output);
-                    }
-                };
-
-                // Execute css-loader
-                cssLoader.call(loaderContext, code);
-            } else {
-                const tsCode = `import { css } from '@microsoft/fast-element';\nexport default css\`${code}\`;`;
-                callback(null, tsCode);
-            }
-        } else {
-            callback(null, code);
+        if (fromTs && saveFile && code) {
+            plugin.writeCssFile(filePath, code);
         }
+
+        // Properly setup the context for css-loader
+        const loaderContext = {
+            ...this,
+            query: { sourceMap: isDev },
+            async: () => (err, output) => {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                callback(null, output);
+            }
+        };
+
+        // Execute css-loader with the generated CSS code
+        cssLoader.call(loaderContext, code);
+
     } catch (e) {
         console.error(e);
         callback(e);

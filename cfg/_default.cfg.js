@@ -17,6 +17,7 @@ const _DEFAULT_CONFIG_VARS = {
     //Universal configs
     transports: ['websocket'],    
     parted: false,        
+    plugins: []
 }
 
 const _DEFAULT_CONFIG = Object.freeze(_DEFAULT_CONFIG_VARS);

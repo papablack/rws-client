@@ -1,5 +1,5 @@
 declare module '*.scss' {
-    const content: import('@microsoft/fast-element').ElementStyles;
+    const content: string;
     export default content;
 }
 

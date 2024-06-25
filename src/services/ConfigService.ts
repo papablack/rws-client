@@ -117,9 +117,7 @@ class ConfigService extends TheService {
     mergeConfig(config: IRWSConfig) {
         const unloaded = ConfigService.isLoaded;     
 
-        if(!Object.keys(this.data).includes('plugins')){
-            this.data.plugins = [];
-        }
+        this.data.plugins = [];
         
         this.data = Object.assign(this.data, config);
 
