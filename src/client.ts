@@ -13,7 +13,7 @@ import { IBackendRoute } from './services/ApiService';
 import IRWSUser from './types/IRWSUser';
 import RWSWindow, { RWSWindowComponentRegister, loadRWSRichWindow } from './types/RWSWindow';
 
-import { DI, Container, Registration } from '@microsoft/fast-foundation';
+import { DI, Container, Registration } from '@microsoft/fast-foundation/dist/fast-foundation';
 
 import RWSViewComponent, { IWithCompose } from './components/_component';
 import RWSContainer from './components/_container';

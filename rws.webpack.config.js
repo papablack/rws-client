@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
-const uglify = require('uglify-js')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const chalk = require('chalk');
@@ -10,7 +9,6 @@ const tools = require('./_tools');
 const { _DEFAULT_CONFIG } = require('./cfg/_default.cfg');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const JsMinimizerPlugin = require('terser-webpack-plugin');
 
 const json5 = require('json5');
 const { rwsPath, RWSConfigBuilder } = require('@rws-framework/console');
@@ -40,7 +38,7 @@ const RWSWebpackWrapper = async (config) => {
 
   const publicIndex = BuildConfigurator.get('publicIndex') || config.publicIndex;
 
-  const devTools = isDev ? (config.devtool || 'inline-source-map') : false;
+  const devTools = isDev ? (BuildConfigurator.get('devtool') || 'source-map') : false;
 
   const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);
   const rwsPlugins = {};
@@ -64,9 +62,9 @@ const RWSWebpackWrapper = async (config) => {
     parted: isParted,
     partedPrefix,
     partedDirUrlPrefix,
-    devtool: devTools
+    devtool: devTools,
+    plugins: config.rwsPlugins
   });
-
 
   //AFTER OPTION DEFINITIONS
 
@@ -75,7 +73,11 @@ const RWSWebpackWrapper = async (config) => {
       'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
       'process.env._RWS_BUILD_OVERRIDE': JSON.stringify(BuildConfigurator.exportBuildConfig())
     }),
-    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/)
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/),
+    new webpack.IgnorePlugin({
+      resourceRegExp: /.*\.es6\.js$/,
+      contextRegExp: /node_modules/
+    })
   ];
 
   const WEBPACK_AFTER_ACTIONS = config.actions || [];
@@ -134,17 +136,16 @@ const RWSWebpackWrapper = async (config) => {
 
   const optimConfig = {};
 
-  // if(!isDev){
     optimConfig.minimize = !isDev;
-    optimConfig.minimizer = !isDev ? [
+    optimConfig.minimizer = [
       new TerserPlugin({
         terserOptions: {
           keep_classnames: true, // Prevent mangling of class names
           mangle: false, //@error breaks FAST view stuff if enabled for all assets             
-          compress: !isDev ? {
+          compress:  {
             dead_code: true,
-            pure_funcs: ['console.log', 'console.info', 'console.warn']
-          } : null,
+            pure_funcs: isDev ? ['console.log', 'console.info', 'console.warn'] : null
+          },
           output: {
             comments: false
           },
@@ -152,21 +153,14 @@ const RWSWebpackWrapper = async (config) => {
         extractComments: false,
         parallel: true,
       }),
-      new CssMinimizerPlugin()      
-    ] : [
-      new TerserPlugin({
-        terserOptions: {
-          keep_classnames: true, // Prevent mangling of class names
-          mangle: false, //@error breaks FAST view stuff if enabled for all assets            
-          output: {
-            comments: false
-          },
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: ['default', {
+            discardComments: { removeAll: false },
+          }],
         },
-        extractComments: false,
-        parallel: false,
-      })
+      })      
     ]
-  // }
   
 
   if (isParted) {
@@ -255,11 +249,10 @@ const RWSWebpackWrapper = async (config) => {
       rules: [    
         {
           test: /\.html$/,
-          use: [
+          use: [    
             {
-              loader: 'html-loader'
-            },
-            path.resolve(__dirname, './webpack/loaders/rws_fast_html_loader.js')
+              loader: 'raw-loader' // Load HTML as raw string
+            }
           ],
         },
         {
@@ -298,15 +291,6 @@ const RWSWebpackWrapper = async (config) => {
     plugins: WEBPACK_PLUGINS,
     optimization: optimConfig,
   }
-
-  // if(isDev){
-    // cfgExport.module.rules.push({
-    //   test: /\.js$/,
-    //   use: [
-    //     path.resolve(__dirname, './webpack/loaders/rws_uncomments_loader.js'),                 
-    //   ],
-    // })
-  // }
 
   if (isHotReload) {
     cfgExport.devServer = {

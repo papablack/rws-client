@@ -2,7 +2,7 @@ import IRWSUser from '../../src/types/IRWSUser';
 import RWSContainer from '../../src/components/_container';
 
 //@4DI
-import { Container } from '@microsoft/fast-foundation';
+import { Container } from '@microsoft/fast-foundation/dist/fast-foundation';
 
 type SWMsgType = {
     command: string,

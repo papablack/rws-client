@@ -1,4 +1,4 @@
-import { Key } from '@microsoft/fast-foundation';
+import { Key } from '@microsoft/fast-foundation/dist/fast-foundation';
 import RWSContainer from '../_container';
 
 function getFunctionParamNames(func: () => any): string[] {

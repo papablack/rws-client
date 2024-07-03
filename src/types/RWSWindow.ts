@@ -1,5 +1,5 @@
 import { RWSClientInstance } from '../client';
-import { Container, InterfaceSymbol } from '@microsoft/fast-foundation';
+import { Container, InterfaceSymbol } from '@microsoft/fast-foundation/dist/fast-foundation';
 import { RWSPlugin, DefaultRWSPluginOptionsType } from '../plugins/_plugin';
 import { v1 as uuid} from 'uuid';
 export type RWSWindowComponentInterface = (params?: any) => void;

@@ -1,7 +1,6 @@
 import RWSViewComponent, { IWithCompose } from './_component';
 import { RWSInject } from './_decorators/RWSInject';
 import { ElementStyles, ViewTemplate } from '@microsoft/fast-element'; 
-import 'reflect-metadata';
 
 interface RWSDecoratorOptions {
     template?: string,

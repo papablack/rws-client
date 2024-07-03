@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import IRWSConfig from '../../types/IRWSConfig.js';
 
 function extractEnvVar(envVar: string){

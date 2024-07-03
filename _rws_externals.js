@@ -27,6 +27,12 @@ const externals = (declaredCodeBase, nodeModules, externalOptions = _defaultOpts
     
     let mergeTarget = true;
 
+    const srch = 'tslib'
+
+    if(context.indexOf(srch) > -1 || request.indexOf(srch) > -1){
+      console.log(context, request);
+    }    
+
     if (mergeTarget) {
       //merging to output
       return callback();

@@ -1,4 +1,4 @@
-import { Key } from '@microsoft/fast-foundation';
+import { Key } from '@microsoft/fast-foundation/dist/fast-foundation';
 import RWSViewComponent, { IWithCompose } from '../_component';
 import { loadDep, getFunctionParamNames } from './_di';
 import TheRWSService from '../../services/_service';
