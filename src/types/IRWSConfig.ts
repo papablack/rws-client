@@ -23,7 +23,7 @@ export default interface IRWSConfig {
     parted?: boolean
     partedFileDir?: string
     partedPrefix?: string
-    plugins?: RWSPluginEntry<DefaultRWSPluginOptionsType>[]
+    plugins?: RWSPluginEntry<DefaultRWSPluginOptionsType | any>[]
     routing_enabled?: boolean
     _noLoad?: boolean    
 }
