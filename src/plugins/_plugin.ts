@@ -1,5 +1,5 @@
 import RWSContainer from "../components/_container";
-import { Container } from "@microsoft/fast-foundation";
+import { Container } from "../components/_container";
 import RWSWindow, {loadRWSRichWindow } from '../types/RWSWindow';
 import IRWSUser from "../types/IRWSUser";
 import { RWSInfoType } from "../client/components";

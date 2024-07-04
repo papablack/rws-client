@@ -3,6 +3,7 @@ import { RWSClientInstance } from "../client";
 
 import { RWSPlugin, DefaultRWSPluginOptionsType } from "../plugins/_plugin";
 import RWSWindow, {loadRWSRichWindow } from '../types/RWSWindow';
+import deepmerge from 'deepmerge';
 
 type RWSInfoType = { components: string[] };
 
@@ -89,12 +90,17 @@ function addPlugin<T  extends DefaultRWSPluginOptionsType>(this: RWSClientInstan
 async function setup(this: RWSClientInstance, config: IRWSConfig = {}): Promise<IRWSConfig> {
     if (this.isSetup) {
         return this.config;
+    }    
+
+    if(this.config){
+        this.config = deepmerge(this.config, config);
     }
 
-    this.config = { ...this.config, ...config };
+    console.log(config, this.config.plugins)
+
     this.appConfig.mergeConfig(this.config);    
 
-    if(this.config.plugins){        
+    if(this.config.plugins){                
         for (const pluginEntry of this.config.plugins){
             addPlugin.bind(this)(pluginEntry);
         }
@@ -130,7 +136,8 @@ async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
     await this.initCallback();        
 
     for (const plugin of RWSPlugin.getAllPlugins()){
-        plugin.onClientStart();
+        console.log('plugin', plugin)
+        await plugin.onClientStart();
     }
 
     return this;

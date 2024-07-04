@@ -1,4 +1,4 @@
-import { DI } from '@microsoft/fast-foundation/dist/fast-foundation';
+import {DI, Container, Key, Registration , InterfaceSymbol} from '@microsoft/fast-foundation';
 import {loadRWSRichWindow} from '../types/RWSWindow';
 
 export default () => {
@@ -12,3 +12,5 @@ export default () => {
 
     return richWindow.RWS.container;
 };
+
+export { DI, Container, Key, Registration, InterfaceSymbol }

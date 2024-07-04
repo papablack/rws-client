@@ -1,4 +1,9 @@
+import RWSContainer from './_container';
+import TheRWSService from '../services/_service';
+import ConfigService from '../services/ConfigService';
+import { loadRWSRichWindow } from '../types/RWSWindow';
 import RWSViewComponent, { IWithCompose } from './_component';
+import { InterfaceSymbol } from './_container';
 import { RWSInject } from './_decorators/RWSInject';
 import { ElementStyles, ViewTemplate } from '@microsoft/fast-element'; 
 
@@ -49,26 +54,52 @@ function getParentConstructor(instance: any): any {
     return null;
 }
 
+
 const applyConstructor = (component: RWSViewComponent, x: boolean = false): void => {
     const mainConstructor: any = component.constructor;
     const parent = getParentConstructor(component);
+    
 
     if (parent.name !== 'RWSViewComponent' ) {
         return;
     }    
+    
 
     const existingInjectedDependencies = (mainConstructor as IWithCompose<RWSViewComponent>)._toInject;
-    const defaultDeps = (mainConstructor as IWithCompose<RWSViewComponent>)._depKeys['_all'] || [];
-    const depsToInject = (mainConstructor as IWithCompose<RWSViewComponent>)._depKeys[mainConstructor.name] || [];
 
-    Object.keys(existingInjectedDependencies).forEach((depKey: string) => {        
-        // console.log(`Checking "${mainConstructor.name}" for "${depKey}"`, [...defaultDeps, ...depsToInject]);
+    const regServices = loadRWSRichWindow().RWS._registered;
+    
 
-        if ([...defaultDeps, ...depsToInject].includes(depKey)) {
-            const loadedDependency = existingInjectedDependencies[depKey];     
-            (component as any)[depKey] = loadedDependency;
+    const depsToInject: string[] = (mainConstructor as IWithCompose<RWSViewComponent>)._depKeys[mainConstructor.name] || [];
+    const depsInInjector: string[] = Object.keys(existingInjectedDependencies);
+
+    const toInject: string[] = [...depsToInject]
+
+    type KeyType = {[key: string]: TheRWSService | string };
+
+    function inject(services: KeyType){
+        for (const prop in services) {
+            const service = (typeof services[prop] === 'string' ? existingInjectedDependencies[prop] : services[prop]) as TheRWSService;      
+            (component as any)[prop] = service;            
         }
-    });
+    }
+
+    inject(toInject.reduce((acc: KeyType, cur) => {
+        acc[cur] = cur;
+        return acc;
+      }, {}));
+
+    const defaultDeps: [string, TheRWSService][] = Object.keys(existingInjectedDependencies)
+        .filter((depKey: string) => existingInjectedDependencies[depKey].isDefault()).map((depKey => [depKey, existingInjectedDependencies[depKey]]));
+
+    inject(defaultDeps.reduce((acc: KeyType, cur: [string, TheRWSService]) => {
+        acc[cur[0]] = cur[1];
+        return acc;
+      }, {}));    
+
+    inject({
+        config: RWSContainer().get(ConfigService)
+    })    
 };
 
 export { RWSView, RWSDecoratorOptions, RWSIgnore, RWSInject, applyConstructor };

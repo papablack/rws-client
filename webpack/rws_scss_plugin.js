@@ -48,7 +48,9 @@ class RWSScssPlugin {
         importRootPath = path.dirname(importRootPath);
       }      
 
-      imports.push([this.processImportPath(importPath, importRootPath), importLine]);
+      const processedImportPath = this.processImportPath(importPath, importRootPath);
+
+      imports.push([processedImportPath, importLine, path.resolve(processedImportPath)]);
     }
 
     return [imports, fileContent];
@@ -251,9 +253,6 @@ class RWSScssPlugin {
   }
 
   replaceFontUrlWithBase64(cssContent) {    
-    const urlRegex = /url\(([^)]+)\)/g;
-    let match;
-    
     const fontFaceRegex = /@font-face\s*\{[^}]*\}/g;
     let fontFaces = [...cssContent.matchAll(fontFaceRegex)];
 
@@ -350,6 +349,8 @@ class RWSScssPlugin {
     const _self = this;
     const [scssImports] = this.extractScssImports(scssCode, fileRootDir);
 
+    const dependencies = scssImports.map((item) => item[2]);
+
     if (scssImports && scssImports.length) {
       scssCode = this.replaceImports(this.processImports(scssImports, fileRootDir), scssCode);
     }
@@ -372,11 +373,9 @@ class RWSScssPlugin {
     scssCode = scssUses + scssCode;
 
     try {
+      const result = sass.compileString(scssCode, { loadPaths: [fileRootDir]});
 
-      const result = sass.compileString(scssCode, { loadPaths: [fileRootDir], style: minify ? 'compressed' : 'expanded' });
-      let finalCss = result.css.toString();
-
-      return this.replaceFontUrlWithBase64(finalCss);
+      return { code: this.replaceFontUrlWithBase64(result.css.toString()), dependencies};
     } catch (err) {
       console.error('SASS Error in', fileRootDir);
 

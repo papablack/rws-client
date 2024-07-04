@@ -1,5 +1,4 @@
-import { DI, InterfaceSymbol, Key, Registration } from '@microsoft/fast-foundation/dist/fast-foundation';
-import RWSContainer from '../components/_container';
+import RWSContainer, { DI, InterfaceSymbol, Key, Registration } from '../components/_container';
 import { loadRWSRichWindow } from '../types/RWSWindow';
 
 export interface IWithDI<T> {
@@ -31,21 +30,25 @@ export default abstract class TheRWSService {
         this.getSingleton();
     }
     
-    public static getSingleton<T extends Key>(this: IWithDI<T>): InterfaceSymbol<T>
+    public static getSingleton<T extends Key>(this: IWithDI<T>, serviceName: string = null): InterfaceSymbol<T>
     {                  
         const richWindow = loadRWSRichWindow();        
 
-        if(Object.keys(richWindow.RWS._registered).includes(this.name)){            
-            return richWindow.RWS._registered[this.name];        
+        if(!serviceName){
+            serviceName = this.name;
         }
 
-        const interf = DI.createInterface<T>(this.name);
+        if(Object.keys(richWindow.RWS._registered).includes(serviceName)){            
+            return richWindow.RWS._registered[serviceName];        
+        }
+
+        const interf = DI.createInterface<T>(serviceName);
    
         RWSContainer().register(
             Registration.singleton(interf, this)
         );
 
-        richWindow.RWS._registered[this.name] = interf;
+        richWindow.RWS._registered[serviceName] = interf;
 
         return interf;
     }

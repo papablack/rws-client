@@ -17,22 +17,19 @@ function setupTsConfig(tsConfigPath, executionDir) {
         let tsConfig = JSON.parse(tsConfigContents);
 
         const declarationsPath = path.resolve(__dirname, '..', 'types') + '/declarations.d.ts';
+        const foundationPath = path.resolve(__dirname, '..', 'foundation');
         const testsPath = path.resolve(__dirname, '..', 'tests');
         const declarationsPathMD5 = md5(fs.readFileSync(declarationsPath, 'utf-8'));
         const testsPathMD5 = fs.existsSync(testsPath) ? md5(fs.readFileSync(testsPath, 'utf-8')) : null;
 
         const relativeDeclarationsPath = path.relative(path.dirname(tsConfigPath), declarationsPath);
         const relativeTestsPath = path.relative(path.dirname(tsConfigPath), testsPath);
+        const relativeFoundationPath = path.relative(path.dirname(tsConfigPath), foundationPath);
+
 
         const includedMD5 = [];
 
-        let changed = false;
-
-        if (!tsConfig['include'].includes('src')) {
-            console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS project typescript code to project tsconfig.json');
-            tsConfig['include'].unshift('src');
-            changed = true;
-        }   
+        let changed = false; 
 
         if (!Object.keys(tsConfig).includes('include')) {
             tsConfig['include'] = [];
@@ -44,7 +41,14 @@ function setupTsConfig(tsConfigPath, executionDir) {
 
                  return fs.existsSync(rwsPath.relativize(inc, executionDir))
             })
-        }     
+        }    
+        
+        
+        if (!tsConfig['include'].includes('src')) {
+            console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS project typescript code to project tsconfig.json');
+            tsConfig['include'].unshift('src');
+            changed = true;
+        }  
 
         if (!Object.keys(tsConfig).includes('exclude')) {
             tsConfig['exclude'] = [];            
@@ -73,6 +77,15 @@ function setupTsConfig(tsConfigPath, executionDir) {
             changed = true;
         }      
 
+
+        // if(!Object.keys(tsConfig['compilerOptions']).includes('paths')){
+        //     tsConfig['compilerOptions']['paths'] = {};
+        //     changed = true;
+        // }
+
+        // if(!Object.keys(tsConfig['compilerOptions']['paths']).includes('@rws-framework/foundation')){
+        //     tsConfig['compilerOptions']['paths']['@rws-framework/foundation'] = [relativeFoundationPath];
+        // }
     
 
         if (changed) {
@@ -82,8 +95,15 @@ function setupTsConfig(tsConfigPath, executionDir) {
 
         return true;
     } catch (e) {
-        console.log(chalk.red('Error in tsconfig.json:'));
-        console.log(chalk.blueBright(e.message));
+        const tsConfigFileContent = fs.readFileSync(tsConfigPath, 'utf-8');
+        try{            
+            console.log(chalk.blueBright('TSConfig (parsed)'), JSON.parse(tsConfigFileContent));
+        } catch (e){
+            console.log(chalk.yellow('TSConfig (unparsed)'), tsConfigFileContent);
+
+        }
+        console.log(chalk.redBright('Error in tsconfig.json:'));        
+        console.error(chalk.red(e.stack));
 
         return false;
     }

@@ -1,8 +1,9 @@
 const rwsAfterCopy = require('./after/copy');
 const rwsAfterSW = require('./after/sw');
+const deepmerge = require('deepmerge');
 
 
-const _DEFAULT_CONFIG = {actions: [], executionDir: process.cwd(), packageDir: process.cwd()}
+const _DEFAULT_CONFIG = {actions: [], executionDir: process.cwd(), packageDir: process.cwd(), dev: false}
 
 const _DEFAULT_ACTION = {
     type: 'copy',
@@ -20,7 +21,7 @@ class RWSAfterPlugin {
     _allowedActionTypes = ['copy', 'custom', 'service_worker'];
 
     constructor(config = {}){
-        this.config = Object.assign(this.config, config);
+        this.config = deepmerge(this.config, config);
     }
 
     apply(compiler) {        
@@ -34,29 +35,31 @@ class RWSAfterPlugin {
     
                 return await Promise.all(proms);            
             });       
-        });        
-
-        compiler.hooks.emit.tapAsync('RWSAfterPlugin', (compilation, callback) => {      
-            Object.keys(compilation.assets).forEach((filename) => {
-            
-              if (filename.endsWith('.js')) {
-                const asset = compilation.assets[filename];
-                let source = asset.source();
-                if(source.indexOf('css`') > -1 || source.indexOf('html`') > -1){   
-                    console.log('replacing', filename);
-                  const updatedSource = source.replace(/\n/g, '');
+        });     
         
-                  // Update the asset with the new content
-                  compilation.assets[filename] = {
-                    source: () => updatedSource,
-                    size: () => updatedSource.length
-                  };
-                }          
-              }
+        if(!this.config.dev){
+            compiler.hooks.emit.tapAsync('RWSAfterPlugin', (compilation, callback) => {                  
+                Object.keys(compilation.assets).forEach((filename) => {
+                
+                  if (filename.endsWith('.js')) {
+                    const asset = compilation.assets[filename];
+                    let source = asset.source();                    
+    
+                    if((source.indexOf('css`') > -1 || source.indexOf('html`') > -1)){   
+                      const updatedSource = source.replace(/\n/g, '');
+            
+                      // Update the asset with the new content
+                      compilation.assets[filename] = {
+                        source: () => updatedSource,
+                        size: () => updatedSource.length
+                      };
+                    }          
+                  }
+                });
+          
+                callback();
             });
-      
-            callback();
-        });
+        }         
     }
 
     async _runActionType(actionType, action){    

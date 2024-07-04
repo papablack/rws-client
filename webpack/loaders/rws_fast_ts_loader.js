@@ -84,10 +84,11 @@ module.exports = async function(content) {
             let template = 'const rwsTemplate: null = null;';
 
             if(templateExists){
+                const templateContent = fs.readFileSync(templatePath);
                 htmlFastImports = `import * as T from '@microsoft/fast-element';\nimport RWSTemplateHTML from './${templateName}.html';`;
                 this.addDependency(templatePath);
-                template = `
-let rwsTemplate: any = T.html\`\${RWSTemplateHTML}\`;
+                template = `                
+let rwsTemplate: any = T.html\`${templateContent}\`;
 `;              
             }
 

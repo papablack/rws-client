@@ -124,6 +124,8 @@ class ConfigService extends TheService {
         if(unloaded){
             ConfigService.isLoaded = true;
         }
+
+        return this.data;
     }
 
     getData(): IRWSConfig
@@ -132,6 +134,6 @@ class ConfigService extends TheService {
     }
 }
 
-export default ConfigService.getSingleton();
+export default ConfigService.getSingleton('ConfigService');
 
 export { ConfigService as ConfigServiceInstance };

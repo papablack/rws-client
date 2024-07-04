@@ -1,5 +1,5 @@
-import { Key } from '@microsoft/fast-foundation/dist/fast-foundation';
-import RWSContainer from '../_container';
+
+import RWSContainer, { Key } from '../_container';
 
 function getFunctionParamNames(func: () => any): string[] {
     const constructorMatch = func.toString().match(/constructor\s*\(([^)]*)\)/);

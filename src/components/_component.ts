@@ -1,5 +1,5 @@
 import { ViewTemplate, ElementStyles, observable, html, Constructable, PartialFASTElementDefinition, attr } from '@microsoft/fast-element';
-import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, OverrideFoundationElementDefinition } from '@microsoft/fast-foundation/dist/fast-foundation';
+import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, OverrideFoundationElementDefinition } from '../../foundation/rws-foundation';
 import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
 import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
 import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
@@ -8,6 +8,7 @@ import NotifyService, { NotifyServiceInstance } from '../services/NotifyService'
 import { IRWSViewComponent, IAssetShowOptions } from '../types/IRWSViewComponent';
 import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../types/RWSWindow';
 import { applyConstructor, RWSInject } from './_decorator';
+import TheRWSService from '../services/_service';
 
 interface IFastDefinition {
     name: string;
@@ -29,7 +30,7 @@ export interface IWithCompose<T extends RWSViewComponent> {
     compose: ComposeMethodType<FoundationElementDefinition, Constructable<T>>;
     define<TType extends (...params: any[]) => any>(type: TType, nameOrDef?: string | PartialFASTElementDefinition | undefined): TType;
     _verbose: boolean;
-    _toInject: {[key: string]: any};
+    _toInject: {[key: string]: TheRWSService};
     _depKeys: {[key: string]: string[]};
 }
 
@@ -42,7 +43,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
     static autoLoadFastElement = true;
     static _defined: { [key: string]: boolean } = {};
-    static _toInject: any[] = [];
+    static _toInject: {[key: string]: TheRWSService} = {};
     static _depKeys: {[key: string]: string[]} = {_all: []};
     static _verbose: boolean = false;
 
