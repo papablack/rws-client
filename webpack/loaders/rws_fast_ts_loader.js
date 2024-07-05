@@ -88,6 +88,7 @@ module.exports = async function(content) {
                 htmlFastImports = `import * as T from '@microsoft/fast-element';\nimport RWSTemplateHTML from './${templateName}.html';`;
                 this.addDependency(templatePath);
                 template = `                
+//@ts-ignore                
 let rwsTemplate: any = T.html\`${templateContent}\`;
 `;              
             }
