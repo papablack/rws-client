@@ -1,56 +1,59 @@
-import { Observable, AttributeConfiguration, DecoratorAttributeConfiguration } from '@microsoft/fast-element';
+import { Observable, Accessor, observable as parentObservable} from '@microsoft/fast-element';
+
 import RWSViewComponent from '../_component';
+import { DefaultObservableAccessor } from './_default_observable_accessor';
+import { ExternalObservableAccessor } from './_external_observable_accessor';
 
-type TargetType = RWSViewComponent;  // Use a more generic type for the target to ensure compatibility
 
-function externalAttr(configOrTarget?: DecoratorAttributeConfiguration | TargetType, prop?: string): void | any 
-{    
+type ExternalObservableOptions = {} | unknown;
 
-    console.log('EXATTR');
-    if (arguments.length > 1) {
-        // Decorator used directly without factory invocation
-        // Apply the decorator immediately without returning anything
-        applyDecorator(configOrTarget as RWSViewComponent, prop!);
-    } else {
-        // Decorator factory invocation
-        const config = configOrTarget as AttributeConfiguration;
-        // Return a function that applies the decorator, conforming to TypeScript's expectations for decorator factories
-        return (target: TargetType, property: string) => applyDecorator(target, property, config);
-    }
+function isString(test: unknown){
+    return typeof test === 'string';
 }
 
-function applyDecorator(target: TargetType, prop: string, config: AttributeConfiguration | any = {}): void 
-{    
-    if (arguments.length > 1) {  
-        config.property = prop;
-    }
+function externalAttr(targetComponent: RWSViewComponent | unknown, nameOrAccessor: string | Accessor, opts: ExternalObservableOptions = null): void | any 
+{        
 
-    AttributeConfiguration.locate(target.constructor).push(config);
-    modifyPropertyDescriptor(target, prop);
-}
+    const target = targetComponent as any;
+    const propName = typeof nameOrAccessor === 'string' ? nameOrAccessor : nameOrAccessor.name;
 
 
+    if (isString(nameOrAccessor)) {
+        nameOrAccessor = new DefaultObservableAccessor(propName);
+    }    
 
-function modifyPropertyDescriptor(target: any, propertyKey: string): void {
-    const privatePropName = `_${String(propertyKey)}`;
-    Object.defineProperty(target, privatePropName, {
-        writable: true,
-        value: target[propertyKey],
-    });
+    const defaultAccessor: Accessor = nameOrAccessor as Accessor;
+    const extendedAccessor = new ExternalObservableAccessor(propName);
 
-    Object.defineProperty(target, propertyKey, {
-        get() {            
-            return this[privatePropName] as string;
-        },
-        set(value: any) {                
-            if (typeof value !== 'string') {                    
-                this[privatePropName] = null; // Set to null if condition is met
-            } else {
-                this[privatePropName] = value;
-            }
-            Observable.notify(this, propertyKey);
-        },
-    });
+    const accessors: Accessor[] = [
+        defaultAccessor,
+        extendedAccessor
+    ];
+
+    for (const accessor of accessors){
+        Observable.getAccessors(target).push(accessor);
+
+        Reflect.defineProperty(target, accessor.name, {
+            enumerable: true,
+            get(this: any) {
+                if(typeof this[propName] === 'string' && this[propName].indexOf('{{') == -1){
+                    return accessor.getValue(this);
+                }else{
+                    return null;
+                }
+            },
+            set(this: any, newValue: any) {        
+                if(isString){
+                    if(typeof newValue !== 'string'){
+                        console.warn(`@deprecated: Prop ${propName} is not a "string" type. Any @attr and simillar decorators needs to be a string. To be removed in RWS 4.`)
+                    }
+                }     
+                if(typeof newValue === 'string' && newValue.indexOf('{{') == -1){
+                    accessor.setValue(this, newValue);
+                }                   
+            },
+        });
+    }   
 }
   
 

@@ -23,7 +23,7 @@ function externalObservable(targetComponent: RWSViewComponent | unknown, nameOrA
     }    
 
     const defaultAccessor: Accessor = nameOrAccessor as Accessor;
-    const extendedAccessor = new ExternalObservableAccessor(propName, void 0);
+    const extendedAccessor = new ExternalObservableAccessor(propName);
 
     const accessors: Accessor[] = [
         defaultAccessor,
