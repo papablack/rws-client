@@ -1,72 +1,49 @@
-import { Observable } from '@microsoft/fast-element';
+import { Observable, Accessor, observable as parentObservable} from '@microsoft/fast-element';
+
 import RWSViewComponent from '../_component';
-import DOMService from '../../services/DOMService';
-import RWSContainer from '../_container';
-import { IOptions } from 'sanitize-html';
+import { DefaultObservableAccessor } from './_default_observable_accessor';
+import { ExternalObservableAccessor } from './_external_observable_accessor';
 
-import * as he from 'he';
 
-type SanitizeOptions = IOptions & { fullEncode?: boolean };
+type ExternalObservableOptions = {} | unknown;
 
-const heOpt: he.EncodeOptions = {
-    useNamedReferences: false, 
-    encodeEverything: true,
-};
-
-function enc(html: string): string
-{
-    return he.encode(html, heOpt);
+function isString(test: unknown){
+    return typeof test === 'string';
 }
 
+function externalObservable(targetComponent: RWSViewComponent | unknown, nameOrAccessor: string | Accessor, opts: ExternalObservableOptions = null): void | any 
+{        
 
-const transformAnyTag = (tagName: string, attribs: { [key: string]: string }) => {
-    // Example: Wrap the original tag with `span` and indicate the original tag name in a data attribute
-    return {
-        tagName: 'span', // Change this to any tag you want to transform to
-        attribs: {
-            ...attribs,
-            'data-original-tag': tagName
-        }
-    };
-};
+    const target = targetComponent as any;
+    const propName = typeof nameOrAccessor === 'string' ? nameOrAccessor : nameOrAccessor.name;
 
-function applyDecorator(target: RWSViewComponent, prop: string, config: SanitizeOptions = null): void 
-{    
-    modifyPropertyDescriptor(target, prop, config as IOptions);
-}
 
-function modifyPropertyDescriptor(target: any, propertyKey: string, config: IOptions = null): void {
-    const privatePropName = `_${String(propertyKey)}`;
-    Object.defineProperty(target, privatePropName, {
-        writable: true,
-        value: target[propertyKey],
-    });
+    if (isString(nameOrAccessor)) {
+        nameOrAccessor = new DefaultObservableAccessor(propName);
+    }    
 
-    Object.defineProperty(target, propertyKey, {
-        get() {
-            return this[privatePropName];                             
-        },
-        set(value: any) {                 
-            console.log('[DEBUG] external changed', propertyKey);      
-            this[privatePropName] = value;
-            Observable.notify(this, propertyKey);
-        },
-    });
-}
+    const defaultAccessor: Accessor = nameOrAccessor as Accessor;
+    const extendedAccessor = new ExternalObservableAccessor(propName, void 0);
 
-function externalAttr(configOrTarget?: SanitizeOptions | RWSViewComponent, prop?: string): void | any 
-{    
-    if (arguments.length > 1) {
-        // Decorator used directly without factory invocation
-        // Apply the decorator immediately without returning anything
-        applyDecorator(configOrTarget as RWSViewComponent, prop!);
-    } else {
-        // Decorator factory invocation
-        const config = configOrTarget as SanitizeOptions;
-        // Return a function that applies the decorator, conforming to TypeScript's expectations for decorator factories
-        return (target: RWSViewComponent, property: string) => applyDecorator(target, property, config);
-    }
+    const accessors: Accessor[] = [
+        defaultAccessor,
+        extendedAccessor
+    ];
+
+    for (const accessor of accessors){
+        Observable.getAccessors(target).push(accessor);
+
+        Reflect.defineProperty(target, accessor.name, {
+            enumerable: true,
+            get(this: any) {
+                return accessor.getValue(this);
+            },
+            set(this: any, newValue: any) {                
+                accessor.setValue(this, newValue);
+            },
+        });
+    }   
 }
   
 
-export { externalAttr };
+export { externalObservable };
