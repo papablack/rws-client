@@ -90,6 +90,8 @@ module.exports = async function(content) {
                     styles += `import { css } from '@microsoft/fast-element';\n`;     
                 }       
                 styles += `const styles = ${templateExists? 'T.': ''}css\`${cssCode}\`;\n`;
+
+                this.addDependency(path.dirname(filePath) + '/' + stylesPath);
             }                                    
             
             if(templateExists){                         
@@ -99,6 +101,7 @@ module.exports = async function(content) {
 //@ts-ignore                
 let rwsTemplate: any = T.html\`${templateContent}\`;
 `;              
+                this.addDependency(templatePath);
             }
         
             const viewReg = /@RWSView\(['"]([a-zA-Z0-9_-]+)['"],?.*\)\sclass\s([a-zA-Z0-9_-]+) extends RWSViewComponent/gs

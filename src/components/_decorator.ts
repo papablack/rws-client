@@ -36,7 +36,7 @@ function RWSView<Component extends RWSViewComponent>(name: string, data?: RWSDec
             if(override.options){
                 (theComponent.definition as any).options = override.options;
             }
-        }
+        }        
     };
 }
 
