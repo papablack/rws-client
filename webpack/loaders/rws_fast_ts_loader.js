@@ -5,6 +5,8 @@ const ts = require('typescript');
 const tools = require('../../_tools');
 const chalk = require('chalk');
 const {html_error_proof} = require('./ts/html_error');
+const RWSCssPlugin = require("../rws_scss_plugin");
+const plugin = new RWSCssPlugin();
 
 const _defaultRWSLoaderOptions = {
     templatePath: 'template.html',
@@ -12,9 +14,8 @@ const _defaultRWSLoaderOptions = {
     fastOptions: {  shadowOptions: { mode: 'open' }  }
 }
 
-let htmlFastImports = null;
-
-module.exports = async function(content) {    
+module.exports = async function(content) { 
+    let htmlFastImports = null;   
     let processedContent = content;
     const filePath = this.resourcePath;
     const isDev = this._compiler.options.mode === 'development';    
@@ -70,28 +71,36 @@ module.exports = async function(content) {
     const tagName = decoratorData.tagName;
     
     try { 
-        if(tagName){                                   
+        if(tagName){       
+            const templateName = 'template';
+            const templatePath = path.dirname(filePath) + `/${templateName}.html`;
+    
+            const templateExists = fs.existsSync(templatePath);                   
+
+            let template = 'const rwsTemplate: null = null;';                            
             let styles = 'const styles: null = null;'
 
             if(fs.existsSync(path.dirname(filePath) + '/styles')){
-                styles = `import componentCSS from './${stylesPath}';\n`;
-                styles += `const styles = T.css\`\${componentCSS}\`;`;
-            }
+                const scsscontent = fs.readFileSync(path.dirname(filePath) + '/' + stylesPath, 'utf-8');
+                const codeData = plugin.compileScssCode(scsscontent, path.dirname(filePath) + '/styles', null, filePath, !isDev);        
+                const cssCode = codeData.code;
+           
+                styles = `import './${stylesPath}';\n`;     
+                if(!templateExists){
+                    styles += `import { css } from '@microsoft/fast-element';\n`;     
+                }       
+                styles += `const styles = ${templateExists? 'T.': ''}css\`${cssCode}\`;\n`;
+            }                                    
             
-            const templateName = 'template';
-            const templatePath = path.dirname(filePath) + `/${templateName}.html`;
-            const templateExists = fs.existsSync(templatePath, 'utf-8');                   
-            let template = 'const rwsTemplate: null = null;';
-
-            if(templateExists){
-                const templateContent = fs.readFileSync(templatePath);
-                htmlFastImports = `import * as T from '@microsoft/fast-element';\n`;
+            if(templateExists){                         
+                const templateContent = fs.readFileSync(templatePath, 'utf-8');
+                htmlFastImports = `import * as T from '@microsoft/fast-element';\nimport './${templateName}.html';\n`;
                 template = `                
 //@ts-ignore                
 let rwsTemplate: any = T.html\`${templateContent}\`;
 `;              
             }
-
+        
             const viewReg = /@RWSView\(['"]([a-zA-Z0-9_-]+)['"],?.*\)\sclass\s([a-zA-Z0-9_-]+) extends RWSViewComponent/gs
 
             let m;

@@ -8,6 +8,7 @@ const cssLoader = require('css-loader');
 // }
 
 module.exports = function(content) {
+    return '';
     const plugin = new RWSCssPlugin();
     const filePath = this.resourcePath;
 
@@ -36,9 +37,9 @@ module.exports = function(content) {
             plugin.writeCssFile(filePath, code);
         }
 
-        // if(!fromTs){
-        //     return (context) => makeFastResource(context, code); 
-        // }
+        if(!fromTs){
+            
+        }
 
         // Properly setup the context for css-loader
 
@@ -51,7 +52,7 @@ module.exports = function(content) {
                     callback(err);
                     return;
                 }
-                callback(null, output);
+                callback(null, `module.exports = ${JSON.stringify(output)}`);
             }
         };
 

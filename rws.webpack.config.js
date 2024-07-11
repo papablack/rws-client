@@ -286,7 +286,7 @@ const RWSWebpackWrapper = async (config) => {
       sourceMapFilename: '[file].map',
     },
     resolve: {      
-      extensions: ['.ts', '.js'],
+      extensions: ['.ts', '.js', '.scss', '.css'],
       modules: modules_setup,
       alias: {
         ...aliases
@@ -317,31 +317,10 @@ const RWSWebpackWrapper = async (config) => {
     const apiPort = BuildConfigurator.get('apiPort') || config.apiPort;
 
     if(backendUrl && apiPort){
-      // cfgExport.plugins.push(
-      //   new BrowserSyncPlugin(
-      //     // BrowserSync options
-      //     {
-      //       // Proxy the NGINX server
-      //       proxy: `${backendUrl}`, // Replace with your NGINX server address and port
-      //       files: [
-      //         {
-      //           match: ['**/*.html'], // Watch for changes in all HTML files
-      //           fn: function(event, file) {
-      //             if (event === 'change') {
-      //               const bs = require('browser-sync').get('bs-webpack-plugin');
-      //               bs.reload();
-      //             }
-      //           }
-      //         }
-      //       ],
-      //       notify: true, // Disable BrowserSync notifications
-      //     },
-      //     // Plugin options
-      //     {
-      //       reload: false
-      //     }
-      //   )
-      // )
+      // cfgExport.devServer = {
+      //   hot: true, // Enable hot module replacement
+      //   open: true, // Automatically open the browser
+      // }
     }    
   }
 

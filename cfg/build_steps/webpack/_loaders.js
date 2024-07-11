@@ -9,11 +9,13 @@ function getRWSLoaders(packageDir, nodeModulesPath, tsConfigPath){
 
   return [    
       {
-        test: /\.scss$/,
-        use: [                                    
-          scssLoader,
-        ],
-      },
+          test: /\.html$/,
+          use: [
+              {
+                  loader: htmlLoader, 
+              },
+          ],
+      },  
       {
         test: /\.(ts)$/,
         use: [
@@ -33,7 +35,13 @@ function getRWSLoaders(packageDir, nodeModulesPath, tsConfigPath){
           /\.debug\.ts$/,  
           /\.d\.ts$/,  
         ],
-      }
+      },
+      {
+        test: /\.scss$/i,
+        use: [                                              
+          scssLoader,
+        ],
+      },
   ]
 }
 
