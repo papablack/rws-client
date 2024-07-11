@@ -379,8 +379,10 @@ const options?: RWSDecoratorOptions;
 class WebChat extends RWSViewComponent {
     @attr tagAttr: string; //HTML tag attr
     @ngAttr fromNgAttr: string; //HTML attr from angular template
+    @externalAttr fromExAttr: string; //HTML attr with change observation
     @sanitizedAttr htmlAttr: string; //HTML attr that's sanitized with every val change
     @observable someVar: any; //Var for templates/value change observation
+    @externalObservable someExVar: string; //Var for templates/value change observation with external watch
 }
 ```
 
