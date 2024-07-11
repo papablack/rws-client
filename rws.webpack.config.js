@@ -5,6 +5,8 @@ const webpack = require('webpack');
 const { rwsPath, RWSConfigBuilder } = require('@rws-framework/console');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
@@ -24,7 +26,7 @@ const { _DEFAULT_CONFIG } = require('./cfg/_default.cfg');
 const { info } = require('console');
 
 const _MAIN_PACKAGE = rwsPath.findRootWorkspacePath(process.cwd());
-
+console.log(process.argv);
 const RWSWebpackWrapper = async (config) => {
   const BuildConfigurator = new RWSConfigBuilder(rwsPath.findPackageDir(process.cwd()) + '/.rws.json', {..._DEFAULT_CONFIG, ...config});
 
@@ -52,6 +54,7 @@ const RWSWebpackWrapper = async (config) => {
 
   const devTools = isDev ? (BuildConfigurator.get('devtool') || 'source-map') : false;
   const devDebug = isDev ? (BuildConfigurator.get('devDebug') || config.devDebug || { build: false }) : null;
+  const devRouteProxy = BuildConfigurator.get('devRouteProxy') || config.devRouteProxy;
 
   const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);
   const rwsPlugins = {};
@@ -302,17 +305,45 @@ const RWSWebpackWrapper = async (config) => {
     cfgExport.optimization = optimConfig;
   }
 
-  if (isHotReload) {
-    cfgExport.devServer = {
-      hot: true,
-      static: publicDir
-    }
-  }
+
 
   for (const pluginKey of Object.keys(rwsPlugins)){
     const plugin = rwsPlugins[pluginKey];
     cfgExport = await plugin.onBuild(cfgExport);
   }  
+
+  if(isDev){
+    const backendUrl = BuildConfigurator.get('backendUrl') || config.backendUrl;
+    const apiPort = BuildConfigurator.get('apiPort') || config.apiPort;
+
+    if(backendUrl && apiPort){
+      // cfgExport.plugins.push(
+      //   new BrowserSyncPlugin(
+      //     // BrowserSync options
+      //     {
+      //       // Proxy the NGINX server
+      //       proxy: `${backendUrl}`, // Replace with your NGINX server address and port
+      //       files: [
+      //         {
+      //           match: ['**/*.html'], // Watch for changes in all HTML files
+      //           fn: function(event, file) {
+      //             if (event === 'change') {
+      //               const bs = require('browser-sync').get('bs-webpack-plugin');
+      //               bs.reload();
+      //             }
+      //           }
+      //         }
+      //       ],
+      //       notify: true, // Disable BrowserSync notifications
+      //     },
+      //     // Plugin options
+      //     {
+      //       reload: false
+      //     }
+      //   )
+      // )
+    }    
+  }
 
   return cfgExport;
 }

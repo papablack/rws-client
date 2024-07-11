@@ -17,6 +17,8 @@ const _DEFAULT_CONFIG_VARS = {
     //Universal configs
     transports: ['websocket'],    
     parted: false,        
+    devRouteProxy: '/api',
+    devApiPort: 3002,
     plugins: []
 }
 
