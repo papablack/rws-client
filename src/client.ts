@@ -23,6 +23,7 @@ import ComponentHelper, { ComponentHelperStatic, RWSInfoType } from './client/co
 import ServicesHelper from './client/services';
 import ConfigHelper from './client/config';
 import { DefaultRWSPluginOptionsType, RWSPlugin } from './plugins/_plugin';
+import { IStaticRWSPlugin } from './types/IRWSPlugin'
 
 interface IHotModule extends NodeModule {
     hot?: {
@@ -73,7 +74,7 @@ class RWSClient {
         }        
     }
 
-    addPlugin<T extends DefaultRWSPluginOptionsType>(pluginEntry: RWSPluginEntry<T>)
+    addPlugin<T extends DefaultRWSPluginOptionsType>(pluginEntry: IStaticRWSPlugin)
     {        
         this.config.plugins.push(pluginEntry);
     }

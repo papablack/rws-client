@@ -14,6 +14,7 @@ import { ngAttr } from './components/_attrs/angular-attr';
 import { externalObservable } from './components/_attrs/external-observable';
 import { externalAttr } from './components/_attrs/external-attr';
 import { RWSPlugin, DefaultRWSPluginOptionsType } from './plugins/_plugin';
+import { IRWSPlugin, IStaticRWSPlugin } from './types/IRWSPlugin';
 import RWSClient, { RWSClientInstance } from './client';
 import { RWSPluginEntry } from './types/IRWSConfig';
 import IRWSUser from './types/IRWSUser';
@@ -33,6 +34,7 @@ export {
 
     RWSPlugin,
     RWSPluginEntry,
+    IRWSPlugin, IStaticRWSPlugin,
     DefaultRWSPluginOptionsType,
     
     NotifyUiType,

@@ -3,11 +3,12 @@ import { Container } from "../components/_container";
 import RWSWindow, {loadRWSRichWindow } from '../types/RWSWindow';
 import IRWSUser from "../types/IRWSUser";
 import { RWSInfoType } from "../client/components";
+import { IRWSPlugin } from "../types/IRWSPlugin";
 
 type DefaultRWSPluginOptionsType = { enabled: boolean };
 type PluginInfoType = { name: string }
 type PluginConstructor<T extends DefaultRWSPluginOptionsType> = new (options: T) => RWSPlugin<T>;
-abstract class RWSPlugin<PluginOptions extends DefaultRWSPluginOptionsType> {
+abstract class RWSPlugin<PluginOptions extends DefaultRWSPluginOptionsType> implements IRWSPlugin{
     protected isLoaded: boolean = false;
     protected options: PluginOptions;
     protected container: Container;    

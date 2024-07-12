@@ -31,26 +31,27 @@ function applyDecorator(target: TargetType, prop: string, config: AttributeConfi
 
 function modifyPropertyDescriptor(target: any, propertyKey: string): void {
     const privatePropName = `_${String(propertyKey)}`;
-
-    Observable.track(target, propertyKey);
-
     Object.defineProperty(target, privatePropName, {
         writable: true,
         value: target[propertyKey],
     });
 
     Object.defineProperty(target, propertyKey, {
-        get() {
+        get() {            
             const value: string = this[privatePropName];                
-            
             return isNgValue(value) ? null : value;
         },
-        set(value: any) {                
-            if (typeof value === 'string' && isNgValue(value)) {                                    
-                this[privatePropName] = null; // Set to null if condition is met
-            } else {
-                this[privatePropName] = value;                
-            }            
+        set(value: any) {                         
+            const oldVal = this[privatePropName];
+
+            if (!( (typeof value === 'string' && isNgValue(value)) || (typeof value !== 'undefined')  || oldVal == value)) {                                
+                this[privatePropName] = value;
+                Observable.notify(this, propertyKey);
+
+                if(!!this['externalChanged']){
+                    this['externalChanged'].call(propertyKey, oldVal, value);
+                }
+            }             
         },
     });
 }

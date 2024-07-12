@@ -38,8 +38,12 @@ function externalObservable(targetComponent: RWSViewComponent | unknown, nameOrA
             get(this: any) {
                 return accessor.getValue(this);
             },
-            set(this: any, newValue: any) {                
+            set(this: any, newValue: any) {         
+                const oldVal = accessor.getValue(this);       
                 accessor.setValue(this, newValue);
+                if(!!this['externalChanged']){
+                    this['externalChanged'].call(accessor.name, oldVal, newValue);
+                }
             },
         });
     }   
