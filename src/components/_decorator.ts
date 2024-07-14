@@ -5,7 +5,8 @@ import { loadRWSRichWindow } from '../types/RWSWindow';
 import RWSViewComponent, { IWithCompose } from './_component';
 import { InterfaceSymbol } from './_container';
 import { RWSInject } from './_decorators/RWSInject';
-import { ElementStyles, ViewTemplate } from '@microsoft/fast-element'; 
+import { ElementStyles, Observable, ViewTemplate } from '@microsoft/fast-element'; 
+import { handleExternalChange } from './_attrs/_external_handler';
 
 interface RWSDecoratorOptions {
     template?: string,
@@ -36,7 +37,7 @@ function RWSView<Component extends RWSViewComponent>(name: string, data?: RWSDec
             if(override.options){
                 (theComponent.definition as any).options = override.options;
             }
-        }        
+        }
     };
 }
 
@@ -77,10 +78,12 @@ const applyConstructor = (component: RWSViewComponent, x: boolean = false): void
 
     type KeyType = {[key: string]: TheRWSService | string };
 
+    const _target = (component as any);
+    
     function inject(services: KeyType){
         for (const prop in services) {
             const service = (typeof services[prop] === 'string' ? existingInjectedDependencies[prop] : services[prop]) as TheRWSService;      
-            (component as any)[prop] = service;            
+            _target[prop] = service;            
         }
     }
 
@@ -100,6 +103,21 @@ const applyConstructor = (component: RWSViewComponent, x: boolean = false): void
     inject({
         config: RWSContainer().get(ConfigService)
     })    
+
+    if(Object.keys(RWSViewComponent._externalAttrs).includes((_target.constructor as IWithCompose<any>).name)){
+        for(const exAttrKey in RWSViewComponent._externalAttrs[(_target.constructor as IWithCompose<any>).name]){  
+            const exAttr = RWSViewComponent._externalAttrs[(_target.constructor as IWithCompose<any>).name][exAttrKey];          
+            const notifier = Observable.getNotifier(_target);
+            notifier.subscribe({
+                handleChange(source, key) {                    
+                    if (key === exAttr && !_target.__exAttrLoaded.includes(exAttr)) {                        
+                        handleExternalChange(source, key);
+                        _target.__exAttrLoaded.push(key);
+                    }
+                }
+            }, exAttr);
+        }    
+    }
 };
 
 export { RWSView, RWSDecoratorOptions, RWSIgnore, RWSInject, applyConstructor };

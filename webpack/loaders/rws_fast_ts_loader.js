@@ -95,7 +95,7 @@ module.exports = async function(content) {
             }                                    
             
             if(templateExists){                         
-                const templateContent = fs.readFileSync(templatePath, 'utf-8');
+                const templateContent = fs.readFileSync(templatePath, 'utf-8').replace(/<!--[\s\S]*?-->/g, '');
                 htmlFastImports = `import * as T from '@microsoft/fast-element';\nimport './${templateName}.html';\n`;
                 template = `                
 //@ts-ignore                

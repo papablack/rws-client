@@ -2,6 +2,7 @@ import { Key } from '../_container';
 import RWSViewComponent, { IWithCompose } from '../_component';
 import { loadDep, getFunctionParamNames } from './_di';
 import TheRWSService from '../../services/_service';
+import { handleExternalChange } from '../_attrs/_external_handler';
 
 
 type InjectDecoratorReturnType = (target: any, key?: string | number | undefined, parameterIndex?: number) => void;
@@ -40,7 +41,7 @@ function RWSInject<T extends RWSViewComponent>(dependencyClass: Key, defaultServ
             const depKey = paramNames[parameterIndex];       
             
             addToComponentInjection(targetConstructor.name, targetConstructor, depKey, dependencyClass, defaultService);
-        }                
+        }                        
     };
 }
 
