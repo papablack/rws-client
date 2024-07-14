@@ -1,59 +1,60 @@
-import { Observable, AttributeConfiguration, DecoratorAttributeConfiguration } from '@microsoft/fast-element';
-import RWSViewComponent from '../_component';
+import { 
+    DecoratorAttributeConfiguration, 
+    AttributeConfiguration,
+    Observable,     
+} from "@microsoft/fast-element";
+import { handleExternalChange } from "./_external_handler";
+import RWSViewComponent, { IWithCompose } from "../_component";
 
-type TargetType = RWSViewComponent;  // Use a more generic type for the target to ensure compatibility
+type ExAttrOpts = { converter?: (val: any) => string }
+const _default_opts = {
+    converter: (val: any) => {
+        return val;
+    }    
+}
 
-function externalAttr(configOrTarget?: DecoratorAttributeConfiguration | TargetType, prop?: string): void | any 
-{    
+export function externalAttr(
+    config?: DecoratorAttributeConfiguration, 
+): (target: {}, property: string) => void;
+
+export function externalAttr(target: {}, property: string, opts?: ExAttrOpts): void;
+export function externalAttr(
+    configOrTarget?: DecoratorAttributeConfiguration | {},
+    property?: string,
+    opts: ExAttrOpts = _default_opts
+): void | ((target: {}, property: string) => void) {
+    let config: AttributeConfiguration;
+
+    function decorator($target: {}, $prop: string): void {
+        if (arguments.length > 1) {
+            // Non invocation:
+            // - @attr
+            // Invocation with or w/o opts:
+            // - @attr()
+            // - @attr({...opts})
+            config.property = $prop;
+        }
+
+        config.mode = 'fromView';        
+        config.converter = { fromView: opts.converter, toView: null };
+
+        const attrs = AttributeConfiguration.locate($target.constructor);        
+        RWSViewComponent.setExternalAttr(($target.constructor as IWithCompose<any>).name, $prop);        
+        
+        attrs.push(config);       
+    }
+
     if (arguments.length > 1) {
-        // Decorator used directly without factory invocation
-        // Apply the decorator immediately without returning anything
-        applyDecorator(configOrTarget as RWSViewComponent, prop!);
-    } else {
-        // Decorator factory invocation
-        const config = configOrTarget as AttributeConfiguration;
-        // Return a function that applies the decorator, conforming to TypeScript's expectations for decorator factories
-        return (target: TargetType, property: string) => applyDecorator(target, property, config);
-    }
-}
-
-function applyDecorator(target: TargetType, prop: string, config: AttributeConfiguration | any = {}): void 
-{    
-    if (arguments.length > 1) {  
-        config.property = prop;
+        // Non invocation:
+        // - @attr
+        config = {} as any;
+        decorator(configOrTarget!, property!);
+        return;
     }
 
-    AttributeConfiguration.locate(target.constructor).push(config);
-    modifyPropertyDescriptor(target, prop);
+    // Invocation with or w/o opts:
+    // - @attr()
+    // - @attr({...opts})
+    config = configOrTarget === void 0 ? ({} as any) : configOrTarget;
+    return decorator;
 }
-
-
-function modifyPropertyDescriptor(target: any, propertyKey: string): void {
-    const privatePropName = `_${String(propertyKey)}`;
-    Object.defineProperty(target, privatePropName, {
-        writable: true,
-        value: target[propertyKey],
-    });
-
-    Object.defineProperty(target, propertyKey, {
-        get() {            
-            const value: string = this[privatePropName];                
-            return value;
-        },
-        set(value: any) {                         
-            const oldVal = this[privatePropName];    
-            
-            if (!( typeof value === 'string'  || typeof value !== 'undefined' || oldVal == value )) {                            
-                this[privatePropName] = value;
-                Observable.notify(this, propertyKey);
-                if(!!this['externalChanged']){
-                    this['externalChanged'].call(propertyKey, oldVal, value);
-                }
-            }             
-        },
-    });
-}
-
-  
-
-export { externalAttr };
