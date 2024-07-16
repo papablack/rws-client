@@ -368,6 +368,8 @@ export default (partedMode: boolean = false) => {
 };
 ```
 
+## RWS Decorators
+
 **Component needs to extend RWSViewComponent and use @RWSView decorator**:
 
 ```typescript
