@@ -1,4 +1,4 @@
-import { IRWSConfig, IRWSUser } from "../index";
+import { IRWSConfig, IRWSUser, IStaticRWSPlugin } from "../index";
 import { RWSClientInstance } from "../client";
 
 import { RWSPlugin, DefaultRWSPluginOptionsType } from "../plugins/_plugin";
@@ -73,9 +73,9 @@ function get(this: RWSClientInstance, key: string): any | null
 }
 
 type PluginConstructor<T extends DefaultRWSPluginOptionsType> = new (options: T) => RWSPlugin<T>;
-type RWSPluginEntry<T extends DefaultRWSPluginOptionsType> = PluginConstructor<T> | [PluginConstructor<T>, T];
+type RWSPluginEntry = IStaticRWSPlugin;
 
-function addPlugin<T  extends DefaultRWSPluginOptionsType>(this: RWSClientInstance, pluginEntry: RWSPluginEntry<T>){
+function addPlugin<T  extends DefaultRWSPluginOptionsType>(this: RWSClientInstance, pluginEntry: RWSPluginEntry){
     const rwsWindow: RWSWindow = loadRWSRichWindow();
     const pluginClass: PluginConstructor<T> = (Array.isArray(pluginEntry) ? pluginEntry[0] : pluginEntry) as PluginConstructor<T>;
     const pluginOptions: T = (Array.isArray(pluginEntry) ? pluginEntry[1] : { enabled: true }) as T;
