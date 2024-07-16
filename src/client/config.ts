@@ -1,8 +1,9 @@
-import { IRWSConfig, IRWSUser } from "../index";
+import { IRWSConfig, IRWSUser, IStaticRWSPlugin } from "../index";
 import { RWSClientInstance } from "../client";
 
 import { RWSPlugin, DefaultRWSPluginOptionsType } from "../plugins/_plugin";
 import RWSWindow, {loadRWSRichWindow } from '../types/RWSWindow';
+import deepmerge from 'deepmerge';
 
 type RWSInfoType = { components: string[] };
 
@@ -72,9 +73,9 @@ function get(this: RWSClientInstance, key: string): any | null
 }
 
 type PluginConstructor<T extends DefaultRWSPluginOptionsType> = new (options: T) => RWSPlugin<T>;
-type RWSPluginEntry<T extends DefaultRWSPluginOptionsType> = PluginConstructor<T> | [PluginConstructor<T>, T];
+type RWSPluginEntry = IStaticRWSPlugin;
 
-function addPlugin<T  extends DefaultRWSPluginOptionsType>(this: RWSClientInstance, pluginEntry: RWSPluginEntry<T>){
+function addPlugin<T  extends DefaultRWSPluginOptionsType>(this: RWSClientInstance, pluginEntry: RWSPluginEntry){
     const rwsWindow: RWSWindow = loadRWSRichWindow();
     const pluginClass: PluginConstructor<T> = (Array.isArray(pluginEntry) ? pluginEntry[0] : pluginEntry) as PluginConstructor<T>;
     const pluginOptions: T = (Array.isArray(pluginEntry) ? pluginEntry[1] : { enabled: true }) as T;
@@ -89,12 +90,15 @@ function addPlugin<T  extends DefaultRWSPluginOptionsType>(this: RWSClientInstan
 async function setup(this: RWSClientInstance, config: IRWSConfig = {}): Promise<IRWSConfig> {
     if (this.isSetup) {
         return this.config;
-    }
+    }    
 
-    this.config = { ...this.config, ...config };
+    if(this.config){
+        this.config = deepmerge(this.config, config);
+    }    
+
     this.appConfig.mergeConfig(this.config);    
 
-    if(this.config.plugins){        
+    if(this.config.plugins){                
         for (const pluginEntry of this.config.plugins){
             addPlugin.bind(this)(pluginEntry);
         }
@@ -129,8 +133,8 @@ async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
 
     await this.initCallback();        
 
-    for (const plugin of RWSPlugin.getAllPlugins()){
-        plugin.onClientStart();
+    for (const plugin of RWSPlugin.getAllPlugins()){        
+        await plugin.onClientStart();
     }
 
     return this;

@@ -18,10 +18,14 @@
       "lib": ["DOM", "ESNext"],
     },
     "paths": {
-      "@rws-framework/client": ["src"]
+      "@rws-framework/client": ["src"],
+      "@rws-framework/foundation": ["foundation"]
     },   
     "include": [
       "src",             
       "types/docs-typings.d.ts"      
+    ],
+    "exclude": [
+      "node_modules"
     ]
   }

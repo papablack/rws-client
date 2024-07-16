@@ -2,7 +2,6 @@ import { Transformer as HTMLTagTransformerType, Tag as HTMLTag, Attributes as HT
 import { observable, attr } from '@microsoft/fast-element';
 import IRWSConfig from './types/IRWSConfig';
 import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
-import { provideRWSDesignSystem } from './components/_design_system';
 import RWSService from './services/_service';
 import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
 import NotifyService, {NotifyServiceInstance} from './services/NotifyService';
@@ -12,7 +11,10 @@ import UtilsService, {UtilsServiceInstance} from './services/UtilsService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 import { sanitizedAttr } from './components/_attrs/sanitize-html';
 import { ngAttr } from './components/_attrs/angular-attr';
+import { externalObservable } from './components/_attrs/external-observable';
+import { externalAttr } from './components/_attrs/external-attr';
 import { RWSPlugin, DefaultRWSPluginOptionsType } from './plugins/_plugin';
+import { IRWSPlugin, IStaticRWSPlugin } from './types/IRWSPlugin';
 import RWSClient, { RWSClientInstance } from './client';
 import { RWSPluginEntry } from './types/IRWSConfig';
 import IRWSUser from './types/IRWSUser';
@@ -32,6 +34,7 @@ export {
 
     RWSPlugin,
     RWSPluginEntry,
+    IRWSPlugin, IStaticRWSPlugin,
     DefaultRWSPluginOptionsType,
     
     NotifyUiType,
@@ -67,14 +70,15 @@ export {
     RWSView,
     sanitizedAttr,
     RWSIgnore,
-    RWSInject,
-    ngAttr,    
+    RWSInject,    
     observable,
+    externalObservable,
+    externalAttr,
     attr,
+    ngAttr,
     
     RWSService,
-    RWSViewComponent,   
-    provideRWSDesignSystem,
+    RWSViewComponent,       
     declareRWSComponents,
 
     RWSContainer

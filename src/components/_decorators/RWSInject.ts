@@ -1,7 +1,8 @@
-import { Key } from '@microsoft/fast-foundation';
+import { Key } from '../_container';
 import RWSViewComponent, { IWithCompose } from '../_component';
 import { loadDep, getFunctionParamNames } from './_di';
 import TheRWSService from '../../services/_service';
+import { handleExternalChange } from '../_attrs/_external_handler';
 
 
 type InjectDecoratorReturnType = (target: any, key?: string | number | undefined, parameterIndex?: number) => void;
@@ -24,7 +25,7 @@ function addToComponentInjection(targetComponentName: string, constructor: any, 
     if(!Object.keys(constructor._toInject).includes(depKey)){           
         const loadedDependency = loadDep<TheRWSService>(dependencyClass);
         constructor._toInject[depKey] = loadedDependency;
-    }
+    }    
 }
 
 function RWSInject<T extends RWSViewComponent>(dependencyClass: Key, defaultService: boolean = false): InjectDecoratorReturnType {
@@ -40,7 +41,7 @@ function RWSInject<T extends RWSViewComponent>(dependencyClass: Key, defaultServ
             const depKey = paramNames[parameterIndex];       
             
             addToComponentInjection(targetConstructor.name, targetConstructor, depKey, dependencyClass, defaultService);
-        }        
+        }                        
     };
 }
 

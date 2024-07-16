@@ -1,5 +1,5 @@
-import { ViewTemplate, ElementStyles, observable, html, Constructable, PartialFASTElementDefinition, attr } from '@microsoft/fast-element';
-import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, OverrideFoundationElementDefinition } from '@microsoft/fast-foundation';
+import { ViewTemplate, ElementStyles, observable, html, Constructable, PartialFASTElementDefinition, attr, Observable } from '@microsoft/fast-element';
+import { FoundationElement, FoundationElementDefinition, FoundationElementRegistry, OverrideFoundationElementDefinition } from '../../foundation/rws-foundation';
 import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
 import UtilsService, { UtilsServiceInstance } from '../services/UtilsService';
 import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMService';
@@ -8,8 +8,8 @@ import NotifyService, { NotifyServiceInstance } from '../services/NotifyService'
 import { IRWSViewComponent, IAssetShowOptions } from '../types/IRWSViewComponent';
 import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../types/RWSWindow';
 import { applyConstructor, RWSInject } from './_decorator';
-
-import 'reflect-metadata';
+import TheRWSService from '../services/_service';
+import { handleExternalChange } from './_attrs/_external_handler';
 
 interface IFastDefinition {
     name: string;
@@ -31,12 +31,15 @@ export interface IWithCompose<T extends RWSViewComponent> {
     compose: ComposeMethodType<FoundationElementDefinition, Constructable<T>>;
     define<TType extends (...params: any[]) => any>(type: TType, nameOrDef?: string | PartialFASTElementDefinition | undefined): TType;
     _verbose: boolean;
-    _toInject: {[key: string]: any};
+    _toInject: {[key: string]: TheRWSService};
     _depKeys: {[key: string]: string[]};
+    _externalAttrs: { [key:string]: string[] };
+    setExternalAttr: (componentName: string, key: string) => void
 }
 
 abstract class RWSViewComponent extends FoundationElement implements IRWSViewComponent {
     __isLoading: boolean = true;
+    __exAttrLoaded: string[] = [];
     private static instances: RWSViewComponent[] = [];
     static fileList: string[] = [];
 
@@ -44,8 +47,9 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
     static autoLoadFastElement = true;
     static _defined: { [key: string]: boolean } = {};
-    static _toInject: any[] = [];
+    static _toInject: {[key: string]: TheRWSService} = {};
     static _depKeys: {[key: string]: string[]} = {_all: []};
+    static _externalAttrs: { [key: string]: string[] } = {};
     static _verbose: boolean = false;
 
     @RWSInject(ConfigService, true) protected config: ConfigServiceInstance;    
@@ -61,34 +65,18 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
     constructor() {
         super();       
-        applyConstructor(this);
-        
+        applyConstructor(this);       
     }
 
     connectedCallback() {        
         super.connectedCallback();        
-        applyConstructor(this);
-     
-        // console.trace(this.config);
-        // console.log(this.routingService);
+        applyConstructor(this);    
+
         if (!(this.constructor as IWithCompose<this>).definition && (this.constructor as IWithCompose<this>).autoLoadFastElement) {
             throw new Error('RWS component is not named. Add `static definition = {name, template};`');
         }
 
-        try {
-            (this.constructor as IWithCompose<this>).fileList.forEach((file: string) => {
-                if (this.fileAssets[file]) {
-                    return;
-                }
-                this.apiService.pureGet(this.config.get('pubUrlFilePrefix') + file).then((response: string) => {
-                    this.fileAssets = { ...this.fileAssets, [file]: html`${response}` };
-                });
-            });
-
-        } catch (e: Error | any) {
-            console.error('Error loading file content:', e.message);
-            console.error(e.stack);
-        }
+        this.applyFileList();
 
         RWSViewComponent.instances.push(this);
     }
@@ -215,6 +203,32 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         this.$emit(eventName, event);
     }
 
+    private applyFileList(): void
+    {
+        try {
+            (this.constructor as IWithCompose<this>).fileList.forEach((file: string) => {
+                if (this.fileAssets[file]) {
+                    return;
+                }
+                this.apiService.pureGet(this.config.get('pubUrlFilePrefix') + file).then((response: string) => {
+                    this.fileAssets = { ...this.fileAssets, [file]: html`${response}` };
+                });
+            });
+
+        } catch (e: Error | any) {
+            console.error('Error loading file content:', e.message);
+            console.error(e.stack);
+        }
+    }   
+
+    static setExternalAttr(componentName: string, key: string)
+    {
+        if(!Object.keys(RWSViewComponent._externalAttrs).includes(componentName)){
+            RWSViewComponent._externalAttrs[componentName] = [];
+        }
+
+        RWSViewComponent._externalAttrs[componentName].push(key);
+    }
 
     static hotReplacedCallback() {
         this.getInstances().forEach(instance => instance.forceReload());

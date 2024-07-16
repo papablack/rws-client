@@ -1,7 +1,5 @@
-import { DI } from '@microsoft/fast-foundation';
+import {DI, Container, Key, Registration , InterfaceSymbol} from '@microsoft/fast-foundation';
 import {loadRWSRichWindow} from '../types/RWSWindow';
-
-import 'reflect-metadata';
 
 export default () => {
     const richWindow = loadRWSRichWindow();            
@@ -14,3 +12,5 @@ export default () => {
 
     return richWindow.RWS.container;
 };
+
+export { DI, Container, Key, Registration, InterfaceSymbol }

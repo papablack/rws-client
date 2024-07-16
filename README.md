@@ -8,6 +8,7 @@ Realtime Web Suit is a web-component powered, MS FAST powered fullstack-oriented
 2. [Getting Started](#getting-started)
 3. [Key Components: RWSClient & RoutingService](#key-components-rwsclient--routingservice)
 4. [Component Initialization](#component-initialization)
+4. [RWS Decorators](#rws-decorators)
 5. [DI](#dependency-injection)
 6. [Frontend routes](#frontend-routes)
 7. [Backend Imports](#backend-imports)
@@ -368,6 +369,8 @@ export default (partedMode: boolean = false) => {
 };
 ```
 
+## RWS Decorators
+
 **Component needs to extend RWSViewComponent and use @RWSView decorator**:
 
 ```typescript
@@ -379,12 +382,23 @@ const options?: RWSDecoratorOptions;
 class WebChat extends RWSViewComponent {
     @attr tagAttr: string; //HTML tag attr
     @ngAttr fromNgAttr: string; //HTML attr from angular template
+    @externalAttr fromExAttr: string; //HTML attr with change observation
     @sanitizedAttr htmlAttr: string; //HTML attr that's sanitized with every val change
     @observable someVar: any; //Var for templates/value change observation
+    @externalObservable someExVar: string; //Var for templates/value change observation with external watch
 }
 ```
 
-The decorator options type:
+**external decorators + @ngAttr fire externalChanged function after changes**
+
+```typescript
+externalChanged(name: string, oldValue: string | undefined, newValue: string): void
+{        
+    this.callApi();        
+}
+```
+
+The RWSView decorator options type:
 
 ```typescript
 interface RWSDecoratorOptions{
