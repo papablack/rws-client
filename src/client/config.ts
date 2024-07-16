@@ -94,9 +94,7 @@ async function setup(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
 
     if(this.config){
         this.config = deepmerge(this.config, config);
-    }
-
-    console.log(config, this.config.plugins)
+    }    
 
     this.appConfig.mergeConfig(this.config);    
 
@@ -135,8 +133,7 @@ async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
 
     await this.initCallback();        
 
-    for (const plugin of RWSPlugin.getAllPlugins()){
-        console.log('plugin', plugin)
+    for (const plugin of RWSPlugin.getAllPlugins()){        
         await plugin.onClientStart();
     }
 

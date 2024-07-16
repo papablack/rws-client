@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const { rwsPath, RWSConfigBuilder } = require('@rws-framework/console');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const TerserPlugin = require('terser-webpack-plugin');
@@ -26,7 +25,6 @@ const { _DEFAULT_CONFIG } = require('./cfg/_default.cfg');
 const { info } = require('console');
 
 const _MAIN_PACKAGE = rwsPath.findRootWorkspacePath(process.cwd());
-console.log(process.argv);
 const RWSWebpackWrapper = async (config) => {
   const BuildConfigurator = new RWSConfigBuilder(rwsPath.findPackageDir(process.cwd()) + '/.rws.json', {..._DEFAULT_CONFIG, ...config});
 

@@ -64,8 +64,7 @@ class RWSScssPlugin {
       const usesPath = match[1];
       const usesLine = match[0];
 
-      if(!uses.find((item) => { 
-        console.log(item);
+      if(!uses.find((item) => {         
         return item[0] == usesPath
       }) && !usesPath !== 'sass:math'){
         uses.push([usesPath, usesLine]);
@@ -361,8 +360,7 @@ class RWSScssPlugin {
 
     uses.forEach(scssUse => {
       const useLine = scssUse[1];
-      if(scssCode.indexOf(useLine) === -1){        
-        console.log(scssCode);      
+      if(scssCode.indexOf(useLine) === -1){                
         scssUses += useLine + '\n';
         scssCode = scssCode.replace(useLine + '\n', '');
       }else{
