@@ -200,6 +200,11 @@ class RWSClient {
     defineComponents(){
         ComponentHelperStatic.defineAllComponents();
     }
+
+    
+    logout(){
+        this.user = null;
+    }
 }
 
 export default DI.createInterface<RWSClient>(x => x.singleton(RWSClient));

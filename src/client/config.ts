@@ -8,13 +8,6 @@ import deepmerge from 'deepmerge';
 type RWSInfoType = { components: string[] };
 
 function getUser(this: RWSClientInstance): IRWSUser {
-
-    const localSaved = localStorage.getItem('the_rws_user');
-
-    if (localSaved) {
-        this.setUser(JSON.parse(localSaved) as IRWSUser);
-    }
-
     return this.user;
 }
 
@@ -27,8 +20,6 @@ function setUser(this: RWSClientInstance, user: IRWSUser): RWSClientInstance {
     this.user = user;
 
     this.apiService.setToken(this.user.jwt_token);
-
-    localStorage.setItem('the_rws_user', JSON.stringify(this.user));
 
     for(const plugin of RWSPlugin.getAllPlugins()){
         plugin.onSetUser(user);
@@ -98,6 +89,8 @@ async function setup(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
 
     this.appConfig.mergeConfig(this.config);    
 
+    console.log(this.config);
+
     if(this.config.plugins){                
         for (const pluginEntry of this.config.plugins){
             addPlugin.bind(this)(pluginEntry);
@@ -110,7 +103,11 @@ async function setup(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
         for (const plugin of RWSPlugin.getAllPlugins()){
             plugin.onPartedComponentsLoad(componentParts);
         }
-    }               
+    }        
+    
+    if(config?.user){
+        this.setUser(config.user);
+    }
 
     this.isSetup = true;
     return this.config;
@@ -127,13 +124,16 @@ async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
         this.appConfig.mergeConfig(this.config);
     }        
 
+    if(!this.user && config?.user){
+        this.setUser(config.user);
+    }
+
     if (this.config.user && !this.config.dontPushToSW) {
         this.pushUserToServiceWorker(this.user);
     }
 
     await this.initCallback();        
-
-    for (const plugin of RWSPlugin.getAllPlugins()){        
+    for (const plugin of RWSPlugin.getAllPlugins()){             
         await plugin.onClientStart();
     }
 
