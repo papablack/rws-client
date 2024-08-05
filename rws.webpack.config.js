@@ -222,7 +222,7 @@ const RWSWebpackWrapper = async (config) => {
             },
             output: {
               comments: false,
-              beautify: false,        
+              beautify: true,        
               ascii_only: true      
             },
           },        
