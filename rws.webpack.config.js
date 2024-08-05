@@ -216,13 +216,14 @@ const RWSWebpackWrapper = async (config) => {
           terserOptions: {
             keep_classnames: true, // Prevent mangling of class names
             mangle: false, //@error breaks FAST view stuff if enabled for all assets              
-            compress: !isDev ? {
+            compress: {
               dead_code: true,
               pure_funcs:  ['console.log', 'console.info', 'console.warn']
-            } : null,
+            },
             output: {
               comments: false,
-              beautify: isDev
+              beautify: false,        
+              ascii_only: true      
             },
           },        
           extractComments: false,

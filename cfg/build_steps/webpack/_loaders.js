@@ -1,7 +1,6 @@
 const path = require('path');
 
 function getRWSLoaders(packageDir, nodeModulesPath, tsConfigPath){
-  console.log(packageDir, nodeModulesPath, tsConfigPath);
 
   const scssLoader = packageDir + '/webpack/loaders/rws_fast_scss_loader.js';
   const tsLoader = packageDir + '/webpack/loaders/rws_fast_ts_loader.js';
