@@ -1,26 +1,22 @@
-const sass = require('sass');
-const fs = require('fs');
 const path = require('path');
-const { getTokenSourceMapRange } = require('typescript');
 const _tools = require('../_tools');
-const { rwsPath } = require('@rws-framework/console');
-const _COMPILE_DIR_NAME = 'compiled';
 
-const FONT_REGEX = /url\(['"]?(.+?\.(woff|woff2|eot|ttf|otf))['"]?\)/gm;
-const CSS_IMPORT_REGEX = /@import\s+['"]((?![^'"]*:[^'"]*).+?)['"];?/gm
-const SCSS_USE_REGEX = /@use\s+['"]?([^'"\s]+)['"]?;?/gm;
-const _DEV = true;
+const _scss_compiler_builder = require('./scss/_compiler');
+let _scss_compiler = null;
+const _scss_import_builder = require('./scss/_import');
+let _scss_import = null;
+const _scss_fs_builder = require('./scss/_fs');
+let _scss_fs = null;
 
-const log = (args) => {
-  if (_DEV) {
-    console.log(args);
-  }
-}
+
 class RWSScssPlugin {
   autoCompile = [];
 
   constructor(params) {
     this.node_modules_dir = (fileDir) => path.relative(fileDir, _tools.findRootWorkspacePath(process.cwd())) + '/node_modules/'
+    _scss_import = _scss_import_builder(this);    
+    _scss_fs = _scss_fs_builder(this);
+    _scss_compiler = _scss_compiler_builder(this);
 
     if (!params) {
       params = {};
@@ -36,366 +32,27 @@ class RWSScssPlugin {
     }
   }
 
-  extractScssImports(fileContent, importRootPath) {
-    let match;
-    const imports = [];
-
-    while ((match = CSS_IMPORT_REGEX.exec(fileContent)) !== null) {
-      const importPath = match[1];
-      const importLine = match[0];
-
-      if(fs.statSync(importRootPath).isFile()){        
-        importRootPath = path.dirname(importRootPath);
-      }      
-
-      const processedImportPath = this.processImportPath(importPath, importRootPath);
-
-      imports.push([processedImportPath, importLine, path.resolve(processedImportPath)]);
-    }
-
-    return [imports, fileContent];
-  }
-
-  extractScssUses(fileContent) {
-    let match;
-    const uses = [];
-
-    while ((match = SCSS_USE_REGEX.exec(fileContent)) !== null) {
-      const usesPath = match[1];
-      const usesLine = match[0];
-
-      if(!uses.find((item) => {         
-        return item[0] == usesPath
-      }) && !usesPath !== 'sass:math'){
-        uses.push([usesPath, usesLine]);
-      }      
-    }
-
-    // console.log(uses);
-
-    return [uses];
-  }
-
-  detectImports(code) {
-    return CSS_IMPORT_REGEX.test(code);
-  }
-
-  writeCssFile(scssFilePath, cssContent) {
-    const cssFilePath = scssFilePath.replace('.scss', '.css');
-    let endCssFilePath = cssFilePath.split('/');
-    let endCssDir = [...endCssFilePath];
-    endCssDir[endCssDir.length - 1] = `${_COMPILE_DIR_NAME}`;
-    endCssDir = endCssDir.join('/');
-
-    if (!fs.existsSync(endCssDir)) {
-      fs.mkdirSync(endCssDir);
-    }
-
-    endCssFilePath[endCssFilePath.length - 1] = `${_COMPILE_DIR_NAME}/` + endCssFilePath[endCssFilePath.length - 1];
-    endCssFilePath = endCssFilePath.join('/');
-
-    fs.writeFileSync(endCssFilePath, cssContent);
-    log('Saved CSS file: ' + endCssFilePath);
-  }
-
-  hasFontEmbeds(css) {
-    return FONT_REGEX.test()
-  }
-
-  embedFontsInCss(css, cssFilePath) {
-    let match;
-
-    while ((match = FONT_REGEX.exec(css)) !== null) {
-      const fontPath = match[1];
-      const absoluteFontPath = path.resolve(path.dirname(cssFilePath), fontPath);
-
-      if (fs.existsSync(absoluteFontPath)) {
-        const fontData = fs.readFileSync(absoluteFontPath);
-        const base64Font = fontData.toString('base64');
-        const fontMimeType = this.getFontMimeType(path.extname(absoluteFontPath));
-        const fontDataURL = `data:${fontMimeType};base64,${base64Font}`;
-
-        css = css.replace(new RegExp(match[0], 'g'), `url(${fontDataURL})`);
-      }
-    }
-
-    return css;
-  }
-
-  getFontMimeType(extension) {
-    switch (extension) {
-      case '.woff': return 'font/woff';
-      case '.woff2': return 'font/woff2';
-      case '.eot': return 'application/vnd.ms-fontobject';
-      case '.ttf': return 'font/ttf';
-      case '.otf': return 'font/otf';
-      default: return 'application/octet-stream';
-    }
-  }
-
+  
   apply(compiler) {
     const _self = this;
 
     return;
   }
 
-  readSCSSFilesFromDirectory(dirPath) {
-    let scssFiles = [];
+  async compileFile(scssPath) {    
+    scssPath = _scss_import.processImportPath(scssPath, path.dirname(scssPath))
 
-    try {
-      const files = fs.readdirSync(dirPath);
+    let scssCode = _scss_fs.getCodeFromFile(scssPath);
 
-      files.forEach(file => {
-        const filePath = path.join(dirPath, file);
-        const stat = fs.statSync(filePath);
-
-        if (stat.isFile() && path.extname(file) === '.scss') {
-          scssFiles.push(filePath);
-        } else if (stat.isDirectory()) {
-          scssFiles = scssFiles.concat(readSCSSFilesFromDirectory(filePath));
-        }
-      });
-    } catch (e) {
-      console.error(`Failed to read directory ${dirPath}:`, e);
-    }
-
-    return scssFiles;
-  };
-
-
-  getCodeFromFile(filePath) {
-    filePath = filePath.replace('//', '/');
-
-    if (!fs.existsSync(filePath)) {
-      const processedImportPath = this.processImportPath(filePath, path.dirname(filePath));      
-
-      if (!fs.existsSync(processedImportPath)) {
-        throw new Error(`SCSS loader: File path "${filePath}" was not found.`);
-      }
-
-      filePath = processedImportPath;
-    }
-
-    if (filePath[filePath.length - 1] === '/' && fs.statSync(filePath).isDirectory()) {
-      let collectedCode = '';
-
-      this.readSCSSFilesFromDirectory(filePath).forEach(scssPath => {
-        collectedCode += fs.readFileSync(scssPath, 'utf-8');
-      });
-
-      return collectedCode;
-    } else if (fs.statSync(filePath).isDirectory()) {
-      throw new Error(`Non-directory path (not ending with "/") "${filePath}" is and should not be a directory`)
-    }
-
-    return fs.readFileSync(filePath, 'utf-8');
+    return await _scss_compiler.compileScssCode(scssCode, path.dirname(scssPath));
   }
 
-  replaceWithNodeModules(input, fileDir = null, absolute = false, token = '~') {
-    return input.replace(token, absolute ? `${path.resolve(_tools.findRootWorkspacePath(process.cwd()), 'node_modules')}/` : this.node_modules_dir(fileDir ? fileDir : process.cwd()));
+  async compileScssCode(scssCode, scssPath){    
+    return await _scss_compiler.compileScssCode(scssCode, scssPath);
   }
 
-  async compileFile(scssPath) {
-    scssPath = this.processImportPath(scssPath, path.dirname(scssPath))
-
-    let scssCode = this.getCodeFromFile(scssPath);
-
-    return await this.compileScssCode(scssCode, path.dirname(scssPath));
-  }
-
-  processImports(imports, fileRootDir, importStorage = {}, sub = false) {
-    const importResults = [];
-
-    const getStorage = (sourceComponentPath, importedFileContent) => {
-      const sourceComponentPathFormatted = sourceComponentPath.replace('/', '_');
-
-      if (!(sourceComponentPathFormatted in importStorage)) {
-        importStorage[sourceComponentPathFormatted] = importedFileContent;
-
-        return importedFileContent;
-      }
-
-      return '';
-    }
-
-    imports.forEach(importData => {
-      const originalImportPath = importData[0];
-      let importPath = this.processImportPath(originalImportPath, fileRootDir);
-      let replacedScssContent = getStorage(importPath, this.getCodeFromFile(importPath).replace(/\/\*[\s\S]*?\*\//g, ''));
-      
-      const recursiveImports = this.extractScssImports(replacedScssContent, importPath)[0];
-
-      if (recursiveImports.length) {
-
-        replacedScssContent = this.replaceImports(this.processImports(recursiveImports, path.dirname(importPath), importStorage, true), replacedScssContent);
-      }
-
-      importResults.push({
-        line: importData[1],
-        code: replacedScssContent
-      });
-    });
-
-    return importResults;
-  }
-
-  replaceImports(processedImports, code) {
-    processedImports.forEach(importObj => {
-      code = code.replace(importObj.line, importObj.code);
-    });
-
-    return code;
-  }
-
-  convertFontToBase64(fontPath) {    
-    return fs.readFileSync(fontPath, { encoding: 'base64' });
-  }
-
-  replaceFontUrlWithBase64(cssContent) {    
-    const fontFaceRegex = /@font-face\s*\{[^}]*\}/g;
-    let fontFaces = [...cssContent.matchAll(fontFaceRegex)];
-
-     for(const fontFace of fontFaces){
-      const fontFaceContent = fontFace[0];
-        const urlRegex = /url\((['"]?)([^)'"]+)(\1)\)/g;
-        let match;
-        
-        let modifiedFontFaceContent = fontFaceContent;
-        
-        while ((match = urlRegex.exec(fontFaceContent)) !== null) {          
-          // Create a promise to convert each font to Base64 and replace in CSS
-          const base64 = this.convertFontToBase64(this.processImportPath(match[2], null, true));
-          const base64Font = `data:font/woff2;base64,${base64}`;          
-          
-          modifiedFontFaceContent = modifiedFontFaceContent.replace(match[2], base64Font);          
-        }
-
-        cssContent = cssContent.replace(fontFaceContent, modifiedFontFaceContent)
-    };
-      
-    return cssContent;
-  }
-
-  processImportPath(importPath, fileRootDir = null, noext = false) {
-    if (importPath.split('')[0] === '~') {
-      return this.fillSCSSExt(this.replaceWithNodeModules(importPath, null, true), noext);
-    }
-
-    if (importPath.indexOf('@rws-mixins') === 0) {
-      return path.resolve(rwsPath.findPackageDir(__dirname), 'src', 'styles', 'includes.scss');
-    }
-
-    if (importPath.indexOf('@cwd') === 0) {
-      return this.fillSCSSExt(process.cwd() + '/' + importPath.slice(4), noext);
-    }
-
-    if (importPath.split('')[0] === '/') {
-
-      return this.fillSCSSExt(importPath, noext);
-    }
-
-    if(fileRootDir){   
-      const relativized = path.resolve(fileRootDir) + '/' + importPath;
-
-      if (importPath.split('')[0] === '.') {
-        return this.fillSCSSExt(relativized, noext);
-      }
-
-      if (!fs.existsSync(relativized)) {
-        const partSplit = relativized.split('/');
-        partSplit[partSplit.length - 1] = '_' + partSplit[partSplit.length - 1] + '.scss';
-
-        const newPath = this.underscorePath(relativized);        
-
-        if (fs.existsSync(newPath)) {
-          return newPath;
-        }
-      }
-      return this.fillSCSSExt(relativized, noext);
-    }
-
-    return importPath;
-  }
-
-  underscorePath(path, noext = false) {
-    const partSplit = path.split('/');
-    partSplit[partSplit.length - 1] = '_' + partSplit[partSplit.length - 1] + (path.indexOf('.scss') > - 1  || noext ? '' : '.scss');
-    return partSplit.join('/');
-  }
-
-  fillSCSSExt(scssPath, noext = false) {
-    const underscoredPath = this.underscorePath(scssPath, noext);
-    if (!fs.existsSync(scssPath) && fs.existsSync(underscoredPath)) {
-      return underscoredPath;
-    }
-
-    if(noext){
-      return scssPath;
-    }
-
-    if ((!fs.existsSync(scssPath) || (fs.existsSync(scssPath) && fs.statSync(scssPath).isDirectory())) && fs.existsSync(`${scssPath}.scss`)) {
-      return `${scssPath}.scss`;
-    }
-
-    if (fs.existsSync(`_${scssPath}.scss`)) {
-      return `${scssPath}.scss`;
-    }  
-
-    return scssPath;
-  }
-
-  compileScssCode(scssCode, fileRootDir, createFile = false, filePath = null, minify = false) {
-    const _self = this;
-    const [scssImports] = this.extractScssImports(scssCode, fileRootDir);
-
-    const dependencies = scssImports.map((item) => item[2]);
-
-    if (scssImports && scssImports.length) {
-      scssCode = this.replaceImports(this.processImports(scssImports, fileRootDir), scssCode);
-    }
-
-    const uses = this.extractScssUses(scssCode)[0];
-    let scssUses = '';
-
-
-    uses.forEach(scssUse => {
-      const useLine = scssUse[1];
-      if(scssCode.indexOf(useLine) === -1){                
-        scssUses += useLine + '\n';
-        scssCode = scssCode.replace(useLine + '\n', '');
-      }else{
-        console.log('ommiting @use. detected in:', fileRootDir, scssUse)
-      }
-    });
-
-    scssCode = scssUses + scssCode;
-
-    try {
-      const result = sass.compileString(scssCode, { loadPaths: [fileRootDir]});
-
-      return { code: this.replaceFontUrlWithBase64(result.css.toString()), dependencies};
-    } catch (err) {
-      console.error('SASS Error in', fileRootDir);
-
-      console.error(err);
-      throw err;
-      return '';
-    };
-  }
-
-  checkForImporterType(_module, checkTypeExt) {
-    let importingFileExtension = '';
-
-    if (_module && _module.issuer && _module.issuer.resource) {
-      importingFileExtension = path.extname(_module.issuer.resource);
-      if (importingFileExtension === ('.' + checkTypeExt)) {
-        return true;
-      }
-    } else {
-      return false;
-    }
-
-    return false
+  writeCssFile(scssFilePath, cssContent){
+    return _scss_fs.writeCssFile(scssFilePath, cssContent);
   }
 }
 

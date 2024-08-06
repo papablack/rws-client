@@ -5,10 +5,10 @@ const webpack = require('webpack');
 const { rwsPath, RWSConfigBuilder } = require('@rws-framework/console');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { ESBuildPlugin } = require('esbuild-loader');
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const TerserPlugin = require('terser-webpack-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+
 
 const RWSAfterPlugin = require('./webpack/rws_after_plugin');
 
@@ -19,6 +19,7 @@ const tools = require('./_tools');
 const buildInfo = require('./cfg/build_steps/webpack/_info');
 const { loadAliases } = require('./cfg/build_steps/webpack/_aliases');
 const { getRWSLoaders } = require('./cfg/build_steps/webpack/_loaders');
+const { getRWSProductionSetup } = require('./cfg/build_steps/webpack/_production');
 const { rwsExternals } = require('./cfg/build_steps/webpack/_rws_externals');
 
 const { _DEFAULT_CONFIG } = require('./cfg/_default.cfg');
@@ -79,7 +80,11 @@ const RWSWebpackWrapper = async (config) => {
     new webpack.IgnorePlugin({
       resourceRegExp: /.*\.es6\.js$/,
       contextRegExp: /node_modules/
-    })
+    }),
+    // new ESBuildPlugin({
+    //   'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
+    //   'process.env._RWS_BUILD_OVERRIDE': JSON.stringify(BuildConfigurator.exportBuildConfig())
+    // })
   ];
 
   const WEBPACK_AFTER_ACTIONS = config.actions || [];
@@ -208,35 +213,9 @@ const RWSWebpackWrapper = async (config) => {
       optimConfig = {};
     }
 
-    optimConfig = {
-      ...optimConfig,
-      minimize: true,
-      minimizer: [
-        new TerserPlugin({
-          terserOptions: {
-            keep_classnames: true, // Prevent mangling of class names
-            mangle: false, //@error breaks FAST view stuff if enabled for all assets              
-            compress: {
-              dead_code: true,
-              pure_funcs:  ['console.log', 'console.info', 'console.warn']
-            },
-            output: {
-              comments: false,
-              beautify: isDev
-            },
-          },        
-          extractComments: false,
-          parallel: true,
-        }),
-        new CssMinimizerPlugin({
-          minimizerOptions: {
-            preset: ['default', {
-              discardComments: { removeAll: false },
-            }],
-          },
-        })      
-      ]
-    };
+    optimConfig = getRWSProductionSetup(optimConfig, tsConfigPath);
+
+    // WEBPACK_PLUGINS.push(new ESBuildPlugin());
   }
 
   const devExternalsVars = {

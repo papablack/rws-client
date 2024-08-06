@@ -2,18 +2,18 @@ const path = require('path');
 const fs = require('fs');
 const RWSScssPlugin = require('../rws_scss_plugin');
 
-module.exports = function(content) {      
+module.exports = async function(content) {      
     const filePath = this.resourcePath;
     const componentDir = path.resolve(path.dirname(filePath), '..');
     const componentPath = path.resolve(componentDir, 'component.ts');
     const isDev = this._compiler.options.mode === 'development';    
     const saveFile = content.indexOf('@save') > -1; 
     const plugin = new RWSScssPlugin(); 
-    let fromTs = false;
+    let fromTs = false;    
 
     if(saveFile){
         try {
-            const codeData = plugin.compileScssCode(content, path.dirname(filePath), null, filePath, !isDev);        
+            const codeData = await plugin.compileScssCode(content, path.dirname(filePath), null, filePath, !isDev);                    
 
             const code = codeData.code;
             const deps = codeData.dependencies;        

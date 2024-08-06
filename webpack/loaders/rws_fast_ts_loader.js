@@ -82,10 +82,10 @@ module.exports = async function(content) {
 
             if(fs.existsSync(path.dirname(filePath) + '/styles')){
                 const scsscontent = fs.readFileSync(path.dirname(filePath) + '/' + stylesPath, 'utf-8');
-                const codeData = plugin.compileScssCode(scsscontent, path.dirname(filePath) + '/styles', null, filePath, !isDev);        
+                const codeData = await plugin.compileScssCode(scsscontent, path.dirname(filePath) + '/styles', null, filePath, !isDev);        
                 const cssCode = codeData.code;
            
-                styles = `import './${stylesPath}';\n`;     
+                styles = isDev ? `import './${stylesPath}';\n` : '';     
                 if(!templateExists){
                     styles += `import { css } from '@microsoft/fast-element';\n`;     
                 }       

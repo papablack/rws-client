@@ -10,12 +10,8 @@ import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../ty
 import { applyConstructor, RWSInject } from './_decorator';
 import TheRWSService from '../services/_service';
 import { handleExternalChange } from './_attrs/_external_handler';
-
-interface IFastDefinition {
-    name: string;
-    template: ViewTemplate;
-    styles?: ElementStyles;
-} 
+import { IFastDefinition, isDefined, defineComponent, getDefinition } from './_definitions';
+import { on, $emitDown, observe } from './_event_handling';
 
 type ComposeMethodType<
     T extends FoundationElementDefinition, 
@@ -79,27 +75,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
         this.applyFileList();
 
         RWSViewComponent.instances.push(this);
-    }
-
-    observe(callback: (component: this, node: Node, observer: MutationObserver) => Promise<void>, condition: (component: this, node: Node) => boolean = null, observeRemoved: boolean = false)
-    {
-        const observer = new MutationObserver((mutationsList, observer) => {
-            for(const mutation of mutationsList) {
-                if (mutation.type === 'childList') {
-                    const mutationObserveType: NodeList = observeRemoved ? mutation.removedNodes : mutation.addedNodes;
-                    mutationObserveType.forEach(node => {                    
-                        if ((condition !== null && condition(this, node))) {
-                            callback(this, node, observer);
-                        }else if(condition === null){
-                            callback(this, node, observer);
-                        }                    
-                    });
-                }
-            }
-        });
-        
-        observer.observe(this.getShadowRoot(), { childList: true, subtree: true });
-    }
+    }    
 
     passRouteParams(routeParams: Record<string, string> = null) {
         if (routeParams) {
@@ -118,16 +94,16 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     }
 
     on<T>(type: string, listener: (event: CustomEvent<T>) => any) {
-        this.addEventListener(type, (baseEvent: Event) => {
-            listener(baseEvent as CustomEvent<T>);
-        });
+        return on.bind(this)(type, listener);
     }
 
     $emitDown<T>(eventName: string, payload: T) {
-        this.$emit(eventName, payload, {
-            bubbles: true,
-            composed: true
-        });
+        return $emitDown.bind(this)(eventName, payload);
+    }
+
+    observe(callback: (component: RWSViewComponent, node: Node, observer: MutationObserver) => Promise<void>, condition: (component: RWSViewComponent, node: Node) => boolean = null, observeRemoved: boolean = false)
+    {
+        return observe.bind(this)(callback, condition, observeRemoved);
     }
 
     parse$<T extends Element>(input: NodeListOf<T>, directReturn: boolean = false): DOMOutputType<T> {
@@ -236,58 +212,17 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
     static isDefined<T extends RWSViewComponent>(this: IWithCompose<T>): boolean 
     {
-        const richWindow: RWSWindow = loadRWSRichWindow();
-
-        if(!this.definition){
-            return false;
-        }
-
-        return Object.keys(richWindow.RWS.components).includes(this.definition.name);
+        return isDefined<T>(this);
     }
 
     static defineComponent<T extends RWSViewComponent>(this: IWithCompose<T>): void
     {
-        if(this.isDefined()){
-            if(this._verbose){
-                console.warn(`Component ${this.name} is already declared`);
-            }            
-            
-            return;
-        }
-
-        const richWindow = loadRWSRichWindow();        
-
-        if (!this.definition) {
-            throw new Error('RWS component is not named. Add `static definition = {name, template};`');
-        }
-
-        const composedComp = this.compose({
-            baseName: this.definition.name,
-            template: this.definition.template,
-            styles: this.definition.styles
-        }) as RWSWindowComponentInterface;
-
-        if (!richWindow.RWS) {
-            throw new Error('RWS client not initialized');
-        }
-
-        richWindow.RWS.components[this.definition.name] = {
-            interface: composedComp,
-            component: this
-        };        
+        return defineComponent<T>(this);
     }
 
-    static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null) {
-        const def: IFastDefinition = {
-            name: tagName,
-            template: htmlTemplate
-        };
-
-        if (styles) {
-            def.styles = styles;
-        }
-
-        return def;
+    static getDefinition(tagName: string, htmlTemplate: ViewTemplate, styles: ElementStyles = null) 
+    {
+        return getDefinition(tagName, htmlTemplate, styles);
     }
 
     private static getInstances(): RWSViewComponent[] {
