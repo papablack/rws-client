@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const { rwsPath, RWSConfigBuilder } = require('@rws-framework/console');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { ESBuildPlugin } = require('esbuild-loader');
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
