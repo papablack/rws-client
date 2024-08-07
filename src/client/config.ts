@@ -122,17 +122,20 @@ async function setup(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
 
 async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<RWSClientInstance> {
     this.config = { ...this.config, ...config };
-
+    
     if (!this.isSetup) {
         this.config = await this.setup(this.config);
     }
 
     if (Object.keys(config).length) {
         this.appConfig.mergeConfig(this.config);
-    }        
+    }            
 
-    if(!this.user && config?.user){
-        this.setUser(config.user);
+    const setThisUser = config?.user || this.getUser();
+
+    if(setThisUser){
+        this.config.user = setThisUser;
+        this.setUser(setThisUser);
     }
 
     if (this.config.user && !this.config.dontPushToSW) {
@@ -141,7 +144,7 @@ async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
 
     await this.initCallback();        
 
-    for (const plugin of RWSPlugin.getAllPlugins()){        
+    for (const plugin of RWSPlugin.getAllPlugins()){                
         await plugin.onClientStart();
     }
 
