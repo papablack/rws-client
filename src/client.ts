@@ -204,6 +204,7 @@ class RWSClient {
     
     logout(){
         this.user = null;
+        localStorage.removeItem('the_rws_user');
     }
 }
 

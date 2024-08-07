@@ -104,6 +104,10 @@ async function setup(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
         }
     }
 
+    if(config?.user){
+        this.setUser(config.user);
+    }
+
     if (this.appConfig.get('parted')) {
         const componentParts = await this.loadPartedComponents();
 
@@ -126,6 +130,10 @@ async function start(this: RWSClientInstance, config: IRWSConfig = {}): Promise<
     if (Object.keys(config).length) {
         this.appConfig.mergeConfig(this.config);
     }        
+
+    if(!this.user && config?.user){
+        this.setUser(config.user);
+    }
 
     if (this.config.user && !this.config.dontPushToSW) {
         this.pushUserToServiceWorker(this.user);
