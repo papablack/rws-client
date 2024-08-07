@@ -110,6 +110,7 @@ class RWSClient {
 
     setBackendRoutes(routes: IBackendRoute[]): RWSClient {
         this.config.backendRoutes = routes;
+        this.appConfig.set('backendRoutes', routes);
         return this;
     }
 
