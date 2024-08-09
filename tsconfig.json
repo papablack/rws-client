@@ -22,7 +22,7 @@
       "@rws-framework/foundation": ["foundation"]
     },   
     "include": [
-      "src",             
+      "src/index.ts",             
       "types/docs-typings.d.ts"      
     ],
     "exclude": [

@@ -35,7 +35,7 @@ function setupTsConfig(tsConfigPath, executionDir) {
             tsConfig['include'] = [];
         } else {
             tsConfig['include'] = tsConfig['include'].filter((inc) => {
-                 if(inc === 'src'){
+                 if(inc === 'src/index.ts'){
                     return true;
                  }
 
@@ -44,9 +44,9 @@ function setupTsConfig(tsConfigPath, executionDir) {
         }    
         
         
-        if (!tsConfig['include'].includes('src')) {
+        if (!tsConfig['include'].includes('src/index.ts')) {
             console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS project typescript code to project tsconfig.json');
-            tsConfig['include'].unshift('src');
+            tsConfig['include'].unshift('src/index.ts');
             changed = true;
         }  
 

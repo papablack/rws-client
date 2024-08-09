@@ -80,10 +80,6 @@ const RWSWebpackWrapper = async (config) => {
       resourceRegExp: /.*\.es6\.js$/,
       contextRegExp: /node_modules/
     }),
-    // new ESBuildPlugin({
-    //   'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
-    //   'process.env._RWS_BUILD_OVERRIDE': JSON.stringify(BuildConfigurator.exportBuildConfig())
-    // })
   ];
 
   const WEBPACK_AFTER_ACTIONS = config.actions || [];

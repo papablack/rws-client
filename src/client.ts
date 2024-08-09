@@ -110,6 +110,7 @@ class RWSClient {
 
     setBackendRoutes(routes: IBackendRoute[]): RWSClient {
         this.config.backendRoutes = routes;
+        this.appConfig.set('backendRoutes', routes);
         return this;
     }
 
@@ -204,6 +205,7 @@ class RWSClient {
     
     logout(){
         this.user = null;
+        localStorage.removeItem('the_rws_user');
     }
 }
 
