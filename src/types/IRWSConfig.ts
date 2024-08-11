@@ -21,7 +21,8 @@ export default interface IRWSConfig {
     pubUrlFilePrefix?: string
     partedDirUrlPrefix?: string
     dontPushToSW?: boolean
-    parted?: boolean
+    parted?: boolean,
+    rwsDefines?: {[key: string]: any}
     partedFileDir?: string
     partedPrefix?: string
     plugins?: IStaticRWSPlugin[]

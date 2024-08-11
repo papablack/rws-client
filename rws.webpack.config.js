@@ -70,11 +70,19 @@ const RWSWebpackWrapper = async (config) => {
 
   //AFTER OPTION DEFINITIONS
 
+  let _rws_defines = {
+    'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
+    'process.env._RWS_BUILD_OVERRIDE': JSON.stringify(BuildConfigurator.exportBuildConfig())
+  }
+
+  const rwsDefines = BuildConfigurator.get('rwsDefines') || config.rwsDefines || null;
+
+  if(rwsDefines){
+    _rws_defines = {..._rws_defines, ...rwsDefines}
+  }
+
   let WEBPACK_PLUGINS = [
-    new webpack.DefinePlugin({
-      'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
-      'process.env._RWS_BUILD_OVERRIDE': JSON.stringify(BuildConfigurator.exportBuildConfig())
-    }),
+    new webpack.DefinePlugin(_rws_defines),
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/),
     new webpack.IgnorePlugin({
       resourceRegExp: /.*\.es6\.js$/,
