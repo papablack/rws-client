@@ -6,6 +6,7 @@ export type IFrontRoutes = Record<string, unknown>;
 export type RWSPluginEntry<T extends DefaultRWSPluginOptionsType = DefaultRWSPluginOptionsType> = new (...args: any[]) => RWSPlugin<T>;
 
 export default interface IRWSConfig {
+    [custom_config_key: string]: unknown
     dev?: boolean
     defaultLayout?: typeof RWSViewComponent
     backendUrl?: string
@@ -24,6 +25,7 @@ export default interface IRWSConfig {
     partedFileDir?: string
     partedPrefix?: string
     plugins?: IStaticRWSPlugin[]
+    rwsDefines?: {[key: string]: string}
     routing_enabled?: boolean
     _noLoad?: boolean    
 }

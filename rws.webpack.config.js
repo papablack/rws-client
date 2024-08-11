@@ -54,6 +54,19 @@ const RWSWebpackWrapper = async (config) => {
   const devDebug = isDev ? (BuildConfigurator.get('devDebug') || config.devDebug || { build: false }) : null;
   const devRouteProxy = BuildConfigurator.get('devRouteProxy') || config.devRouteProxy;
 
+  let _rws_defines = {
+    'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
+    'process.env._RWS_BUILD_OVERRIDE': JSON.stringify(BuildConfigurator.exportBuildConfig())
+  }
+
+  const rwsDefines = BuildConfigurator.get('rwsDefines') || config.rwsDefines || null;
+
+  if(rwsDefines){
+    _rws_defines = {..._rws_defines, ...rwsDefines};
+  }
+
+  console.log(_rws_defines);
+
   const tsConfigPath = rwsPath.relativize(BuildConfigurator.get('tsConfigPath') || config.tsConfigPath, executionDir);
   const rwsPlugins = {};
 
@@ -71,10 +84,7 @@ const RWSWebpackWrapper = async (config) => {
   //AFTER OPTION DEFINITIONS
 
   let WEBPACK_PLUGINS = [
-    new webpack.DefinePlugin({
-      'process.env._RWS_DEFAULTS': JSON.stringify(BuildConfigurator.exportDefaultConfig()),
-      'process.env._RWS_BUILD_OVERRIDE': JSON.stringify(BuildConfigurator.exportBuildConfig())
-    }),
+    new webpack.DefinePlugin(_rws_defines),
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/),
     new webpack.IgnorePlugin({
       resourceRegExp: /.*\.es6\.js$/,
