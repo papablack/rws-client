@@ -6,6 +6,7 @@ export type IFrontRoutes = Record<string, unknown>;
 export type RWSPluginEntry<T extends DefaultRWSPluginOptionsType = DefaultRWSPluginOptionsType> = new (...args: any[]) => RWSPlugin<T>;
 
 export default interface IRWSConfig {
+    [key: string]: any
     dev?: boolean
     defaultLayout?: typeof RWSViewComponent
     backendUrl?: string
