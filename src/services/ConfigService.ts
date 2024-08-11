@@ -29,9 +29,9 @@ class ConfigService extends TheService {
         }        
 
         
-        const isInDefaults: boolean = Object.keys(this._DEFAULTS).includes(key);
-        const isInData: boolean = Object.keys(this.data).includes(key);
-        const isInBuildVars: boolean = Object.keys(this._BUILD_OVERRIDE).includes(key);
+        const isInDefaults: boolean = Object.keys(this._DEFAULTS).includes(key as string);
+        const isInData: boolean = Object.keys(this.data).includes(key as string);
+        const isInBuildVars: boolean = Object.keys(this._BUILD_OVERRIDE).includes(key as string);
 
         let isDev = false;
 
@@ -50,7 +50,7 @@ class ConfigService extends TheService {
                 defaultVal = this.data[((defaultVal as string).slice(1)) as keyof IRWSConfig];
             }
 
-            if(isInBuildVars && Object.keys(this._BUILD_OVERRIDE).includes(key)){
+            if(isInBuildVars && Object.keys(this._BUILD_OVERRIDE).includes(key as string)){
                 if(isDev){
                     console.warn(`.rws.json override [${key}]:`), this._BUILD_OVERRIDE[key];
                 }
