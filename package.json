@@ -38,7 +38,7 @@
         "moment": "^2.29.4",
         "node-sass": "^7.0.3",
         "partial-json-parser": "^1.0.0",
-        "reflect-metadata": "^0.1.13",
+        "reflect-metadata": "^0.2.2",
         "resolve-url-loader": "^5.0.0",
         "sanitize-html": "^2.12.1",
         "sass": "1.69.7",
