@@ -43,6 +43,8 @@ export function defineComponent<T extends RWSViewComponent>(element: IWithCompos
         throw new Error('RWS client not initialized');
     }
 
+    element.sendEventToOutside<string>(element._EVENTS.component_define, element.definition.name);
+
     richWindow.RWS.components[element.definition.name] = {
         interface: composedComp,
         component: element

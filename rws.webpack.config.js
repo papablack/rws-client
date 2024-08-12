@@ -138,7 +138,18 @@ const RWSWebpackWrapper = async (config) => {
 
   const rwsInfoJson = outputDir + '/rws_info.json'
   const automatedEntries = {};
-  const automatedChunks = {};
+  let automatedChunks = {
+    client: config.entry,
+  };
+
+  // if(isParted){ 
+  //   automatedChunks = {
+  //     index:  config.entry,
+  //     client: __dirname + '/src/client.ts',
+  //   };   
+
+  //   console.log({index: automatedChunks.client})
+  // }
 
   const foundRWSUserClasses = tools.findComponentFilesWithText(executionDir, '@RWSView', ['dist', 'node_modules', '@rws-framework/client']);
   const foundRWSClientClasses = tools.findComponentFilesWithText(__dirname, '@RWSView', ['dist', 'node_modules']);
@@ -166,39 +177,13 @@ const RWSWebpackWrapper = async (config) => {
   });
 
   if (isParted) {
-    WEBPACK_PLUGINS.push(new webpack.BannerPlugin(tools.getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix)));
+    // WEBPACK_PLUGINS.push(new webpack.BannerPlugin(tools.getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix, isDev)));
 
     for (const pluginKey of Object.keys(rwsPlugins)){
       const plugin = rwsPlugins[pluginKey];
       partedComponentsLocations = await plugin.onComponentsLocated(partedComponentsLocations);
     }
     
-    optimConfig = { splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: (module) => {
-            let importString = module.identifier();
-
-            if (importString.split('!').length > 2) {
-              importString = importString.split('!')[2];
-            }
-
-            const inNodeModules = importString.indexOf('node_modules') > -1;
-            const inVendorPackage = importString.indexOf(__dirname) > -1;
-
-            const inExecDir = importString.indexOf(executionDir) > -1;
-            const isNoPartedComponent = !Object.keys(automatedEntries).find(key => importString.indexOf(path.resolve(path.dirname(automatedEntries[key]))) > -1);
-
-            let isAvailableForVendors = (inNodeModules || inVendorPackage) && isNoPartedComponent;
-
-
-            return isAvailableForVendors;
-          },
-          name: 'vendors',
-          chunks: 'all',
-        }
-      }
-    } };
   }
 
   fs.writeFileSync(rwsInfoJson, JSON.stringify({ components: Object.keys(automatedEntries) }, null, 2));
@@ -237,11 +222,11 @@ const RWSWebpackWrapper = async (config) => {
     WEBPACK_AFTER_ACTIONS.push({
       type: 'custom',
       actionHandler: () => {        
-        fs.writeFileSync(path.join(debugDir, 'ignored.json'), JSON.stringify(devExternalsVars.ignored, null, 2));
-        fs.writeFileSync(path.join(debugDir, 'packed.json'), JSON.stringify(devExternalsVars.packed, null, 2));
+        fs.writeFileSync(path.join(debugDir, 'in_vendors.json'), JSON.stringify(devExternalsVars.ignored, null, 2));
+        fs.writeFileSync(path.join(debugDir, 'rws_processed.json'), JSON.stringify(devExternalsVars.packed, null, 2));
         fs.writeFileSync(path.join(debugDir, 'requestcache.json'), JSON.stringify(devExternalsVars.frontendRequestContextCache, null, 2));
 
-        console.log(chalk.yellow('[RWS BUILD] (after)'), `saved in: ${debugDir}/(ignored/packed/requestcache).json`);
+        console.log(chalk.yellow('[RWS BUILD] (after)'), `packaging debug saved in: ${debugDir}`);
       }
     });
   }
@@ -250,11 +235,12 @@ const RWSWebpackWrapper = async (config) => {
     WEBPACK_PLUGINS.push(new RWSAfterPlugin({ actions: WEBPACK_AFTER_ACTIONS, dev: isDev }));
   }
 
+  console.log('Webpack building with entrypoints:', Object.keys(automatedChunks));
+
 
   let cfgExport = {  
     context: executionDir,  
-    entry: {
-      client: config.entry,
+    entry: {      
       ...automatedChunks
     },
     mode: isDev ? 'development' : 'production',
@@ -276,7 +262,7 @@ const RWSWebpackWrapper = async (config) => {
       rules: getRWSLoaders(__dirname, path.resolve(config.packageDir, 'node_modules'), tsConfigPath),
     },
     plugins: WEBPACK_PLUGINS,    
-    externals: rwsExternals(executionDir, modules_setup, {
+    externals: rwsExternals(executionDir, modules_setup, automatedChunks, {
       _vars: devExternalsVars
     })
   }

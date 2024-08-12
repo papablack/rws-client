@@ -32,3 +32,10 @@ export function observe(this: RWSViewComponent, callback: (component: RWSViewCom
     
     observer.observe(this.getShadowRoot(), { childList: true, subtree: true });
 }
+
+export function sendEventToOutside<T>(eventName: string, data: T): void
+{
+    document.dispatchEvent(new CustomEvent<T>(eventName, {
+        detail: data,
+    }));
+}

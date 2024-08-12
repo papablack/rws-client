@@ -12,7 +12,7 @@ const _defaultOpts = {
   }
 }
 
-const externals = (declaredCodeBase, nodeModules, externalOptions = _defaultOpts) => ({context, request}, callback) => {
+const externals = (declaredCodeBase, nodeModules, automatedChunks, externalOptions = _defaultOpts) => ({context, request}, callback) => {
     let theOptions = _defaultOpts;
 
     if(externalOptions !== null){      
@@ -36,11 +36,13 @@ const externals = (declaredCodeBase, nodeModules, externalOptions = _defaultOpts
 
     const frontendDirs = [
       codeBase,
-      __dirname
-    ];    
+      path.resolve(__dirname,'..','..','..')
+    ];        
 
     const inFrontendContext = frontendDirs.some(dir => context.startsWith(dir)) || 
-        externalOptions._vars.frontendRequestContextCache.some(package => context.indexOf(package.request) > -1);
+        externalOptions._vars.frontendRequestContextCache.some(package => context.indexOf(package.request) > -1)
+    
+        ;
 
     const patternInContextOrRequest = pattern => pattern.test(request) || pattern.test(context);
 
@@ -53,13 +55,14 @@ const externals = (declaredCodeBase, nodeModules, externalOptions = _defaultOpts
       }
 
       externalOptions._vars.frontendRequestContextCache.push({request, context});
-
-      //merging to output
+      
+      //handled as RWS async dependency
       return callback();
     }
     
     externalOptions._vars.ignored.push({request, context});
-    //using require from node_modules
+
+    //using require from vendors
     callback(null, false);
   }
 

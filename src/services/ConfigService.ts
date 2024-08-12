@@ -1,6 +1,7 @@
 import TheService from './_service';
 import IRWSConfig from '../types/IRWSConfig';
 import { RWSFillBuild } from '../components/_decorators/RWSFillBuild';
+import { sendEventToOutside } from '../components/_event_handling';
 
 
 
@@ -85,11 +86,9 @@ class ConfigService extends TheService {
             return;
         }
 
-        __SENT_TO_COMPONENTS.push(tagName);
+        __SENT_TO_COMPONENTS.push(tagName); 
 
-        document.dispatchEvent(new CustomEvent<{tagName: string}>('rws_cfg_call', {
-            detail: {tagName},
-        }));
+        sendEventToOutside<{tagName: string}>('rws_cfg_call', {tagName})
 
         return new Promise((resolve) => {
             const tick = () => {

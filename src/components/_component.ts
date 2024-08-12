@@ -11,7 +11,7 @@ import { applyConstructor, RWSInject } from './_decorator';
 import TheRWSService from '../services/_service';
 import { handleExternalChange } from './_attrs/_external_handler';
 import { IFastDefinition, isDefined, defineComponent, getDefinition } from './_definitions';
-import { on, $emitDown, observe } from './_event_handling';
+import { on, $emitDown, observe, sendEventToOutside } from './_event_handling';
 
 type ComposeMethodType<
     T extends FoundationElementDefinition, 
@@ -31,6 +31,11 @@ export interface IWithCompose<T extends RWSViewComponent> {
     _depKeys: {[key: string]: string[]};
     _externalAttrs: { [key:string]: string[] };
     setExternalAttr: (componentName: string, key: string) => void
+    sendEventToOutside: <T>(eventName: string, data: T) => void
+    _EVENTS: {
+        component_define: string,
+        component_parted_load: string,
+    }
 }
 
 abstract class RWSViewComponent extends FoundationElement implements IRWSViewComponent {
@@ -47,6 +52,11 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     static _depKeys: {[key: string]: string[]} = {_all: []};
     static _externalAttrs: { [key: string]: string[] } = {};
     static _verbose: boolean = false;
+
+    static _EVENTS = {
+        component_define: 'rws:lifecycle:defineComponent',
+        component_parted_load: 'rws:lifecycle:loadPartedComponents',
+    }
 
     @RWSInject(ConfigService, true) protected config: ConfigServiceInstance;    
     @RWSInject(DOMService, true) protected domService: DOMServiceInstance;
@@ -170,13 +180,11 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     }
 
     sendEventToOutside<T>(eventName: string, data: T) {
-        const event = new CustomEvent<T>(eventName, {
-            detail: data,
-            bubbles: true,
-            composed: true
-        });
+        sendEventToOutside(eventName, data);
+    }
 
-        this.$emit(eventName, event);
+    static sendEventToOutside<T>(eventName: string, data: T) {
+        sendEventToOutside(eventName, data);
     }
 
     private applyFileList(): void

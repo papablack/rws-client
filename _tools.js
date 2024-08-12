@@ -337,16 +337,37 @@ function getAllFilesInFolder(folderPath, ignoreFilenames = [], recursive = false
   return files;
 }
 
-function getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix) {
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+function printAddJs(scriptFileName, partedDirUrlPrefix, partedPrefix, onload = ''){
+  const sriptVarName = 'script' + getRndInteger(0, 1000);
+  return `  
+    const ${sriptVarName} = document.createElement('script');
+    ${sriptVarName}.src = '${partedDirUrlPrefix}/${partedPrefix}.${scriptFileName}.js';        
+    ${sriptVarName}.type = 'text/javascript';    
+
+    document.body.appendChild(${sriptVarName});
+
+    ${onload}     
+  `
+}
+
+function getPartedModeVendorsBannerParams(partedDirUrlPrefix, partedPrefix, isDev = true) {
+  let code = `if(!window.RWS_PARTS_LOADED){
+    ${printAddJs('vendors', partedDirUrlPrefix, partedPrefix, `
+      window.RWS_PARTS_LOADED = true;
+      console.log('\x1b[1m[RWS]\x1b[0m', 'vendors injected for parted mode');       
+    `)}
+  }`;
+
+  if(!isDev){
+    code = code.replace(/\n\s+/g, '');
+  }
+
   return {
-    banner: `if(!window.RWS_PARTS_LOADED){
-            const script = document.createElement('script');
-            script.src = '${partedDirUrlPrefix}/${partedPrefix}.vendors.js';        
-            script.type = 'text/javascript';
-            document.body.appendChild(script);
-            window.RWS_PARTS_LOADED = true;
-            console.log('\x1b[1m[RWS]\x1b[0m', 'vendors injected for parted mode');
-          }`.replace('\n', ''),
+    banner: code,
     raw: true,
     entryOnly: true,
     include: `${partedPrefix}.client.js`
