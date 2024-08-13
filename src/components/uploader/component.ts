@@ -3,19 +3,23 @@ import { RWSView, RWSViewComponent, observable, attr } from '../../index';
 @RWSView('rws-uploader')
 class RWSUploader extends RWSViewComponent {
 
-  @observable uploadProgress: number = 0;
+  @observable uploadProgress: number;
 
   @observable uploadedFile: File;
   @observable chosenFile: File;
   @observable uploadParams: any;
 
   @attr onFinish: (uploadResponse: any) => void;
-  @attr onStart: (chosenFile: File, context: any) => void = (chosenFile: File) => null;
+  @attr onStart: (chosenFile: File, context: any) => Promise<unknown> = async (chosenFile: File) => chosenFile;
   @attr onProgress: (progress: number) => void = (progress: number) => null;
 
 
   async onUploadStart(): Promise<void>
   {    
+        if(!this.uploadProgress){
+            this.uploadProgress = 0;
+        }
+
       const response = await this.onStart(this.chosenFile, this);
    
       if(response === null){
@@ -71,7 +75,7 @@ class RWSUploader extends RWSViewComponent {
 
   uploadProgressChanged(oldV: any, newV: any)
   {
-    console.log('chng', this.uploadProgress);
+    
   }
 }
 

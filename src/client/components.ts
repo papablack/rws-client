@@ -13,13 +13,9 @@ async function loadPartedComponents(this: RWSClientInstance): Promise<RWSInfoTyp
         const loadedComponents = [];
 
         document.addEventListener(RWSViewComponent._EVENTS.component_define, (event: Event) => {
-            const customEvent = event as CustomEvent<string>;
+            const customEvent = event as CustomEvent<string>;            
 
-            console.log('defined', customEvent.detail);
-
-            loadedComponents.push(customEvent.detail);
-
-            console.log(loadedComponents.length, componentParts.components.length);
+            loadedComponents.push(customEvent.detail);                           
         });
 
         let compList = '';

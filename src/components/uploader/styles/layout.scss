@@ -1,8 +1,33 @@
 @import "@rws-mixins";
 
+//vars
+$upl_secondary: var(--rws-uploader-secondary, #CCC);
+$upl_bg: var(--rws-uploader-bg, #424242);
+$upl_border: var(--rws-uploader-border, #FFF);
+
+$upl_primary: var(--rws-uploader-primary, #EE2375);
+
+$upl_text: var(--rws-uploader-text, #000);
+
+$upl_btn_text: var(--rws-uploader-btn-text, #000);
+$upl_btn_bg: var(--rws-uploader-btn-bg, #CCC);
+$upl_btn_border: var(--rws-uploader-btn-border, #000);
+
+rws-progress {
+    --accent-foreground-rest: $upl_primary;
+}
+
+//styles
 .upload_area {    
+
+    color: $upl_text;
+
     padding: 25px;
 
+    
+    *{
+        box-sizing: border-box;
+    }
 
     section{
         &::after{
@@ -14,7 +39,7 @@
         display: block;
         contain: content;
         box-sizing: border-box;
-        background: #424242;
+        background: $upl_bg;
         border-radius: 10px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
 
@@ -22,7 +47,7 @@
             @include grid-container();
             @include grid-flex-align-items(center, center);
             
-            border: 4px dashed #FFF; // Adjust color as needed
+            border: 4px dashed $upl_border; // Adjust color as needed
             width: 100%; // Adjust width as needed
             height: 100%; // Adjust height as needed
             padding: 30px;
@@ -33,14 +58,14 @@
             cursor: pointer;
 
             .file-block {
-                border: 1px solid #FFF;
+                border: 1px solid $upl_border;
 
                 font-size: 10px;
                 padding: 15px;
                 border-radius: 15px;
 
                 .close-btn {
-                    border: 1px solid #FFF;
+                    border: 1px solid $upl_border;
                     padding: 5px;
                     font-weight: bold;
                     margin-left: 10px;
@@ -53,7 +78,7 @@
 
                 &:before{
                     content: '';
-                    background: #CCC;
+                    background: $upl_secondary;
                     opacity: 0.4;
 
                     position: absolute;
@@ -70,6 +95,7 @@
 
         h3{
             padding: 0 15px;
+            color: $upl_text;
         }
 
         article {
@@ -78,14 +104,14 @@
         
 
         button {
-            background: var(--accent-fill-rest);
-            color: var(--foreground-on-accent-rest);
+            background: $upl_btn_bg;
+            color: $upl_btn_text;
             font-size: 14px;
             padding: 10px;        
             box-shadow: none;
             border-radius: 5px;
             border-style: solid;
-            border-color: var(--accent-fill-rest);
+            border-color: $upl_btn_border;
             border-width: 1px;
 
             fill: currentcolor;
@@ -97,6 +123,8 @@
 
             &.next{
                 float: right;
+                margin-right: 10px;
+                margin-bottom: 10px;
             }            
         }
     }    

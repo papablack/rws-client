@@ -32,7 +32,9 @@ const RWSWebpackWrapper = async (config) => {
 
   const executionDir = rwsPath.relativize(BuildConfigurator.get('executionDir') || config.executionDir || process.cwd(), config.packageDir);
 
-  const isDev = BuildConfigurator.get('dev', config.dev);
+  const isWatcher = process.argv.includes('--watch') || false;  
+
+  const isDev = isWatcher ? true : (BuildConfigurator.get('dev', config.dev) || false);
   const isHotReload = BuildConfigurator.get('hot', config.hot);
   const isReport = BuildConfigurator.get('report', config.report);
   const isParted = BuildConfigurator.get('parted', config.parted || false);
@@ -234,9 +236,6 @@ const RWSWebpackWrapper = async (config) => {
   if (WEBPACK_AFTER_ACTIONS.length) {
     WEBPACK_PLUGINS.push(new RWSAfterPlugin({ actions: WEBPACK_AFTER_ACTIONS, dev: isDev }));
   }
-
-  console.log('Webpack building with entrypoints:', Object.keys(automatedChunks));
-
 
   let cfgExport = {  
     context: executionDir,  
