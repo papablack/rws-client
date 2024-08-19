@@ -92,10 +92,7 @@ class ConfigService extends TheService {
 
         return new Promise((resolve) => {
             const tick = () => {
-                if(ConfigService.isLoaded){
-                   
-
-                    // console.log('resolved', tagName);
+                if(ConfigService.isLoaded){                                    
                     clearTimeout(t);    
                     resolve(true);
                     return;

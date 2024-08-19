@@ -114,8 +114,6 @@ function extractScssUses(fileContent) {
         }
     }
 
-    // console.log(uses);
-
     return [uses];
 }
 
