@@ -5,7 +5,7 @@ import htmlSanitizer, { Transformer, IOptions } from 'sanitize-html';
 type TagsProcessorType = { [tagName: string]: string | Transformer };
 type DOMOutputType<T extends Element> = NodeListOf<T> | T | null;
 
-//@ts-expect-error tsconfig.json problem
+//@ts-ignore
 declare let trustedTypes: TrustedTypePolicyFactory;
 
 
@@ -46,7 +46,7 @@ class DOMService extends RWSService {
             }
         });
           
-        DOM.setHTMLPolicy(myPolicy);        
+        DOM.setHTMLPolicy(myPolicy as any);        
     }
 
     private enforceAllowedTags(htmlText: string, allowedHTMLTags: string[]): string
