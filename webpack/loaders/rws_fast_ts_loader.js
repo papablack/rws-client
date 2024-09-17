@@ -22,6 +22,8 @@ module.exports = async function(content) {
 
     const htmlMinify = this._compiler.options.htmlMinify || true;
 
+   
+
     const RWSViewRegex = /(@RWSView\([^)]*)\)/;
     const tsSourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
 
@@ -36,10 +38,13 @@ module.exports = async function(content) {
 
     const decoratorData = tools.extractRWSViewArguments(tsSourceFile);
 
+    
     if(!decoratorData){
         return content;
     }
 
+
+    
     if(decoratorData.options){
         if(decoratorData.options.template){
             templatePath = decoratorData.options.template;
@@ -74,7 +79,7 @@ module.exports = async function(content) {
         if(tagName){       
             const templateName = 'template';
             const templatePath = path.dirname(filePath) + `/${templateName}.html`;
-    
+                
             const templateExists = fs.existsSync(templatePath);                   
 
             let template = 'const rwsTemplate: null = null;';                            
@@ -104,10 +109,11 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
                 this.addDependency(templatePath);
             }
         
-            const viewReg = /@RWSView\(['"]([a-zA-Z0-9_-]+)['"],?.*\)\sclass\s([a-zA-Z0-9_-]+) extends RWSViewComponent/gs
+            const viewReg = /@RWSView\(["']([^"']+)["'].*\)\s*export\s+class\s+([a-zA-Z0-9_-]+)\s+extends\s+RWSViewComponent/gm
 
             let m;
             let className = null;
+
 
             while ((m = viewReg.exec(processedContent)) !== null) {
                 // This is necessary to avoid infinite loops with zero-width matches
@@ -121,7 +127,11 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
                         className = match;
                     }                    
                 });
-            }            
+            } 
+                        
+            if(filePath === '/app/frontend/rws/src/components/exampleRws/component.ts'){
+                console.log({className, processedContent});
+            }
 
             if(className){                
                 const replacedViewDecoratorContent = processedContent.replace(
@@ -129,7 +139,10 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
                     `@RWSView('$1', null, { template: rwsTemplate, styles${addedParams.length? ', options: {' + (addedParams.join(', ')) + '}': ''} })\nclass $2 extends RWSViewComponent `
                 );                            
                 processedContent = `${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replacedViewDecoratorContent;   
-            }            
+            }
+            
+           
+    
 
             processedContent = `${htmlFastImports ? htmlFastImports + '\n' : ''}${processedContent}`;
         }
