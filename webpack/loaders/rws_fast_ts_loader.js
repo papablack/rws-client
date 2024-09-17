@@ -123,11 +123,12 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
                 
                 // The result can be accessed through the `m`-variable.
                 m.forEach((match, groupIndex) => {
-                    if(groupIndex === 2){
+                    if(groupIndex === 3){
                         className = match;
                     }                    
                 });
-            }                     
+            }    
+                  
 
             if(className){                
                 const replacedViewDecoratorContent = processedContent.replace(
@@ -135,7 +136,7 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
                     `@RWSView('$1', null, { template: rwsTemplate, styles${addedParams.length? ', options: {' + (addedParams.join(', ')) + '}': ''} })\n$2class $3 extends RWSViewComponent `
                 );                            
                 processedContent = `${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replacedViewDecoratorContent;   
-            }
+            }            
             
             processedContent = `${htmlFastImports ? htmlFastImports + '\n' : ''}${processedContent}`;
         }

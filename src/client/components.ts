@@ -41,8 +41,6 @@ async function loadPartedComponents(this: RWSClientInstance): Promise<RWSInfoTyp
 function defineAllComponents() {
     const richWindowComponents: RWSWindowComponentRegister = (window as Window & RWSWindow).RWS.components;
 
-    console.log({richWindowComponents})
-
     Object.keys(richWindowComponents).map(key => richWindowComponents[key].component).forEach((el: IWithCompose<RWSViewComponent>) => {
         el.define(el as any, el.definition);
     });
