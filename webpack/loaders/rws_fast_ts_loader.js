@@ -109,7 +109,7 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
                 this.addDependency(templatePath);
             }
         
-            const viewReg = /@RWSView\(["']([^"']+)["'].*\)\s*export\s+class\s+([a-zA-Z0-9_-]+)\s+extends\s+RWSViewComponent/gm
+            const viewReg = /@RWSView\(["']([^"']+)["'].*\)\s*(.*?\s+)?class\s+([a-zA-Z0-9_-]+)\s+extends\s+RWSViewComponent/gm
 
             let m;
             let className = null;
@@ -132,14 +132,11 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
             if(className){                
                 const replacedViewDecoratorContent = processedContent.replace(
                     viewReg,
-                    `@RWSView('$1', null, { template: rwsTemplate, styles${addedParams.length? ', options: {' + (addedParams.join(', ')) + '}': ''} })\nclass $2 extends RWSViewComponent `
+                    `@RWSView('$1', null, { template: rwsTemplate, styles${addedParams.length? ', options: {' + (addedParams.join(', ')) + '}': ''} })\n$2class $3 extends RWSViewComponent `
                 );                            
                 processedContent = `${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replacedViewDecoratorContent;   
             }
             
-           
-    
-
             processedContent = `${htmlFastImports ? htmlFastImports + '\n' : ''}${processedContent}`;
         }
 
