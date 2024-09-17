@@ -127,11 +127,7 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
                         className = match;
                     }                    
                 });
-            } 
-                        
-            if(filePath === '/app/frontend/rws/src/components/exampleRws/component.ts'){
-                console.log({className, processedContent});
-            }
+            }                     
 
             if(className){                
                 const replacedViewDecoratorContent = processedContent.replace(
