@@ -152,6 +152,7 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   );  
 
   if (optimConfig) {
+    // setup production config if it got created above
     cfgExport.optimization = optimConfig;
   }
 
