@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const RWSScssPlugin = require('../rws_scss_plugin');
+const { timingStart, timingStop } = require('../../cfg/build_steps/webpack/_timing');
 
 module.exports = async function(content) {      
     const filePath = this.resourcePath;
@@ -13,7 +14,9 @@ module.exports = async function(content) {
 
     if(saveFile){
         try {
+            timingStart('CSS Compilation of ' + filePath);
             const codeData = await plugin.compileScssCode(content, path.dirname(filePath), null, filePath, !isDev);                    
+            const endTime = timingStop('CSS Compilation of ' + filePath);
 
             const code = codeData.code;
             const deps = codeData.dependencies;        

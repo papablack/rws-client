@@ -9,7 +9,7 @@ let _scss_fonts = null;
 const _scss_import_builder = require('./_import');
 let _scss_import = null;
 
-function compileScssCode(scssCode, fileRootDir, createFile = false, filePath = null, minify = false) {    
+function compileScssCode(scssCode, fileRootDir, createFile = false, filePath = null, minify = false) {  
     _scss_fonts = _scss_fonts_builder(this);
     _scss_import = _scss_import_builder(this);
 
@@ -41,7 +41,6 @@ function compileScssCode(scssCode, fileRootDir, createFile = false, filePath = n
       let compiledCode = result.css.toString();
       compiledCode = _scss_fonts.replaceFontUrlWithBase64(compiledCode);
       compiledCode = replaceEmojisWithQuestionMark(compiledCode, fileRootDir);
-
       return { code: compiledCode, dependencies};
     } catch (err) {
       console.error('SASS Error in', fileRootDir);

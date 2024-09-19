@@ -19,8 +19,7 @@ function setupTsConfig(tsConfigPath, executionDir) {
         const declarationsPath = path.resolve(__dirname, '..', 'types') + '/declarations.d.ts';
         const foundationPath = path.resolve(__dirname, '..', 'foundation');
         const testsPath = path.resolve(__dirname, '..', 'tests');
-        const declarationsPathMD5 = md5(fs.readFileSync(declarationsPath, 'utf-8'));
-        const testsPathMD5 = fs.existsSync(testsPath) ? md5(fs.readFileSync(testsPath, 'utf-8')) : null;
+
 
         const relativeDeclarationsPath = path.relative(path.dirname(tsConfigPath), declarationsPath);
         const relativeTestsPath = path.relative(path.dirname(tsConfigPath), testsPath);

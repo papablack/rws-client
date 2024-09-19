@@ -5,6 +5,9 @@ const { spawn } = require('child_process');
 const JSON5 = require('json5');
 
 const { setupTsConfig } = require('./cfg/tsconfigSetup');
+const LoadersHelper = require('./cfg/build_steps/webpack/_loaders');
+
+const { rwsPath } = require('@rws-framework/console');
 
 function findRootWorkspacePath(currentPath) {
   const parentPackageJsonPath = path.join(currentPath + '/..', 'package.json');
@@ -165,16 +168,17 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
 
     if (fileStat.isDirectory() && !ignored.includes(file)) {
       findComponentFilesWithText(filePath, text, ignored, fileList);
-    } else if (fileStat.isFile() && filePath.endsWith('.ts')) {
+    } else if (fileStat.isFile() && filePath.endsWith('component.ts')) {
       const content = fs.readFileSync(filePath, 'utf8');
       if (content.includes(text)) {        
-        const compInfo = extractComponentInfo(content);        
+        try {
+        const compInfo = extractComponentInfo(content);  
 
         if (compInfo) {
       
-          const { tagName, className, options, isIgnored, isOreo } = compInfo;
+          const { tagName, className, options } = compInfo;
 
-          if (isIgnored) {
+          if (options?.ignorePackaging) {
             return;
           }
 
@@ -188,6 +192,11 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
             isIgnored: options?.ignorePackaging,
             isOreo: options?.oreoMode
           });
+          
+        }
+        }catch(e){
+          console.log('ERRORER', e);
+          throw new Error(`findComponentFilesWithText('${dir}', '${text}') error`)
         }
       }
     }
@@ -195,6 +204,7 @@ function findComponentFilesWithText(dir, text, ignored = [], fileList = []) {
 
   return fileList;
 }
+
 
 function extractRWSViewArguments(sourceFile) {
   let argumentsExtracted = {
@@ -292,23 +302,18 @@ function extractRWSIgnoreArguments(sourceFile) {
 }
 
 function extractComponentInfo(componentCode) {
-  const componentNameRegex = /@RWSView/;
+  const decoratorData = LoadersHelper.extractRWSViewArgs(componentCode, true);
 
-  if (!componentNameRegex.test(componentCode)) {
-    return;
+  if(!decoratorData){
+    return null;
   }
+  // console.log(decoratorData, componentCode);
 
-  const tsSourceFile = ts.createSourceFile(`/tmp/temp_ts`, componentCode, ts.ScriptTarget.Latest, true);  
-
-  let decoratorArgs = extractRWSViewArguments(tsSourceFile);
-
-  if (!decoratorArgs) {
-    decoratorArgs = {};
-  }
-
-  decoratorOpts = decoratorArgs.options;
-
-  return { ...decoratorArgs, options: decoratorOpts };
+  return { 
+    tagName: decoratorData.viewDecoratorData.tagName, 
+    className: decoratorData.viewDecoratorData.className, 
+    options: decoratorData.viewDecoratorData.decoratorArgs
+  };
 }
 
 function getAllFilesInFolder(folderPath, ignoreFilenames = [], recursive = false) {
