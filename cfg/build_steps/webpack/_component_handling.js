@@ -45,7 +45,11 @@ function generateRWSInfoFile(outputDir, automatedEntries) {
     fs.writeFileSync(rwsInfoJson, JSON.stringify({ components: Object.keys(automatedEntries) }, null, 2));
 }
 
-async function partedComponentsEvents(partedComponentsLocations, rwsPlugins) {
+async function partedComponentsEvents(partedComponentsLocations, rwsPlugins, isParted) {
+    if(!isParted){
+        return partedComponentsLocations;
+    }
+
     for (const pluginKey of Object.keys(rwsPlugins)) {
         const plugin = rwsPlugins[pluginKey];
         partedComponentsLocations = await plugin.onComponentsLocated(partedComponentsLocations);

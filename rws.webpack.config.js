@@ -24,10 +24,11 @@ const { getBuildConfig } = require('./cfg/build_steps/webpack/_build_config');
 const { createWebpackConfig } = require('./cfg/build_steps/webpack/_webpack_config');
 const { executeRWSStartActions, timingActions, devActions } = require('./cfg/build_steps/webpack/_actions');
 const { webpackDevServer } = require('./cfg/build_steps/webpack/_dev_servers');
+const { RWS_WEBPACK_PLUGINS_BAG, addStartPlugins } = require('./cfg/build_steps/webpack/_plugins');
 
 const _MAIN_PACKAGE = rwsPath.findRootWorkspacePath(process.cwd());
 
-
+// #SECTION INIT OPTIONS
 
 const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   const {
@@ -61,42 +62,13 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
     timingStart('build config');
   }
 
-  // rwsPath.removeDirectory(outputDir, true);
+  //rwsPath.removeDirectory(outputDir, true);
 
   buildInfo.start(executionDir, tsConfigPath, outputDir, isDev, publicDir, isParted, partedPrefix, partedDirUrlPrefix, devTools, rwsFrontendConfig.rwsPlugins);
 
-  //AFTER OPTION DEFINITIONS
+  // #SECTION INIT PLUGINS && ENV VARS DEFINES
 
-  const _rws_defines = processEnvDefines(BuildConfigurator, rwsFrontendConfig, devDebug);
-
-  let WEBPACK_PLUGINS = [
-    // new ForkTsCheckerWebpackPlugin({
-    //   async: false,
-    //   typescript: {
-    //     configFile: tsConfigPath,
-    //     diagnosticOptions: {
-    //       semantic: true,
-    //       syntactic: true,
-    //     },
-    //   },
-    // }),
-    new webpack.DefinePlugin(_rws_defines),
-    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/),
-    new webpack.IgnorePlugin({
-      resourceRegExp: /.*\.es6\.js$/,
-      contextRegExp: /node_modules/
-    }),
-  ];
-
-  if (isHotReload) {
-    if (!publicDir) {
-      throw new Error('No public dir set')
-    }
-
-    WEBPACK_PLUGINS.push(new HtmlWebpackPlugin({
-      template: publicDir + '/' + publicIndex,
-    }));
-  }
+  addStartPlugins(processEnvDefines(BuildConfigurator, rwsFrontendConfig, devDebug), rwsFrontendConfig, isHotReload, isReport);
 
   const WEBPACK_AFTER_ACTIONS = rwsFrontendConfig.actions || [];
   const WEBPACK_AFTER_ERROR_ACTIONS = rwsFrontendConfig.error_actions || [];
@@ -106,19 +78,9 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   let optimConfig = null;
   let aliases = rwsFrontendConfig.aliases = {};
 
-  aliases = { ...aliases, ...loadAliases(__dirname, path.resolve(_MAIN_PACKAGE, 'node_modules')) }
+  aliases = { ...aliases, ...loadAliases(__dirname, path.resolve(_MAIN_PACKAGE, 'node_modules')) }  
 
-  const overridePlugins = rwsFrontendConfig.plugins || []
-
-  WEBPACK_PLUGINS = [...WEBPACK_PLUGINS, ...overridePlugins];
-
-
-  if (isReport) {
-    WEBPACK_PLUGINS.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static',
-      openAnalyzer: false,
-    }));
-  }
+  // #SECTION PLUGIN STARTING HOOKS
 
   executeRWSStartActions(WEBPACK_AFTER_ACTIONS, serviceWorkerPath, BuildConfigurator, rwsFrontendConfig);
 
@@ -126,17 +88,18 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
     timingStop('build config');
   }
 
-  if (isParted) {
-    partedComponentsLocations = await partedComponentsEvents(partedComponentsLocations, rwsPlugins);
-  }
 
-  const RWSComponents = scanComponents(partedComponentsLocations, executionDir, __dirname);
+   // #SECTION RWS COMPONENT SCAN && PARTED PROCESSING
+  const RWSComponents = scanComponents(await partedComponentsEvents(partedComponentsLocations, rwsPlugins, isParted), executionDir, __dirname);
   console.log(`${chalk.cyanBright('RWS Scanned')} ${chalk.yellowBright(RWSComponents.length)} components`);
   const { automatedChunks, automatedEntries } = setComponentsChunks(rwsFrontendConfig.entry, RWSComponents, isParted);
 
+  // #SECTION RWS INFO FILE
   generateRWSInfoFile(outputDir, automatedEntries);
   console.log(chalk.greenBright(`RWSInfo file generated.`));
 
+
+  // #SECTION TSCONFIG VALIDATION/SETUP
   const tsValidated = tools.setupTsConfig(tsConfigPath, executionDir);
 
   if (!tsValidated) {
@@ -144,6 +107,8 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   }
 
   if (!isDev) {
+    // #SECTION RWS PROD SETUP
+
     if (!optimConfig) {
       optimConfig = {};
     }
@@ -151,11 +116,13 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
     optimConfig = getRWSProductionSetup(optimConfig, tsConfigPath);
   }
 
+  // #SECTION RWS DEV ACTIONS
   const devExternalsVars = devActions(WEBPACK_AFTER_ACTIONS, executionDir, devDebug);
   timingActions(WEBPACK_AFTER_ACTIONS, WEBPACK_AFTER_ERROR_ACTIONS, devDebug);
 
+  // #SECTION RWS WEBPACK PLUGIN INIT
   if (WEBPACK_AFTER_ACTIONS.length || WEBPACK_AFTER_ERROR_ACTIONS.length) {
-    WEBPACK_PLUGINS.push(new RWSWebpackPlugin({ 
+    RWS_WEBPACK_PLUGINS_BAG.add(new RWSWebpackPlugin({
       actions: WEBPACK_AFTER_ACTIONS, 
       error_actions: WEBPACK_AFTER_ERROR_ACTIONS, 
       dev: isDev,
@@ -163,7 +130,8 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
     }));
   }
 
-  let cfgExport = createWebpackConfig(
+  // #SECTION RWS WEBPACK BUILD
+  const cfgExport = createWebpackConfig(
     executionDir,
     __dirname,
     _packageDir,
@@ -178,7 +146,7 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
     modules_setup,
     aliases,
     tsConfigPath,
-    WEBPACK_PLUGINS,
+    RWS_WEBPACK_PLUGINS_BAG.getPlugins(),
     rwsExternals,
     devExternalsVars
   );  
@@ -187,12 +155,14 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
     cfgExport.optimization = optimConfig;
   }
 
+  // #SECTION RWS PLUGINS onBuild EVENTS FIRE
   for (const pluginKey of Object.keys(rwsPlugins)) {
     const plugin = rwsPlugins[pluginKey];
-    cfgExport = await plugin.onBuild(cfgExport);
+    await plugin.onBuild(cfgExport);
   }
 
   if (isDev) {
+    // #SECTION RWS DEV SERVERS
     webpackDevServer(BuildConfigurator, rwsFrontendConfig, cfgExport);
   }
 
