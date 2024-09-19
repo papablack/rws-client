@@ -1,15 +1,8 @@
 const { rwsPath } = require('@rws-framework/console');
 const path = require('path');
-const fs = require('fs');
 const chalk = require('chalk');
 
-const webpack = require('webpack');
-
-
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const RWSWebpackPlugin = require('./webpack/rws_webpack_plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const buildInfo = require('./cfg/build_steps/webpack/_info');
 const { loadAliases } = require('./cfg/build_steps/webpack/_aliases');
@@ -19,7 +12,6 @@ const { rwsExternals } = require('./cfg/build_steps/webpack/_rws_externals');
 
 const tools = require('./_tools');
 const { setComponentsChunks, scanComponents, generateRWSInfoFile, partedComponentsEvents } = require('./cfg/build_steps/webpack/_component_handling');
-const { processEnvDefines } = require('./cfg/build_steps/webpack/_env_defines');
 const { getBuildConfig } = require('./cfg/build_steps/webpack/_build_config');
 const { createWebpackConfig } = require('./cfg/build_steps/webpack/_webpack_config');
 const { executeRWSStartActions, timingActions, devActions } = require('./cfg/build_steps/webpack/_actions');
@@ -67,8 +59,7 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   buildInfo.start(executionDir, tsConfigPath, outputDir, isDev, publicDir, isParted, partedPrefix, partedDirUrlPrefix, devTools, rwsFrontendConfig.rwsPlugins);
 
   // #SECTION INIT PLUGINS && ENV VARS DEFINES
-
-  addStartPlugins(processEnvDefines(BuildConfigurator, rwsFrontendConfig, devDebug), rwsFrontendConfig, isHotReload, isReport);
+  addStartPlugins(rwsFrontendConfig, BuildConfigurator, devDebug, isHotReload, isReport, tsConfigPath);
 
   const WEBPACK_AFTER_ACTIONS = rwsFrontendConfig.actions || [];
   const WEBPACK_AFTER_ERROR_ACTIONS = rwsFrontendConfig.error_actions || [];

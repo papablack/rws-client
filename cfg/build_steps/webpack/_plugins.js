@@ -1,4 +1,8 @@
 const webpack = require('webpack')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { processEnvDefines } = require('./_env_defines');
 
 const RWS_WEBPACK_PLUGINS_BAG = {
     _plugins: [],
@@ -21,29 +25,54 @@ const RWS_WEBPACK_PLUGINS_BAG = {
             }
         }
     },
-    getPlugins() {        
+    getPlugins() {
         return this._plugins
     }
 }
 
-function addStartPlugins(_rws_defines, rwsFrontendConfig, isHotReload, isReport) {
-    RWS_WEBPACK_PLUGINS_BAG.add([
-        // new ForkTsCheckerWebpackPlugin({
-        //   async: false,
-        //   typescript: {
-        //     configFile: tsConfigPath,
-        //     diagnosticOptions: {
-        //       semantic: true,
-        //       syntactic: true,
-        //     },
-        //   },
-        // }),
-        new webpack.DefinePlugin(_rws_defines),
+function getPackageModPlugins() {
+    return [
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en-gb/),
         new webpack.IgnorePlugin({
             resourceRegExp: /.*\.es6\.js$/,
             contextRegExp: /node_modules/
         }),
+    ]
+}
+
+function getDefinesPlugins(BuildConfigurator, rwsFrontendConfig, devDebug) {
+    const _rws_defines = processEnvDefines(BuildConfigurator, rwsFrontendConfig, devDebug);
+
+    return [
+        new webpack.DefinePlugin(_rws_defines)
+    ]
+}
+
+function getBuilderOptimPlugins(BuildConfigurator, rwsFrontendConfig, tsConfigPath) {
+    const tsFork =  new ForkTsCheckerWebpackPlugin({
+        async: false,
+        typescript: {
+            configFile: tsConfigPath,
+            diagnosticOptions: {
+                semantic: true,
+                syntactic: true,
+            },
+        },
+    });
+
+
+    
+    return [
+       
+    ]
+}
+
+function addStartPlugins(rwsFrontendConfig, BuildConfigurator, devDebug, isHotReload, isReport, tsConfigPath) {
+
+    RWS_WEBPACK_PLUGINS_BAG.add([
+        ...getDefinesPlugins(BuildConfigurator, rwsFrontendConfig, devDebug),
+        ...getBuilderOptimPlugins(BuildConfigurator, rwsFrontendConfig, tsConfigPath),
+        ...getPackageModPlugins()
     ]);
 
     if (isHotReload) {
