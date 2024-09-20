@@ -3,6 +3,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { processEnvDefines } = require('./_env_defines');
+const path = require('path');
 
 const RWS_WEBPACK_PLUGINS_BAG = {
     _plugins: [],
@@ -48,22 +49,24 @@ function getDefinesPlugins(BuildConfigurator, rwsFrontendConfig, devDebug) {
     ]
 }
 
-function getBuilderOptimPlugins(BuildConfigurator, rwsFrontendConfig, tsConfigPath) {
-    const tsFork =  new ForkTsCheckerWebpackPlugin({
-        async: false,
-        typescript: {
-            configFile: tsConfigPath,
-            diagnosticOptions: {
-                semantic: true,
-                syntactic: true,
-            },
-        },
-    });
+function getBuilderDevPlugins(BuildConfigurator, rwsFrontendConfig, tsConfigPath, devDebug) {    
+    if(!devDebug?.profiling){
+        return [];
+    }
 
+    const profiling =  new webpack.debug.ProfilingPlugin({
+        outputPath: path.join(BuildConfigurator.get('outputDir') || rwsFrontendConfig.outputDir, '.profiling/profileEvents.json'),
+    });
 
     
     return [
-       
+        profiling
+    ]
+}
+
+function getBuilderOptimPlugins(BuildConfigurator, rwsFrontendConfig, tsConfigPath) {
+    return [
+        
     ]
 }
 
@@ -71,6 +74,7 @@ function addStartPlugins(rwsFrontendConfig, BuildConfigurator, devDebug, isHotRe
 
     RWS_WEBPACK_PLUGINS_BAG.add([
         ...getDefinesPlugins(BuildConfigurator, rwsFrontendConfig, devDebug),
+        ...getBuilderDevPlugins(BuildConfigurator, rwsFrontendConfig, tsConfigPath, devDebug),
         ...getBuilderOptimPlugins(BuildConfigurator, rwsFrontendConfig, tsConfigPath),
         ...getPackageModPlugins()
     ]);

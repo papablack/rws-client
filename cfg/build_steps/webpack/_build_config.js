@@ -30,7 +30,7 @@ async function getBuildConfig(rwsFrontBuildConfig){
 
     const devTools = isDev ? (BuildConfigurator.get('devtool') || 'source-map') : false;
 
-    const _DEFAULT_DEV_DEBUG = { build: false, timing: false, rwsCache: false };
+    const _DEFAULT_DEV_DEBUG = { build: false, timing: false, rwsCache: false, profiling: false };
 
     let devDebug = isDev ? (BuildConfigurator.get('devDebug') || rwsFrontBuildConfig.devDebug || {}) : {};
     devDebug = {..._DEFAULT_DEV_DEBUG, ...devDebug}

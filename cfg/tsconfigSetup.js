@@ -5,7 +5,7 @@ const { rwsPath } = require('@rws-framework/console');
 const path = require('path');
 const fs = require('fs');
 
-function setupTsConfig(tsConfigPath, executionDir) {
+function setupTsConfig(tsConfigPath, executionDir, userAliases = {}) {
 
     if (!fs.existsSync(tsConfigPath)) {
         throw new Error(`Typescript config file "${tsConfigPath}" does not exist`);
@@ -27,36 +27,37 @@ function setupTsConfig(tsConfigPath, executionDir) {
 
 
         const includedMD5 = [];
+        const srcPath = 'src/index.ts';
 
-        let changed = false; 
+        let changed = false;
 
         if (!Object.keys(tsConfig).includes('include')) {
             tsConfig['include'] = [];
         } else {
             tsConfig['include'] = tsConfig['include'].filter((inc) => {
-                 if(inc === 'src/index.ts'){
+                if (inc === srcPath) {
                     return true;
-                 }
+                }
 
-                 return fs.existsSync(rwsPath.relativize(inc, executionDir))
+                return fs.existsSync(rwsPath.relativize(inc, executionDir));
             })
-        }    
-        
-        
-        if (!tsConfig['include'].includes('src/index.ts')) {
+        }
+
+
+        if (!tsConfig['include'].includes(srcPath)) {
             console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS project typescript code to project tsconfig.json');
-            tsConfig['include'].unshift('src/index.ts');
+            tsConfig['include'].unshift(srcPath);
             changed = true;
-        }  
+        }
 
         if (!Object.keys(tsConfig).includes('exclude')) {
-            tsConfig['exclude'] = [];            
+            tsConfig['exclude'] = [];
             changed = true;
-        }      
-        
+        }
+
         const excludeString = '**/*.debug.ts';
 
-        if(!tsConfig['exclude'].includes(excludeString)){
+        if (!tsConfig['exclude'].includes(excludeString)) {
             tsConfig['exclude'].push(excludeString);
             changed = true;
         }
@@ -64,28 +65,49 @@ function setupTsConfig(tsConfigPath, executionDir) {
         let probablyLinked = false;
 
         tsConfig['include'].forEach(element => {
-            if(element !== 'src' && element.indexOf('declarations.d.ts') > -1 && md5(fs.readFileSync(rwsPath.relativize(element, executionDir), 'utf-8')) === md5(fs.readFileSync(declarationsPath, 'utf-8'))){
+            if (element !== 'src' && element.indexOf('declarations.d.ts') > -1 && md5(fs.readFileSync(rwsPath.relativize(element, executionDir), 'utf-8')) === md5(fs.readFileSync(declarationsPath, 'utf-8'))) {
                 probablyLinked = true;
-            }            
-        }); 
+            }
+        });
 
         if (!tsConfig['include'].includes(relativeDeclarationsPath) && !probablyLinked) {
             console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding RWS typescript declarations to project tsconfig.json');
             tsConfig['include'].push(relativeDeclarationsPath);
             includedMD5.push(md5(fs.readFileSync(declarationsPath, 'utf-8')));
             changed = true;
-        }      
+        }
 
+        if(!tsConfig.compilerOptions){
+            throw new Error(`${tsConfigPath} needs "compilerOptions" section`)
+        }
 
-        // if(!Object.keys(tsConfig['compilerOptions']).includes('paths')){
-        //     tsConfig['compilerOptions']['paths'] = {};
-        //     changed = true;
-        // }
+        if (Object.keys(userAliases).length) {
+            const tsPaths = tsConfig.compilerOptions?.paths || {};
 
-        // if(!Object.keys(tsConfig['compilerOptions']['paths']).includes('@rws-framework/foundation')){
-        //     tsConfig['compilerOptions']['paths']['@rws-framework/foundation'] = [relativeFoundationPath];
-        // }
-    
+            // console.log({tsPaths})            
+            let changedPaths = false;
+
+            Object.keys(userAliases).forEach((alias) => {
+                const aliasPath = userAliases[alias];
+                if(!tsPaths[alias]){
+        
+                    tsPaths[alias] = [path.relative(executionDir, aliasPath)];
+
+                    console.log({alias, x: tsPaths[alias]});
+
+                    changedPaths = true;                    
+                }
+            });
+
+            if(changedPaths){
+                console.log('tspaths', tsPaths);
+                console.log(chalk.blueBright('[RWS TS CONFIG]'), 'adding user aliases as paths to project tsconfig.json');
+
+                tsConfig.compilerOptions.paths = tsPaths;
+                changed = true;
+            }
+        }
+
 
         if (changed) {
             fs.writeFileSync(tsConfigPath, JSON.stringify(tsConfig, null, 2));
@@ -95,13 +117,13 @@ function setupTsConfig(tsConfigPath, executionDir) {
         return true;
     } catch (e) {
         const tsConfigFileContent = fs.readFileSync(tsConfigPath, 'utf-8');
-        try{            
+        try {
             console.log(chalk.blueBright('TSConfig (parsed)'), JSON.parse(tsConfigFileContent));
-        } catch (e){
+        } catch (e) {
             console.log(chalk.yellow('TSConfig (unparsed)'), tsConfigFileContent);
 
         }
-        console.log(chalk.redBright('Error in tsconfig.json:'));        
+        console.log(chalk.redBright('Error in tsconfig.json:'));
         console.error(chalk.red(e.stack));
 
         return false;

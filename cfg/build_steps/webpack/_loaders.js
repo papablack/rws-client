@@ -1,5 +1,7 @@
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
+
 const RWSCssPlugin = require("../../../webpack/rws_scss_plugin");
 const plugin = new RWSCssPlugin();
 const JSON5 = require('json5');
@@ -11,6 +13,7 @@ function getRWSLoaders(packageDir, nodeModulesPath, tsConfigPath, devDebug) {
   const scssLoader = packageDir + '/webpack/loaders/rws_fast_scss_loader.js';
   const tsLoader = packageDir + '/webpack/loaders/rws_fast_ts_loader.js';
   const htmlLoader = packageDir + '/webpack/loaders/rws_fast_html_loader.js';
+
 
   return [
     {
@@ -27,6 +30,7 @@ function getRWSLoaders(packageDir, nodeModulesPath, tsConfigPath, devDebug) {
         {
           loader: 'ts-loader',
           options: {
+            transpileOnly: true,
             allowTsInNodeModules: true,
             configFile: path.resolve(tsConfigPath)            
           }
@@ -35,7 +39,7 @@ function getRWSLoaders(packageDir, nodeModulesPath, tsConfigPath, devDebug) {
           loader: tsLoader,
         }
       ],
-      exclude: [
+      exclude: [        
         /node_modules\/(?!\@rws-framework\/[A-Z0-9a-z])/,
         /\.debug\.ts$/,
         /\.d\.ts$/,

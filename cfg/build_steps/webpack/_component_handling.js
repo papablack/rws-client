@@ -42,7 +42,7 @@ function setComponentsChunks(clientEntry, RWSComponents = [], isParted = false) 
 
 function generateRWSInfoFile(outputDir, automatedEntries) {
     const rwsInfoJson = outputDir + '/rws_info.json'
-    fs.writeFileSync(rwsInfoJson, JSON.stringify({ components: Object.keys(automatedEntries) }, null, 2));
+    fs.writeFile(rwsInfoJson, JSON.stringify({ components: Object.keys(automatedEntries) }, null, 2), () => {});
 }
 
 async function partedComponentsEvents(partedComponentsLocations, rwsPlugins, isParted) {

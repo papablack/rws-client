@@ -90,7 +90,7 @@ module.exports = async function(content) {
 
         if(isDebugged){
             console.log(chalk.red('[RWS BUILD] Debugging into: ' + debugTsPath));
-            fs.writeFileSync(debugTsPath, processedContent); //for final RWS TS preview.
+            fs.writeFile(debugTsPath, processedContent, () => {}); //for final RWS TS preview.
         }
       
         _scss_cache.cache(customCompilationOptions).cacheItem(filePath, processedContent, cachedCode);

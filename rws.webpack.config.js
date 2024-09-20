@@ -52,10 +52,9 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
 
   if (devDebug?.timing) {
     timingStart('build config');
-  }
+  }  
 
-  //rwsPath.removeDirectory(outputDir, true);
-
+  rwsPath.removeDirectory(outputDir, true);
   buildInfo.start(executionDir, tsConfigPath, outputDir, isDev, publicDir, isParted, partedPrefix, partedDirUrlPrefix, devTools, rwsFrontendConfig.rwsPlugins);
 
   // #SECTION INIT PLUGINS && ENV VARS DEFINES
@@ -67,9 +66,9 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   const modules_setup = ['node_modules'];
 
   let optimConfig = null;
-  let aliases = rwsFrontendConfig.aliases = {};
+  let aliases = rwsFrontendConfig.aliases || {};
 
-  aliases = { ...aliases, ...loadAliases(__dirname, path.resolve(_MAIN_PACKAGE, 'node_modules')) }  
+  aliases = { ...aliases, ...loadAliases(__dirname, path.resolve(_MAIN_PACKAGE, 'node_modules'), executionDir) }  
 
   // #SECTION PLUGIN STARTING HOOKS
 
@@ -91,7 +90,7 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
 
 
   // #SECTION TSCONFIG VALIDATION/SETUP
-  const tsValidated = tools.setupTsConfig(tsConfigPath, executionDir);
+  const tsValidated = tools.setupTsConfig(tsConfigPath, executionDir, rwsFrontendConfig.aliases);
 
   if (!tsValidated) {
     throw new Error('RWS Webpack build failed.');
@@ -156,7 +155,7 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   if (isDev) {
     // #SECTION RWS DEV SERVERS
     webpackDevServer(BuildConfigurator, rwsFrontendConfig, cfgExport);
-  }
+  }  
 
   return cfgExport;
 }

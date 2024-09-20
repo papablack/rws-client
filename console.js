@@ -56,18 +56,18 @@ async function initCmd(){
     if(workspaced){    
       if(!fs.existsSync(`${executionDir}/.eslintrc.json`)){
         const rcjs = fs.readFileSync(`${moduleDir}/.setup/.eslintrc.json`, 'utf-8');
-        fs.writeFileSync(`${executionDir}/.eslintrc.json`, rcjs.replace('{{frontend_dir}}', executionDir));
+        fs.writeFile(`${executionDir}/.eslintrc.json`, rcjs.replace('{{frontend_dir}}', executionDir));
         console.log(chalk.green('RWS CLI'), 'Installed eslint base workspace config file.');
       }
     }else{
       if(!fs.existsSync(`${executionDir}/.eslintrc.json`)){
-        fs.copyFileSync(`${moduleDir}/.eslintrc.json`, `${executionDir}/.eslintrc.json`);
+        fs.copyFile(`${moduleDir}/.eslintrc.json`, `${executionDir}/.eslintrc.json`);
         console.log(chalk.green('[RWS Client]'), 'Installed eslint config file.');
       }        
     }
 
     if(!fs.existsSync(`${executionDir}/tsconfig.json`)){
-      fs.copyFileSync(`${moduleDir}/.setup/tsconfig.json`, `${executionDir}/tsconfig.json`);
+      fs.copyFile(`${moduleDir}/.setup/tsconfig.json`, `${executionDir}/tsconfig.json`);
       console.log(chalk.green('[RWS Client]'), 'Installed tsconfig.');
     }   
 }

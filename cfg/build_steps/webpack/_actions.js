@@ -71,9 +71,9 @@ function devActions(WEBPACK_AFTER_ACTIONS, executionDir, devDebug){
         WEBPACK_AFTER_ACTIONS.push({
           type: 'custom',
           actionHandler: () => {        
-            fs.writeFileSync(path.join(debugDir, 'in_vendors.json'), JSON.stringify(devExternalsVars.ignored, null, 2));
-            fs.writeFileSync(path.join(debugDir, 'rws_processed.json'), JSON.stringify(devExternalsVars.packed, null, 2));
-            fs.writeFileSync(path.join(debugDir, 'requestcache.json'), JSON.stringify(devExternalsVars.frontendRequestContextCache, null, 2));
+            fs.writeFile(path.join(debugDir, 'in_vendors.json'), JSON.stringify(devExternalsVars.ignored, null, 2));
+            fs.writeFile(path.join(debugDir, 'rws_processed.json'), JSON.stringify(devExternalsVars.packed, null, 2));
+            fs.writeFile(path.join(debugDir, 'requestcache.json'), JSON.stringify(devExternalsVars.frontendRequestContextCache, null, 2));
     
             console.log(chalk.yellow('[RWS BUILD] (after)'), `packaging debug saved in: ${debugDir}`);
           }

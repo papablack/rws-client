@@ -1,13 +1,8 @@
 const path = require('path');
 
-function loadAliases(packageDir, nodeModulesPath){
+function loadAliases(packageDir, nodeModulesPath, srcDir){    
     return {
-        fs: false,
-        path: false,
-        http: false,
-        https: false,
-        os: false,
-        stream: false,
+        'src': srcDir + '/src',        
         '@rws-framework/foundation': path.resolve(packageDir, 'foundation', 'rws-foundation.js')
     }
 }
