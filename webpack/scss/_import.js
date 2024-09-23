@@ -1,11 +1,13 @@
 const { rwsPath } = require('@rws-framework/console');
-const _tools = require('../../_tools');
+
 const _scss_fs_builder = require('./_fs');
 let _scss_fs = null;
 const fs = require('fs');
 const path = require('path');
 const CSS_IMPORT_REGEX = /^(?!.*\/\/)(?!.*\/\*).*@import\s+['"]((?![^'"]*:[^'"]*).+?)['"];?/gm;
 const SCSS_USE_REGEX = /^(?!.*\/\/)(?!.*\/\*).*@use\s+['"]?([^'"\s]+)['"]?;?/gm;
+
+const WORKSPACE = rwsPath.findRootWorkspacePath(process.cwd());
 
 function processImportPath(importPath, fileRootDir = null, noext = false) {
     _scss_fs = _scss_fs_builder(this);
@@ -123,7 +125,7 @@ function detectImports(code) {
 
 function replaceWithNodeModules(input, fileDir = null, absolute = false, token = '~') {
     _scss_fs = _scss_fs_builder(this);
-    return input.replace(token, absolute ? `${path.resolve(_tools.findRootWorkspacePath(process.cwd()), 'node_modules')}/` : this.node_modules_dir(fileDir ? fileDir : process.cwd()));
+    return input.replace(token, absolute ? `${path.resolve(WORKSPACE, 'node_modules')}/` : this.node_modules_dir(fileDir ? fileDir : process.cwd()));
 }
 
 function processImports(imports, fileRootDir, importStorage = {}, sub = false) {

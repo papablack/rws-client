@@ -12,8 +12,8 @@ module.exports = async function(content) {
     let fromTs = false;    
 
     if(saveFile){
-        try {
-            const codeData = await plugin.compileScssCode(content, path.dirname(filePath), null, filePath, !isDev);                    
+        try {        
+            const codeData = await plugin.compileScssCode(content, path.dirname(filePath), null, filePath, !isDev);                                
 
             const code = codeData.code;
             const deps = codeData.dependencies;        
@@ -32,7 +32,11 @@ module.exports = async function(content) {
     }
 
     if(fs.existsSync(componentPath)){
-        fs.writeFileSync(componentPath, fs.readFileSync(componentPath, 'utf-8'))  
+        const fileCnt = fs.readFileSync(componentPath, 'utf-8');
+
+        if(fileCnt){
+            fs.writeFile(componentPath, fileCnt, () => {})  
+        }        
     }
     
     return '';   

@@ -52,37 +52,7 @@ class UtilsService extends TheService {
         }  
         
         return 0;
-
-        // const stack = error.stack || '';
-        // const stackLines = stack.split('\n');
-        // const relevantLine = stackLines[1];
-
-        // // Extract file path from the stack line
-        // const match = relevantLine.match(/\((.*?):\d+:\d+\)/);
-        // if (!match) return -1;
-        // const filePath = match[1];
-
-        // // Assuming the source map is in the same directory with '.map' extension
-        // const sourceMapPath = `${filePath}.map`;    
-
-        // if(sourceMap === null){
-        //     sourceMap = await this.fetchSourceMap(sourceMapPath);       
-        // }
-
-        // let originalPosition: any = null;
-
-        // await SourceMapConsumer.with(sourceMap, null, consumer => {
-        //     const lineMatch = relevantLine.match(/:(\d+):(\d+)/);
-        //     if (!lineMatch) return -1;
-            
-        //     originalPosition = consumer.originalPositionFor({
-        //       line: parseInt(lineMatch[1]), // Example line and column
-        //       column: parseInt(lineMatch[2])
-        //     });            
-        // });        
-     
-        // return originalPosition.line;
-    }
+    }    
 }
 
 export default UtilsService.getSingleton();

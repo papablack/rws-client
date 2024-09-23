@@ -5,137 +5,78 @@ const ts = require('typescript');
 const tools = require('../../_tools');
 const chalk = require('chalk');
 const {html_error_proof} = require('./ts/html_error');
-const RWSCssPlugin = require("../rws_scss_plugin");
-const plugin = new RWSCssPlugin();
+const { rwsRuntimeHelper } = require('@rws-framework/console');
+const { timingStart, timingStop } = require('../../cfg/build_steps/webpack/_timing');
+const _scss_cache = require('../../cfg/build_steps/webpack/_cache');
+const LoadersHelper = require('../../cfg/build_steps/webpack/_loaders');
+const { sleep } = require('langchain/util/time');
+const md5 = require('md5');
 
-const _defaultRWSLoaderOptions = {
-    templatePath: 'template.html',
-    stylesPath: 'styles.scss',
-    fastOptions: {  shadowOptions: { mode: 'open' }  }
-}
 
 module.exports = async function(content) { 
-    let htmlFastImports = null;   
+
     let processedContent = content;
     const filePath = this.resourcePath;
-    const isDev = this._compiler.options.mode === 'development';    
-
-    const htmlMinify = this._compiler.options.htmlMinify || true;
-
-   
-
-    const RWSViewRegex = /(@RWSView\([^)]*)\)/;
-    const tsSourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-
-    let templatePath = 'template.html';
-    let stylesPath = 'styles/layout.scss';
+    const isDev = this._compiler.options.mode === 'development';       
     let isIgnored = false;
-    let isDebugged = false;
-    let fastOptions = _defaultRWSLoaderOptions.fastOptions;
-    
-    const addedParamDefs = [];
-    const addedParams = [];
+    let isDebugged = false;  
 
-    const decoratorData = tools.extractRWSViewArguments(tsSourceFile);
-
+    // timingStart('decorator_extraction');
+    const decoratorExtract = LoadersHelper.extractRWSViewArgs(processedContent);    
+    const decoratorData = decoratorExtract ? decoratorExtract.viewDecoratorData : null;
     
+    const cachedCode = processedContent;
+
+    const compilationVariables = this._compilation;
+    const customCompilationOptions = compilationVariables?.customOptions || null;    
+
+    const cachedTS = _scss_cache.cache(customCompilationOptions).getCachedItem(filePath, md5(cachedCode));
+
+    if(cachedTS){
+      return cachedTS;
+    }
+
     if(!decoratorData){
         return content;
     }
 
-
+    let templateName = null;
+    let stylesPath = null;
     
-    if(decoratorData.options){
-        if(decoratorData.options.template){
-            templatePath = decoratorData.options.template;
+    if(decoratorData.decoratorArgs){
+        if(decoratorData.decoratorArgs.template){
+            templateName = decoratorData.decoratorArgs.template || null;
         }
 
-        if(decoratorData.options.styles){
-            stylesPath = decoratorData.options.styles;
+        if(decoratorData.decoratorArgs.styles){
+            stylesPath = decoratorData.decoratorArgs.styles || null;
         }
-
         
-        if(decoratorData.options.ignorePackaging){
+        if(decoratorData.decoratorArgs.ignorePackaging){
             isIgnored = true;
         }
 
-        if(decoratorData.options.debugPackaging){
+        if(decoratorData.decoratorArgs.debugPackaging){
             isDebugged = true;
-        }
-
-        if(decoratorData.options.fastElementOptions){
-            fastOptions = decoratorData.options.fastElementOptions;                   
-        }        
-
-        for (const key in fastOptions){                
-            addedParamDefs.push(`const ${key} = ${JSON.stringify(fastOptions[key])};`);
-            addedParams.push(key);
-        }
+        }             
     }    
 
     const tagName = decoratorData.tagName;
+    const className = decoratorData.className;
     
+    // timingStop('decorator_extraction');
+
     try { 
-        if(tagName){       
-            const templateName = 'template';
-            const templatePath = path.dirname(filePath) + `/${templateName}.html`;
-                
-            const templateExists = fs.existsSync(templatePath);                   
-
-            let template = 'const rwsTemplate: null = null;';                            
-            let styles = 'const styles: null = null;'
-
-            if(fs.existsSync(path.dirname(filePath) + '/styles')){
-                const scsscontent = fs.readFileSync(path.dirname(filePath) + '/' + stylesPath, 'utf-8');
-                const codeData = await plugin.compileScssCode(scsscontent, path.dirname(filePath) + '/styles', null, filePath, !isDev);        
-                const cssCode = codeData.code;
-           
-                styles = isDev ? `import './${stylesPath}';\n` : '';     
-                if(!templateExists){
-                    styles += `import { css } from '@microsoft/fast-element';\n`;     
-                }       
-                styles += `const styles = ${templateExists? 'T.': ''}css\`${cssCode}\`;\n`;
-
-                this.addDependency(path.dirname(filePath) + '/' + stylesPath);
-            }                                    
-            
-            if(templateExists){                         
-                const templateContent = fs.readFileSync(templatePath, 'utf-8').replace(/<!--[\s\S]*?-->/g, '');
-                htmlFastImports = `import * as T from '@microsoft/fast-element';\nimport './${templateName}.html';\n`;
-                template = `                
-//@ts-ignore                
-let rwsTemplate: any = T.html\`${templateContent}\`;
-`;              
-                this.addDependency(templatePath);
-            }
-        
-            const viewReg = /@RWSView\(["']([^"']+)["'].*\)\s*(.*?\s+)?class\s+([a-zA-Z0-9_-]+)\s+extends\s+RWSViewComponent/gm
-
-            let m;
-            let className = null;
-
-
-            while ((m = viewReg.exec(processedContent)) !== null) {
-                // This is necessary to avoid infinite loops with zero-width matches
-                if (m.index === viewReg.lastIndex) {
-                    viewReg.lastIndex++;
-                }
-                
-                // The result can be accessed through the `m`-variable.
-                m.forEach((match, groupIndex) => {
-                    if(groupIndex === 3){
-                        className = match;
-                    }                    
-                });
-            }    
-                  
+        if(tagName){                                   
+            const [template, htmlFastImports, templateExists] = await LoadersHelper.getTemplate(filePath, this.addDependency, templateName, isDev);         
+            const styles = await LoadersHelper.getStyles(filePath, this.addDependency, templateExists, stylesPath, isDev);  
 
             if(className){                
-                const replacedViewDecoratorContent = processedContent.replace(
-                    viewReg,
-                    `@RWSView('$1', null, { template: rwsTemplate, styles${addedParams.length? ', options: {' + (addedParams.join(', ')) + '}': ''} })\n$2class $3 extends RWSViewComponent `
-                );                            
-                processedContent = `${template}\n${styles}\n${addedParamDefs.join('\n')}\n` + replacedViewDecoratorContent;   
+                const replacedViewDecoratorContent =  decoratorExtract.replacedDecorator;  
+
+                if(replacedViewDecoratorContent){
+                    processedContent = `${template}\n${styles}\n${replacedViewDecoratorContent}`;
+                }                
             }            
             
             processedContent = `${htmlFastImports ? htmlFastImports + '\n' : ''}${processedContent}`;
@@ -149,9 +90,10 @@ let rwsTemplate: any = T.html\`${templateContent}\`;
 
         if(isDebugged){
             console.log(chalk.red('[RWS BUILD] Debugging into: ' + debugTsPath));
-            fs.writeFileSync(debugTsPath, processedContent); //for final RWS TS preview.
+            fs.writeFile(debugTsPath, processedContent, () => {}); //for final RWS TS preview.
         }
       
+        _scss_cache.cache(customCompilationOptions).cacheItem(filePath, processedContent, cachedCode);
         return processedContent;
     }catch(e){
         console.log(chalk.red('RWS Typescript loader error:'));

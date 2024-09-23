@@ -19,7 +19,7 @@ function writeCssFile(scssFilePath, cssContent) {
     endCssFilePath[endCssFilePath.length - 1] = `${_COMPILE_DIR_NAME}/` + endCssFilePath[endCssFilePath.length - 1];
     endCssFilePath = endCssFilePath.join('/');
 
-    fs.writeFileSync(endCssFilePath, cssContent);
+    fs.writeFile(endCssFilePath, cssContent, () => {});
     console.log('Saved external CSS file in: ' + endCssFilePath);
 }
 

@@ -7,7 +7,11 @@ module.exports = function(content){
     const componentPath = path.resolve(componentDir, 'component.ts');
 
     if(fs.existsSync(componentPath)){
-        fs.writeFileSync(componentPath, fs.readFileSync(componentPath, 'utf-8'))  
+        const fileCnt = fs.readFileSync(componentPath, 'utf-8');
+
+        if(fileCnt){
+            fs.writeFile(componentPath, fileCnt, () => {})  
+        }    
     }
     
     return '';

@@ -4,8 +4,10 @@ const _tools = require('../_tools');
 const _scss_compiler_builder = require('./scss/_compiler');
 let _scss_compiler = null;
 const _scss_import_builder = require('./scss/_import');
+
 let _scss_import = null;
 const _scss_fs_builder = require('./scss/_fs');
+const { timingStart, timingStop } = require('../cfg/build_steps/webpack/_timing');
 let _scss_fs = null;
 
 
@@ -40,15 +42,16 @@ class RWSScssPlugin {
   }
 
   async compileFile(scssPath) {    
-    scssPath = _scss_import.processImportPath(scssPath, path.dirname(scssPath))
+    scssPath = _scss_import.processImportPath(scssPath, path.dirname(scssPath))    
+
 
     let scssCode = _scss_fs.getCodeFromFile(scssPath);
 
-    return await _scss_compiler.compileScssCode(scssCode, path.dirname(scssPath));
+    return await _scss_compiler.compileScssCode(scssCode, path.dirname(scssPath), null, scssPath);
   }
 
   async compileScssCode(scssCode, scssPath){    
-    return await _scss_compiler.compileScssCode(scssCode, scssPath);
+    return await _scss_compiler.compileScssCode(scssCode, scssPath, null, scssPath);
   }
 
   writeCssFile(scssFilePath, cssContent){
