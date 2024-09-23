@@ -1,15 +1,8 @@
 // custom-html-loader.js
-const path = require('path');
 const fs = require('fs');
-const ts = require('typescript');
-const tools = require('../../_tools');
 const chalk = require('chalk');
-const {html_error_proof} = require('./ts/html_error');
-const { rwsRuntimeHelper } = require('@rws-framework/console');
-const { timingStart, timingStop } = require('../../cfg/build_steps/webpack/_timing');
 const _scss_cache = require('../../cfg/build_steps/webpack/_cache');
 const LoadersHelper = require('../../cfg/build_steps/webpack/_loaders');
-const { sleep } = require('langchain/util/time');
 const md5 = require('md5');
 
 
