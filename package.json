@@ -41,7 +41,7 @@
         "reflect-metadata": "^0.1.13",
         "resolve-url-loader": "^5.0.0",
         "sanitize-html": "^2.12.1",
-        "sass": "1.69.7",
+        "sass": "1.77.8",
         "sass-loader": "^13.3.2",
         "scss-loading-animations": "^1.0.1",
         "socket.io-client": "^4.7.2",
