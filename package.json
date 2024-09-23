@@ -1,7 +1,7 @@
 {
     "name": "@rws-framework/client",
     "private": false,
-    "version": "2.10.10",
+    "version": "2.10.11",
     "main": "src/index.ts",
     "scripts": {
         "docs": "typedoc --tsconfig ./tsconfig.json"
@@ -67,8 +67,7 @@
         "css-loader": "^6.8.1",
         "css-minimizer-webpack-plugin": "^5.0.1",
         "eslint": "^6.0.0",
-        "file-loader": "^6.2.0",
-        "fork-ts-checker-webpack-plugin": "^9.0.2",
+        "file-loader": "^6.2.0",        
         "html-webpack-plugin": "^5.5.3",
         "loader-utils": "^3.2.1",
         "mini-css-extract-plugin": "^2.7.6",
