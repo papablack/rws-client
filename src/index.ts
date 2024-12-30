@@ -1,85 +1,104 @@
-import { Transformer as HTMLTagTransformerType, Tag as HTMLTag, Attributes as HTMLAttributes } from 'sanitize-html';
+// Regular imports for classes and functions
 import { observable, attr } from '@microsoft/fast-element';
-import IRWSConfig from './types/IRWSConfig';
-import RWSNotify, { NotifyUiType, NotifyLogType } from './types/RWSNotify';
+import { Transformer as HTMLTagTransformerType, Tag as HTMLTag, Attributes as HTMLAttributes } from 'sanitize-html';
 import RWSService from './services/_service';
 import ConfigService, { ConfigServiceInstance } from './services/ConfigService';
-import NotifyService, {NotifyServiceInstance} from './services/NotifyService';
-import DOMService, { DOMServiceInstance, DOMOutputType, TagsProcessorType }  from './services/DOMService';
-import ApiService,  { IBackendRoute, ApiServiceInstance, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
-import UtilsService, {UtilsServiceInstance} from './services/UtilsService';
+import NotifyService, { NotifyServiceInstance } from './services/NotifyService';
+import DOMService, { DOMServiceInstance } from './services/DOMService';
+import ApiService, { ApiServiceInstance } from './services/ApiService';
+import UtilsService, { UtilsServiceInstance } from './services/UtilsService';
 import ServiceWorkerService, { ServiceWorkerServiceInstance } from './services/ServiceWorkerService';
 import { sanitizedAttr } from './components/_attrs/sanitize-html';
 import { ngAttr } from './components/_attrs/angular-attr';
 import { externalObservable } from './components/_attrs/external-observable';
 import { externalAttr } from './components/_attrs/external-attr';
-import { RWSPlugin, DefaultRWSPluginOptionsType } from './plugins/_plugin';
-import { IRWSPlugin, IStaticRWSPlugin } from './types/IRWSPlugin';
+import { RWSPlugin } from './plugins/_plugin';
 import RWSClient, { RWSClientInstance } from './client';
-import { RWSPluginEntry } from './types/IRWSConfig';
-import IRWSUser from './types/IRWSUser';
-import RWSViewComponent, { IAssetShowOptions } from './components/_component';
-
+import RWSViewComponent from './components/_component';
 import RWSContainer from './components/_container';
-
-
-import { RWSDecoratorOptions, RWSIgnore, RWSInject, RWSView } from './components/_decorator';
-
+import { RWSIgnore, RWSInject, RWSView } from './components/_decorator';
 import { declareRWSComponents } from './components';
 
+// Type imports
+import type { DOMOutputType, TagsProcessorType } from './services/DOMService';
+import type { IBackendRoute, IHTTProute, IPrefixedHTTProutes } from './services/ApiService';
+import type { DefaultRWSPluginOptionsType } from './plugins/_plugin';
+import type { IRWSPlugin, IStaticRWSPlugin } from './types/IRWSPlugin';
+import type { RWSPluginEntry } from './types/IRWSConfig';
+import type { NotifyUiType, NotifyLogType } from './types/RWSNotify';
+import type { RWSDecoratorOptions } from './components/_decorator';
+import type { IAssetShowOptions } from './components/_component';
+import type IRWSConfig from './types/IRWSConfig';
+import type IRWSUser from './types/IRWSUser';
+import type RWSNotify from './types/RWSNotify';
+
+// Default export
 export default RWSClient;
-export { 
+
+// Class and function exports
+export {
     RWSClient,
     RWSClientInstance,
-
     RWSPlugin,
-    RWSPluginEntry,
-    IRWSPlugin, IStaticRWSPlugin,
-    DefaultRWSPluginOptionsType,
-    
-    NotifyUiType,
-    NotifyLogType,
-
-    ApiServiceInstance,
-    ApiService,    
-    UtilsServiceInstance,    
-    UtilsService,    
-    DOMServiceInstance,
+    ApiService,
+    UtilsService,
     DOMService,
-    DOMOutputType,
-    NotifyServiceInstance,
     NotifyService,
-    ConfigServiceInstance,
     ConfigService,
-    ServiceWorkerServiceInstance,
     ServiceWorkerService,
-
-    RWSNotify,
-    IBackendRoute as IRWSBackendRoute,
-    RWSDecoratorOptions as IRWSDecoratorOptions,
-    IHTTProute as IRWSHttpRoute,
-    IPrefixedHTTProutes as IRWSPrefixedHTTProutes,    
-    IAssetShowOptions as IRWSAssetShowOptions,
-    IRWSConfig,
-    IRWSUser,
-    TagsProcessorType,
-    HTMLTagTransformerType,
-    HTMLTag,
-    HTMLAttributes,
-         
+    RWSService,
+    RWSViewComponent,
+    RWSContainer,
     RWSView,
-    sanitizedAttr,
     RWSIgnore,
-    RWSInject,    
-    observable,
+    RWSInject,
+    sanitizedAttr,
     externalObservable,
     externalAttr,
+    observable,
     attr,
     ngAttr,
-    
-    RWSService,
-    RWSViewComponent,       
     declareRWSComponents,
+    
+    // Service instances
+    ApiServiceInstance,
+    UtilsServiceInstance,
+    DOMServiceInstance,
+    NotifyServiceInstance,
+    ConfigServiceInstance,
+    ServiceWorkerServiceInstance,
+    
+    // External types
+    HTMLTagTransformerType,
+    HTMLTag,
+    HTMLAttributes
+};
 
-    RWSContainer
+// Type exports
+export type {
+    // Plugin types
+    RWSPluginEntry,
+    IRWSPlugin,
+    IStaticRWSPlugin,
+    DefaultRWSPluginOptionsType,
+    
+    // Notification types
+    NotifyUiType,
+    NotifyLogType,
+    RWSNotify,
+    
+    // Service and API types
+    DOMOutputType,
+    TagsProcessorType,
+    IBackendRoute as IRWSBackendRoute,
+    IHTTProute as IRWSHttpRoute,
+    IPrefixedHTTProutes as IRWSPrefixedHTTProutes,
+    
+    // Component and decorator types
+    RWSDecoratorOptions as IRWSDecoratorOptions,
+    IAssetShowOptions as IRWSAssetShowOptions,
+    
+    // Config and user types
+    IRWSConfig,
+    IRWSUser
 };
