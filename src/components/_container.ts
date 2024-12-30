@@ -1,4 +1,4 @@
-import {DI, Container, Key, Registration , InterfaceSymbol} from '@microsoft/fast-foundation';
+import { Key, InterfaceSymbol, DI, Container, Registration } from '../../foundation/rws-foundation';
 import {loadRWSRichWindow} from '../types/RWSWindow';
 
 export default () => {

@@ -72,6 +72,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
     constructor() {
         super();       
         applyConstructor(this);       
+        console.log((this as any).constructor.definition)
     }
 
     connectedCallback() {        
