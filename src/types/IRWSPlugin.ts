@@ -12,8 +12,10 @@ export interface IRWSPlugin {
     onSetUser(user: IRWSUser): Promise<void>
 }
 
-export interface IStaticRWSPlugin<PluginOptions extends DefaultRWSPluginOptionsType = DefaultRWSPluginOptionsType> {    
+type IStaticRWSPluginEntry<PluginOptions extends DefaultRWSPluginOptionsType = DefaultRWSPluginOptionsType> = {    
     new (...args: any[]): IRWSPlugin;
     container: Container;    
     window: RWSWindow;
 }
+
+export type IStaticRWSPlugin<PluginOptions extends DefaultRWSPluginOptionsType> =  IStaticRWSPluginEntry<PluginOptions> | [IStaticRWSPluginEntry<PluginOptions>, PluginOptions]

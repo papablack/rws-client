@@ -74,7 +74,7 @@ class RWSClient {
         }        
     }
 
-    addPlugin<T extends DefaultRWSPluginOptionsType>(pluginEntry: IStaticRWSPlugin)
+    addPlugin<T extends DefaultRWSPluginOptionsType>(pluginEntry: IStaticRWSPlugin<T>)
     {        
         this.config.plugins.push(pluginEntry);
     }
