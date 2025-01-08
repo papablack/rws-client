@@ -25,7 +25,7 @@ export default interface IRWSConfig {
     rwsDefines?: {[key: string]: any}
     partedFileDir?: string
     partedPrefix?: string
-    plugins?: IStaticRWSPlugin[]
+    plugins?: IStaticRWSPlugin<DefaultRWSPluginOptionsType>[]
     routing_enabled?: boolean
     _noLoad?: boolean    
 }
