@@ -1,5 +1,4 @@
 @mixin customScrollbars($width: 10px, $trackColor: #f1f1f1, $thumbColor: #888) {
-
     /* WebKit (Safari/Chrome) */
     &::-webkit-scrollbar {
       width: $width;
