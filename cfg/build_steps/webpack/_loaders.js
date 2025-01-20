@@ -51,6 +51,12 @@ function getRWSLoaders(packageDir, nodeModulesPath, tsConfigPath, devDebug) {
         scssLoader,
       ],
     },
+    {
+      test: /\.css$/i,
+      use: [
+        'css-loader'
+      ],
+    },
   ]
 }
 

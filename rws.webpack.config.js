@@ -68,11 +68,6 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   let optimConfig = null;
   let aliases = rwsFrontendConfig.aliases || {};
 
-  console.log({  
-    __filename,
-    _packageDir
-  });
-
   aliases = { ...aliases, ...loadAliases(__dirname, path.resolve(_MAIN_PACKAGE, 'node_modules'), executionDir) }  
 
   // #SECTION PLUGIN STARTING HOOKS

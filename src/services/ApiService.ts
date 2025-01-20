@@ -80,6 +80,11 @@ class ApiService extends TheService {
         this.token = token;
     }
 
+    getToken(): string
+    {
+        return this.token;
+    }
+
     public async pureGet(url: string, options: IAPIOptions = {}): Promise<string> {
         try {
             const response = await fetch(url, {
@@ -192,6 +197,8 @@ class ApiService extends TheService {
 
             apiPath = apiPath.replace(`:${paramKey}`, paramValue);
         });
+
+        console.log('bck', this.config.get('backendUrl'));
 
         return `${this.config.get('backendUrl')}${this.config.get('apiPrefix') || ''}${apiPath}`;
     }
