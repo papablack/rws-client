@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const FONT_REGEX = /url\(['"]?(.+?\.(woff|woff2|eot|ttf|otf))['"]?\)/gm;
 
-const _scss_import_builder = require('./_import');
+import _scss_import_builder from './_import';
 let _scss_import: any = null;
 
 function hasFontEmbeds(css) {

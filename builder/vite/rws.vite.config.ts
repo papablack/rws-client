@@ -28,7 +28,7 @@ export function rwsViteBuilder(config: Partial<RWSViteConfig> = _DEFAULT_CFG, de
             packageDir: rwsPath.findPackageDir(process.cwd()), 
             nodeModulesPath: `${rwsPath.findRootWorkspacePath(process.cwd())}/node_modules`, 
             tsConfigPath: theConfig.tsConfigPath, 
-            devDebug: true 
+            dev: config.dev 
         }),        
         build: {
             minify: !config.dev,

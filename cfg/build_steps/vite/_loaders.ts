@@ -12,7 +12,7 @@ interface RWSLoaderOptions {
     packageDir: string;
     nodeModulesPath: string;
     tsConfigPath: string;
-    devDebug?: boolean;
+    dev: boolean;
 }
 
 interface ViewDecoratorData {
@@ -22,9 +22,9 @@ interface ViewDecoratorData {
     decoratorArgs: any;
 }
 
-export function getRWSVitePlugins({ packageDir, nodeModulesPath, tsConfigPath, devDebug }: RWSLoaderOptions): Plugin[] {
+export function getRWSVitePlugins({ packageDir, nodeModulesPath, tsConfigPath, dev }: RWSLoaderOptions): Plugin[] {
     return [
-        tsLoader, scssLoader, htmlLoader
+        tsLoader({dev}), scssLoader({dev, plugin: cssPlugin}), htmlLoader({dev})
     ];
 }
 

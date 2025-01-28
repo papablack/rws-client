@@ -1,14 +1,15 @@
-import { IRWSViteLoader } from "./loader.type";
+import { HTMLLoaderParams, IRWSViteLoader } from "./loader.type";
 
-export default (): IRWSViteLoader => ({
+const loader: IRWSViteLoader<HTMLLoaderParams> = (params: HTMLLoaderParams) => ({
     name: 'rws-html',
     async transform(code: string, id: string) {
         if (!id.endsWith('.html')) return null;
-        
-        // Process HTML files
+                
         return {
             code,
             map: null
         };
     }
 });
+
+export default loader;

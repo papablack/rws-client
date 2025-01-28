@@ -1,13 +1,12 @@
-import { IRWSViteLoader } from "./loader.type";
-import { RWSScssPlugin } from '../rws_scss_plugin';
+import { IRWSViteLoader, SCSSLoaderParams } from "./loader.type";
 import path from 'path';
 
-export default (cssPlugin: RWSScssPlugin): IRWSViteLoader => ({
+const loader: IRWSViteLoader<SCSSLoaderParams> = (params: SCSSLoaderParams) => ({
     name: 'rws-scss',
     async transform(code: string, id: string) {
         if (!id.endsWith('.scss')) return null;
         
-        const result = await cssPlugin.compileScssCode(
+        const result = await params.plugin.compileScssCode(
             code,
             path.dirname(id) + '/styles',                    
         );
@@ -18,3 +17,5 @@ export default (cssPlugin: RWSScssPlugin): IRWSViteLoader => ({
         };
     }
 });
+
+export default loader;
