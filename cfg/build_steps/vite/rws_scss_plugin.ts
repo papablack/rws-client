@@ -39,21 +39,18 @@ class RWSScssPlugin {
     return;
   }
 
-  async compileFile(scssPath): Promise<{ code: string, dependencies: string[]}> 
+  async compileFile(scssPath): Promise<{ code: string, dependencies: string[]}>
   {    
-    scssPath = this._scss_import.processImportPath(scssPath, path.dirname(scssPath))    
-
-
-    let scssCode = this._scss_fs.getCodeFromFile(scssPath);
-
-    return await this._scss_compiler.compileScssCode(scssCode, path.dirname(scssPath), null, scssPath);
+      scssPath = this._scss_import.processImportPath(scssPath, path.dirname(scssPath))    
+      let scssCode = this._scss_fs.getCodeFromFile(scssPath);
+      return await this._scss_compiler.compileScssCode(scssCode, path.dirname(scssPath), null, scssPath);
   }
 
   async compileScssCode(scssCode: string, scssPath: string): Promise<{ code: string, dependencies: string[]}>
   {    
-    return await this._scss_compiler.compileScssCode(scssCode, scssPath, null, scssPath);
+      return await this._scss_compiler.compileScssCode(scssCode, scssPath, null, scssPath);
   }
-
+  
   writeCssFile(scssFilePath: string, cssContent: string): string
   {
     return this._scss_fs.writeCssFile(scssFilePath, cssContent);

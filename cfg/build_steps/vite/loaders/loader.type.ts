@@ -1,3 +1,4 @@
+import { PluginOption } from 'vite';
 import { RWSScssPlugin } from '../rws_scss_plugin';
 
 export interface LoaderParams {
@@ -5,21 +6,23 @@ export interface LoaderParams {
 }
 
 export interface TSLoaderParams extends LoaderParams {
-    
+    scssPlugin: RWSScssPlugin
+
 }
 
 export interface SCSSLoaderParams extends LoaderParams {
-    plugin: RWSScssPlugin
+    scssPlugin: RWSScssPlugin,
+    cssOutputPath: string
 }
 
 export interface HTMLLoaderParams extends LoaderParams {
     
 }
 
-export interface LoaderContent {
+export type LoaderContent = {
     name: string,
     enforce?: string,
     transform(code: string, id: string): Promise<{ code: string, map: any } | null>
-}
+} | null;
 
-export type IRWSViteLoader<P extends LoaderParams = LoaderParams> = (params: P) => LoaderContent;
+export type IRWSViteLoader<P extends LoaderParams = LoaderParams> = (params: P) => PluginOption;

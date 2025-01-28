@@ -2,15 +2,17 @@ import path from 'path';
 import fs from 'fs';
 import JSON5 from 'json5';
 import chalk from 'chalk';
-import { Plugin } from 'vite';
 import { RWSScssPlugin } from './rws_scss_plugin';
 import { scssLoader, tsLoader, htmlLoader } from './loaders';
+import { HTMLLoaderParams, IRWSViteLoader, LoaderContent, SCSSLoaderParams, TSLoaderParams } from './loaders/loader.type';
+import { PluginOption } from 'vite';
 
-const cssPlugin = new RWSScssPlugin();
+const scssPlugin = new RWSScssPlugin();
 
 interface RWSLoaderOptions {
     packageDir: string;
     nodeModulesPath: string;
+    cssOutputPath: string;
     tsConfigPath: string;
     dev: boolean;
 }
@@ -22,9 +24,9 @@ interface ViewDecoratorData {
     decoratorArgs: any;
 }
 
-export function getRWSVitePlugins({ packageDir, nodeModulesPath, tsConfigPath, dev }: RWSLoaderOptions): Plugin[] {
+export function getRWSVitePlugins({ packageDir, nodeModulesPath, tsConfigPath, cssOutputPath, dev }: RWSLoaderOptions): PluginOption[] {
     return [
-        tsLoader({dev}), scssLoader({dev, plugin: cssPlugin}), htmlLoader({dev})
+         tsLoader({dev, scssPlugin: scssPlugin}),  scssLoader({dev, scssPlugin: scssPlugin, cssOutputPath}), htmlLoader({dev})
     ];
 }
 

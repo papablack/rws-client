@@ -11,12 +11,17 @@ const __dirname = path.dirname(__filename);
 
 export const _DEFAULT_CFG: RWSViteConfig = {
     dev: true,
-    tsConfigPath: path.resolve(rwsPath.findPackageDir(process.cwd()), 'tsconfig.json')
+    tsConfigPath: path.resolve(rwsPath.findPackageDir(process.cwd()), 'tsconfig.json'),
+    cssOutputPath: path.resolve(rwsPath.findPackageDir(process.cwd()), 'public', 'css'),
 };
 
 export function rwsViteBuilder(config: Partial<RWSViteConfig> = _DEFAULT_CFG, devDebug = false): UserConfig {
     if(!config.tsConfigPath){
         config.tsConfigPath = _DEFAULT_CFG.tsConfigPath;
+    }
+
+    if(!config.cssOutputPath){
+        config.cssOutputPath = _DEFAULT_CFG.cssOutputPath;
     }
 
     const theConfig: RWSViteConfig = {..._DEFAULT_CFG, ...config};
@@ -28,7 +33,8 @@ export function rwsViteBuilder(config: Partial<RWSViteConfig> = _DEFAULT_CFG, de
             packageDir: rwsPath.findPackageDir(process.cwd()), 
             nodeModulesPath: `${rwsPath.findRootWorkspacePath(process.cwd())}/node_modules`, 
             tsConfigPath: theConfig.tsConfigPath, 
-            dev: config.dev 
+            cssOutputPath: theConfig.cssOutputPath as string,
+            dev: config.dev as boolean 
         }),        
         build: {
             minify: !config.dev,
