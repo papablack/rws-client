@@ -24,9 +24,11 @@ interface ViewDecoratorData {
     decoratorArgs: any;
 }
 
-export function getRWSVitePlugins({ packageDir, nodeModulesPath, tsConfigPath, cssOutputPath, dev }: RWSLoaderOptions): PluginOption[] {
+export function getRWSVitePlugins({ tsConfigPath, cssOutputPath, dev }: RWSLoaderOptions): PluginOption[] {
     return [
-         tsLoader({dev, scssPlugin: scssPlugin}),  scssLoader({dev, scssPlugin: scssPlugin, cssOutputPath}), htmlLoader({dev})
+        scssLoader({dev, scssPlugin: scssPlugin, cssOutputPath}), 
+        tsLoader({dev, scssPlugin: scssPlugin, tsConfigPath}),  
+        htmlLoader({dev})
     ];
 }
 

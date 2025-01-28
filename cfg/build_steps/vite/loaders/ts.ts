@@ -165,7 +165,7 @@ class LoadersHelper {
           const codeData = await plugin.compileScssCode(scsscontent, path.dirname(filePath) + '/styles');      
           const cssCode = codeData.code;          
       
-          styles = isDev ? `import './${stylesPath}';\n` : '';
+          styles = isDev ? `` : '';
       
           if (!templateExists) {
             styles += `import { css } from '@microsoft/fast-element';\n`;
@@ -189,7 +189,7 @@ class LoadersHelper {
       
         if (templateExists) {
           const templateContent = fs.readFileSync(templatePath, 'utf-8').replace(/<!--[\s\S]*?-->/g, '');
-          htmlFastImports = `import * as T from '@microsoft/fast-element';\nimport './${templateName}.html';\n`;
+          htmlFastImports = `import * as T from '@microsoft/fast-element';\n`;
           template = `                
       //@ts-ignore                
       let rwsTemplate: any = T.html\`${templateContent}\`;
@@ -256,7 +256,6 @@ const loader: IRWSViteLoader<TSLoaderParams> = async (params: TSLoaderParams) =>
                 if(!stylesPath && fs.existsSync(defaultStylesPath)){
                     stylesPath ='styles/layout.scss';
                 }
-                console.log({stylesPath, templateName, tagName})
 
                 if (tagName && templateName && stylesPath) {
                     const [template, htmlFastImports, templateExists] = await LoadersHelper.getTemplate(
@@ -274,8 +273,6 @@ const loader: IRWSViteLoader<TSLoaderParams> = async (params: TSLoaderParams) =>
                         stylesPath,
                         isDev
                     );
-
-                    console.log({styles})
 
                     if (className && decoratorExtract?.replacedDecorator) {
                         processedContent = `${template}\n${styles}\n${decoratorExtract.replacedDecorator}`;

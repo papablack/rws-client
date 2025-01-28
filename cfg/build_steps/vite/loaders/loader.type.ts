@@ -7,7 +7,7 @@ export interface LoaderParams {
 
 export interface TSLoaderParams extends LoaderParams {
     scssPlugin: RWSScssPlugin
-
+    tsConfigPath: string
 }
 
 export interface SCSSLoaderParams extends LoaderParams {
