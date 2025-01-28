@@ -73,11 +73,11 @@ function get(this: RWSClientInstance, key: string): any | null
 }
 
 type PluginConstructor<T extends DefaultRWSPluginOptionsType> = new (options: T) => RWSPlugin<T>;
-type RWSPluginEntry = IStaticRWSPlugin;
+type RWSPluginEntry<T extends DefaultRWSPluginOptionsType = DefaultRWSPluginOptionsType> = IStaticRWSPlugin<T>;
 
 function addPlugin<T  extends DefaultRWSPluginOptionsType>(this: RWSClientInstance, pluginEntry: RWSPluginEntry){
     const rwsWindow: RWSWindow = loadRWSRichWindow();
-    const pluginClass: PluginConstructor<T> = (Array.isArray(pluginEntry) ? pluginEntry[0] : pluginEntry) as PluginConstructor<T>;
+    const pluginClass: PluginConstructor<T> = (Array.isArray(pluginEntry) ? pluginEntry[0] : pluginEntry) as unknown as PluginConstructor<T>;
     const pluginOptions: T = (Array.isArray(pluginEntry) ? pluginEntry[1] : { enabled: true }) as T;
 
     if(!Object.keys(rwsWindow.RWS.plugins).includes(pluginClass.name)){       

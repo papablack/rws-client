@@ -4,19 +4,19 @@ const chalk = require('chalk');
 
 const RWSWebpackPlugin = require('./webpack/rws_webpack_plugin');
 
-const buildInfo = require('./cfg/build_steps/webpack/_info');
-const { loadAliases } = require('./cfg/build_steps/webpack/_aliases');
-const { timingStart, timingStop, timeLog, toggleLogging } = require('./cfg/build_steps/webpack/_timing');
-const { getRWSProductionSetup } = require('./cfg/build_steps/webpack/_production');
-const { rwsExternals } = require('./cfg/build_steps/webpack/_rws_externals');
+const buildInfo = require('../../cfg/build_steps/webpack/_info');
+const { loadAliases } = require('../../cfg/build_steps/webpack/_aliases');
+const { timingStart, timingStop, timeLog, toggleLogging } = require('../../cfg/build_steps/webpack/_timing');
+const { getRWSProductionSetup } = require('../../cfg/build_steps/webpack/_production');
+const { rwsExternals } = require('../../cfg/build_steps/webpack/_rws_externals');
 
-const tools = require('./_tools');
-const { setComponentsChunks, scanComponents, generateRWSInfoFile, partedComponentsEvents } = require('./cfg/build_steps/webpack/_component_handling');
-const { getBuildConfig } = require('./cfg/build_steps/webpack/_build_config');
-const { createWebpackConfig } = require('./cfg/build_steps/webpack/_webpack_config');
-const { executeRWSStartActions, timingActions, devActions } = require('./cfg/build_steps/webpack/_actions');
-const { webpackDevServer } = require('./cfg/build_steps/webpack/_dev_servers');
-const { RWS_WEBPACK_PLUGINS_BAG, addStartPlugins } = require('./cfg/build_steps/webpack/_plugins');
+const tools = require('../../_tools');
+const { setComponentsChunks, scanComponents, generateRWSInfoFile, partedComponentsEvents } = require('../../cfg/build_steps/webpack/_component_handling');
+const { getBuildConfig } = require('../../cfg/build_steps/webpack/_build_config');
+const { createWebpackConfig } = require('../../cfg/build_steps/webpack/_webpack_config');
+const { executeRWSStartActions, timingActions, devActions } = require('../../cfg/build_steps/webpack/_actions');
+const { webpackDevServer } = require('../../cfg/build_steps/webpack/_dev_servers');
+const { RWS_WEBPACK_PLUGINS_BAG, addStartPlugins } = require('../../cfg/build_steps/webpack/_plugins');
 
 const _MAIN_PACKAGE = rwsPath.findRootWorkspacePath(process.cwd());
 
@@ -67,6 +67,11 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
 
   let optimConfig = null;
   let aliases = rwsFrontendConfig.aliases || {};
+
+  console.log({  
+    __filename,
+    _packageDir
+  });
 
   aliases = { ...aliases, ...loadAliases(__dirname, path.resolve(_MAIN_PACKAGE, 'node_modules'), executionDir) }  
 

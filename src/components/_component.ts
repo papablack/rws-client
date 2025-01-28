@@ -6,6 +6,7 @@ import DOMService, { DOMServiceInstance, DOMOutputType } from '../services/DOMSe
 import ApiService, { ApiServiceInstance } from '../services/ApiService';
 import NotifyService, { NotifyServiceInstance } from '../services/NotifyService';
 import { IRWSViewComponent, IAssetShowOptions } from '../types/IRWSViewComponent';
+import RWSWindow, { RWSWindowComponentInterface, loadRWSRichWindow } from '../types/RWSWindow';
 import { applyConstructor, RWSInject } from './_decorator';
 import TheRWSService from '../services/_service';
 import { handleExternalChange } from './_attrs/_external_handler';
@@ -70,7 +71,7 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 
     constructor() {
         super();       
-        applyConstructor(this);               
+        applyConstructor(this);       
     }
 
     connectedCallback() {        
@@ -240,5 +241,6 @@ abstract class RWSViewComponent extends FoundationElement implements IRWSViewCom
 export default RWSViewComponent;
 
 export type {
-    IAssetShowOptions, IRWSViewComponent
+    IAssetShowOptions,
+    IRWSViewComponent
 } from '../types/IRWSViewComponent';

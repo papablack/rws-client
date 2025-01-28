@@ -39,7 +39,6 @@ export function defineComponent<T extends RWSViewComponent>(element: IWithCompos
         styles: element.definition.styles
     }) as RWSWindowComponentInterface;
 
-
     if (!richWindow.RWS) {
         throw new Error('RWS client not initialized');
     }

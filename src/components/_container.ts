@@ -1,4 +1,4 @@
-import { DI, Container } from '../../foundation/rws-foundation';
+import {DI, Container, Registration } from '../../foundation/rws-foundation';
 import {loadRWSRichWindow} from '../types/RWSWindow';
 
 export default () => {
@@ -13,8 +13,4 @@ export default () => {
     return richWindow.RWS.container;
 };
 
-export { DI, Container }
-
-export type {
-    Key, Registration, InterfaceSymbol
-} from '../../foundation/rws-foundation';
+export { DI, Container, Registration }

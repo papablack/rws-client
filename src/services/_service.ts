@@ -1,6 +1,6 @@
-import RWSContainer from '../components/_container';
+import RWSContainer, { DI, InterfaceSymbol, Key, Registration } from '../components/_container';
 import { loadRWSRichWindow } from '../types/RWSWindow';
-import { DI, InterfaceSymbol, Key,Registration } from '../../foundation/rws-foundation';
+
 export interface IWithDI<T> {
     new (...args: any[]): T;
     getSingleton: <T extends Key>(this: IWithDI<T>) => InterfaceSymbol<T>;

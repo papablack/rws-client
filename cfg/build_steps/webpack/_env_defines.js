@@ -10,13 +10,8 @@ function processEnvDefines(BuildConfigurator, config, devDebug) {
     const rwsDefines = BuildConfigurator.get('rwsDefines') || config.rwsDefines || null;
 
     if (rwsDefines) {
-        for (const defineKey of Object.keys(rwsDefines)){        
-            _rws_defines = { 
-                ..._rws_defines, 
-                ['process.env.' + defineKey]: JSON.stringify(rwsDefines[defineKey]) 
-            }
-        }
-    }    
+        _rws_defines = { ..._rws_defines, ...rwsDefines }
+    }
 
     return _rws_defines;
 }

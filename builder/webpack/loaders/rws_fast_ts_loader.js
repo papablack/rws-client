@@ -24,7 +24,7 @@ module.exports = async function(content) {
     const customCompilationOptions = compilationVariables?.customOptions || null;    
 
     const cachedTS = _scss_cache.cache(customCompilationOptions).getCachedItem(filePath, md5(cachedCode));
-
+    
     if(cachedTS){
       return cachedTS;
     }

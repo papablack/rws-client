@@ -1,4 +1,4 @@
-import RWSViewComponent from "@rws-framework/client/src/components/_component";
+import RWSViewComponent from './_component';
 
 export function on<T>(this: RWSViewComponent, type: string, listener: (event: CustomEvent<any>) => any) {
     this.addEventListener(type, (baseEvent: Event) => {

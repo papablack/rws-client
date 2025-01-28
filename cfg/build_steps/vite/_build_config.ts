@@ -1,9 +1,38 @@
-const chalk = require('chalk');
-const { RWSConfigBuilder } = require('@rws-framework/console')
-const { rwsPath } = require('@rws-framework/console');
-const { _DEFAULT_CONFIG } = require('../../_default.cfg');
+import chalk from 'chalk';
+import { RWSConfigBuilder, rwsPath } from '@rws-framework/console';
+import { _DEFAULT_CONFIG } from '../../_default.cfg';
 
-async function getBuildConfig(rwsFrontBuildConfig){
+import { IRWSPlugin } from '../../../src/types/IRWSPlugin';
+
+interface IRWSViteConfig {
+  executionDir: string;
+  isWatcher: boolean;
+  isDev: boolean;
+  isHotReload: boolean;
+  isReport: boolean;
+  isParted: boolean;
+  partedPrefix?: string | null;
+  partedDirUrlPrefix?: string | null;
+  partedComponentsLocations?: string[];
+  customServiceLocations?: string[];
+  outputDir: string;
+  outputFileName: string;
+  publicDir?: string | null;
+  serviceWorkerPath?: string | null,
+  publicIndex?: string | null,
+  devTools?: string | null,
+  devDebug?: any,
+  devRouteProxy?: any,
+  tsConfigPath: string,
+  rwsPlugins?: {
+    [key: string]: IRWSPlugin
+  },
+  _packageDir?: string,
+  BuildConfigurator: RWSConfigBuilder<any>
+}
+
+async function getBuildConfig(rwsFrontBuildConfig): Promise<IRWSViteConfig>
+{
     const BuildConfigurator = new RWSConfigBuilder(rwsPath.findPackageDir(process.cwd()) + '/.rws.json', {..._DEFAULT_CONFIG, ...rwsFrontBuildConfig});
     const _packageDir = rwsPath.findPackageDir(process.cwd());
 
@@ -43,7 +72,7 @@ async function getBuildConfig(rwsFrontBuildConfig){
 
     if(rwsFrontBuildConfig.rwsPlugins){
         for(const pluginEntry of rwsFrontBuildConfig.rwsPlugins){
-          const pluginBuilder = (await import(`${pluginEntry}/build.js`)).default;      
+          const pluginBuilder = (await import(`${pluginEntry}`)).default;      
           rwsPlugins[pluginEntry] = new pluginBuilder(BuildConfigurator, rwsFrontBuildConfig);
         }
       }
@@ -74,4 +103,4 @@ async function getBuildConfig(rwsFrontBuildConfig){
     }
 }
 
-module.exports = { getBuildConfig }
+export { getBuildConfig }

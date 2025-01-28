@@ -31,6 +31,13 @@ module.exports = async function(content) {
         }
     }
 
-   
+    if(fs.existsSync(componentPath)){
+        const fileCnt = fs.readFileSync(componentPath, 'utf-8');
+
+        if(fileCnt){
+            fs.writeFile(componentPath, fileCnt, () => {})  
+        }        
+    }
+    
     return '';   
 };

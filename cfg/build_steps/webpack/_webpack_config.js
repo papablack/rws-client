@@ -47,7 +47,12 @@ function createWebpackConfig(
         externals: rwsExternals(executionDir, modules_setup, automatedChunks, {
             _vars: devExternalsVars
         }),
-        cache: false,
+        cache: {
+            type: 'filesystem',
+            buildDependencies: {
+                config: [__filename],
+            },
+        }
     }
 }
 

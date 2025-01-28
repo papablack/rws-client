@@ -1,7 +1,7 @@
 import TheService from './_service';
 
 //@4DI
-import ConfigService, { ConfigServiceInstance } from '../services/ConfigService';
+import ConfigService, { ConfigServiceInstance } from './ConfigService';
 
 import { upload, UploadResponse } from 'upload';
 
@@ -78,11 +78,6 @@ class ApiService extends TheService {
     public setToken(token: string)
     {
         this.token = token;
-    }
-
-    getToken(): string
-    {
-        return this.token;
     }
 
     public async pureGet(url: string, options: IAPIOptions = {}): Promise<string> {
@@ -197,8 +192,6 @@ class ApiService extends TheService {
 
             apiPath = apiPath.replace(`:${paramKey}`, paramValue);
         });
-
-        console.log('bck', this.config.get('backendUrl'));
 
         return `${this.config.get('backendUrl')}${this.config.get('apiPrefix') || ''}${apiPath}`;
     }

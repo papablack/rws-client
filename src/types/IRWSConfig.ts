@@ -1,6 +1,6 @@
 import RWSViewComponent from '../components/_component';
 import { RWSPlugin, DefaultRWSPluginOptionsType } from '../plugins/_plugin';
-import { IStaticRWSPlugin } from '../types/IRWSPlugin';
+import { IStaticRWSPlugin } from './IRWSPlugin';
 
 export type IFrontRoutes = Record<string, unknown>; 
 export type RWSPluginEntry<T extends DefaultRWSPluginOptionsType = DefaultRWSPluginOptionsType> = new (...args: any[]) => RWSPlugin<T>;
@@ -25,7 +25,7 @@ export default interface IRWSConfig {
     rwsDefines?: {[key: string]: any}
     partedFileDir?: string
     partedPrefix?: string
-    plugins?: IStaticRWSPlugin<DefaultRWSPluginOptionsType>[]
+    plugins?: IStaticRWSPlugin[]
     routing_enabled?: boolean
     _noLoad?: boolean    
 }
