@@ -2,7 +2,7 @@ const { rwsPath } = require('@rws-framework/console');
 const path = require('path');
 const chalk = require('chalk');
 
-const RWSWebpackPlugin = require('./webpack/rws_webpack_plugin');
+const RWSWebpackPlugin = require('./rws_webpack_plugin');
 
 const buildInfo = require('../../cfg/build_steps/webpack/_info');
 const { loadAliases } = require('../../cfg/build_steps/webpack/_aliases');
