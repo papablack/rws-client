@@ -128,7 +128,7 @@ const RWSWebpackWrapper = async (rwsFrontendConfig) => {
   // #SECTION RWS WEBPACK BUILD
   const cfgExport = createWebpackConfig(
     executionDir,
-    __dirname,
+    path.resolve(__dirname, '..', '..'),
     _packageDir,
     isDev,
     devTools,
