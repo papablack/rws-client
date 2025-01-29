@@ -14,6 +14,7 @@ const __dirname = path.dirname(__filename);
 
 export const _DEFAULT_CFG: RWSViteConfig = {
     dev: true,
+    entry: path.resolve(rwsPath.findPackageDir(process.cwd()), 'src', 'index.ts'),
     tsConfigPath: path.resolve(rwsPath.findPackageDir(process.cwd()), 'tsconfig.json'),
     cssOutputPath: path.resolve(rwsPath.findPackageDir(process.cwd()), 'public', 'css'),
 };
@@ -49,7 +50,7 @@ export function rwsViteBuilder(config: Partial<RWSViteConfig> = _DEFAULT_CFG, de
             outDir: 'dist',
             rollupOptions: {
                 input: {
-                    main: path.resolve(process.cwd(), 'index.html')
+                    main: theConfig.entry
                 }
             }
         }
