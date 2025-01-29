@@ -1,8 +1,10 @@
 export type RWSViteConfig = {
     dev: boolean;
     entry: string;
-    cssOutputPath?: string;
     tsConfigPath: string;
+    outDir: string;
+    cssOutputPath: string;   
+    outFileName?: string; 
     defines?: {
         [key: string]: string
     };
