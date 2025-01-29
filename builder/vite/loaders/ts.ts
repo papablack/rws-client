@@ -157,12 +157,12 @@ class LoadersHelper {
         }
       
         let styles = 'const styles: null = null;'
-        const stylesFilePath = path.dirname(filePath) + '/' + stylesPath;
+        const stylesFilePath = path.join(path.dirname(filePath), stylesPath);
       
         if (fs.existsSync(stylesFilePath)) {  
           const scsscontent = fs.readFileSync(stylesFilePath, 'utf-8');
         
-          const codeData = await plugin.compileScssCode(scsscontent, path.dirname(filePath) + '/styles');      
+          const codeData = await plugin.compileScssCode(scsscontent, path.join(path.dirname(filePath), 'styles'));      
           const cssCode = codeData.code;          
       
           styles = isDev ? `` : '';
@@ -172,7 +172,7 @@ class LoadersHelper {
           }
           styles += `const styles = ${templateExists ? 'T.' : ''}css\`${cssCode}\`;\n`;
       
-          addDependency(path.dirname(filePath) + '/' + stylesPath);
+          addDependency(path.join(path.dirname(filePath), stylesPath));
         }
       
         return styles;

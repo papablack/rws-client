@@ -48,7 +48,9 @@ function readSCSSFilesFromDirectory(dirPath) {
 
 
   function getCodeFromFile(filePath) {
-    filePath = filePath.replace('//', '/');
+    filePath = filePath.replace(/\/\//g, path.sep);        
+    filePath = filePath.replace(/\\/g, path.sep);
+
     if (!fs.existsSync(filePath)) {
       const processedImportPath = _scss_import(this).processImportPath(filePath, path.dirname(filePath));
       if (!fs.existsSync(processedImportPath)) {
@@ -58,7 +60,7 @@ function readSCSSFilesFromDirectory(dirPath) {
       filePath = processedImportPath;
     }
 
-    if (filePath[filePath.length - 1] === '/' && fs.statSync(filePath).isDirectory()) {
+    if (filePath[filePath.length - 1] === path.sep && fs.statSync(filePath).isDirectory()) {
       let collectedCode = '';
 
       readSCSSFilesFromDirectory(filePath).forEach(scssPath => {
@@ -67,7 +69,7 @@ function readSCSSFilesFromDirectory(dirPath) {
 
       return collectedCode;
     } else if (fs.statSync(filePath).isDirectory()) {
-      throw new Error(`Non-directory path (not ending with "/") "${filePath}" is and should not be a directory`)
+      throw new Error(`Non-directory path (not ending with "${path.sep}") "${filePath}" is and should not be a directory`)
     }
 
     return fs.readFileSync(filePath, 'utf-8');

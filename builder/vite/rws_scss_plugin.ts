@@ -6,7 +6,7 @@ import _scss_import_builder from './scss/_import';
 
 import _scss_fs_builder from './scss/_fs';
 
-type PluginParams = { autoCompile: string[] };
+type PluginParams = { autoCompile: string[], dev: boolean };
 
 class RWSScssPlugin {
   protected autoCompile: string[] = [];
@@ -15,8 +15,9 @@ class RWSScssPlugin {
   private _scss_import: any;    
   private _scss_fs: any;
   private _scss_compiler: any;
+  private dev
 
-  constructor(params: PluginParams = { autoCompile: [] }) {
+  constructor(params: PluginParams = { autoCompile: [], dev: true }) {
     this.node_modules_dir = (fileDir) => path.relative(fileDir, rwsPath.findRootWorkspacePath(process.cwd())) + '/node_modules/'
     this._scss_import = _scss_import_builder(this);    
     this._scss_fs = _scss_fs_builder(this);
@@ -47,8 +48,8 @@ class RWSScssPlugin {
   }
 
   async compileScssCode(scssCode: string, scssPath: string): Promise<{ code: string, dependencies: string[]}>
-  {    
-      return await this._scss_compiler.compileScssCode(scssCode, scssPath, null, scssPath);
+  {             
+      return await this._scss_compiler.compileScssCode(scssCode, scssPath, this.dev);
   }
   
   writeCssFile(scssFilePath: string, cssContent: string): string

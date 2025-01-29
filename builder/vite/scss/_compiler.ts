@@ -8,7 +8,7 @@ let _scss_fonts: any = null;
 import _scss_import_builder from './_import';
 let _scss_import: any = null;
 
-async function compileScssCode(scssCode: string, fileRootDir: string, createFile:boolean = false, filePath: string | null = null, minify: boolean = false): Promise<{
+async function compileScssCode(scssCode: string, fileRootDir: string, minify: boolean = false): Promise<{
     code: string,
     dependencies: string[]
 }> {  
@@ -16,6 +16,7 @@ async function compileScssCode(scssCode: string, fileRootDir: string, createFile
     _scss_import = _scss_import_builder(this);
 
     const [scssImports] = _scss_import.extractScssImports(scssCode, fileRootDir);
+    
     const dependencies = scssImports.map((item) => item[2]);
 
     if (scssImports && scssImports.length) {

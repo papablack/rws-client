@@ -2,17 +2,17 @@ import path from 'path';
 import fs from 'fs';
 import JSON5 from 'json5';
 import chalk from 'chalk';
-import { RWSScssPlugin } from './rws_scss_plugin';
-import { scssLoader, tsLoader, htmlLoader } from './loaders';
-import { HTMLLoaderParams, IRWSViteLoader, LoaderContent, SCSSLoaderParams, TSLoaderParams } from './loaders/loader.type';
+import { RWSScssPlugin } from '../../../builder/vite/rws_scss_plugin';
+import { scssLoader, tsLoader, htmlLoader } from '../../../builder/vite/loaders';
+import { HTMLLoaderParams, IRWSViteLoader, LoaderContent, SCSSLoaderParams, TSLoaderParams } from '../../../builder/vite/loaders/loader.type';
 import { PluginOption } from 'vite';
 
-const scssPlugin = new RWSScssPlugin();
 
 interface RWSLoaderOptions {
     packageDir: string;
     nodeModulesPath: string;
     cssOutputPath: string;
+    scssPlugin: RWSScssPlugin;
     tsConfigPath: string;
     dev: boolean;
 }
@@ -24,7 +24,7 @@ interface ViewDecoratorData {
     decoratorArgs: any;
 }
 
-export function getRWSVitePlugins({ tsConfigPath, cssOutputPath, dev }: RWSLoaderOptions): PluginOption[] {
+export function getRWSVitePlugins({ tsConfigPath, cssOutputPath, dev, scssPlugin }: RWSLoaderOptions): PluginOption[] {
     return [
         scssLoader({dev, scssPlugin: scssPlugin, cssOutputPath}), 
         tsLoader({dev, scssPlugin: scssPlugin, tsConfigPath}),  
@@ -123,6 +123,7 @@ export function extractRWSViewArgs(content: string, noReplace = false): { viewDe
 }
 
 export async function getStyles(
+    scssPlugin: RWSScssPlugin,
     filePath: string,
     addDependency: (path: string) => void,
     templateExists: boolean,
@@ -139,7 +140,7 @@ export async function getStyles(
     if (fs.existsSync(stylesFilePath)) {
         const scsscontent = fs.readFileSync(stylesFilePath, 'utf-8');
 
-        const codeData = await cssPlugin.compileScssCode(
+        const codeData = await scssPlugin.compileScssCode(
             scsscontent,
             path.dirname(filePath) + '/styles'
         );        

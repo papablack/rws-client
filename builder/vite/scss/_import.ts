@@ -9,34 +9,40 @@ const SCSS_USE_REGEX = /^(?!.*\/\/)(?!.*\/\*).*@use\s+['"]?([^'"\s]+)['"]?;?/gm;
 
 const WORKSPACE = rwsPath.findRootWorkspacePath(process.cwd());
 
-function processImportPath(importPath, fileRootDir = null, noext = false): string 
+function processImportPath(importPath: string, fileRootDir: string | null = null, noext: boolean = false): string 
 {        
+    if(!importPath){
+        return '';
+    }
+
+    // Windows || Unix
+    const isRootPath = /[A-Z]\:/.test(importPath.substring(0, 2)) || [...importPath][0] === '/'
+    
     if (importPath.split('')[0] === '~') {
         return fillSCSSExt(replaceWithNodeModules(importPath, null, true), noext);
     }
 
-    if (importPath.indexOf('@rws-mixins') === 0) {
+    if (importPath.indexOf('@rws-mixins') === 0) {        
         return path.resolve(rwsPath.findPackageDir(__dirname), 'src', 'styles', 'includes.scss');
     }
 
     if (importPath.indexOf('@cwd') === 0) {
-        return fillSCSSExt(process.cwd() + '/' + importPath.slice(4), noext);
+        return fillSCSSExt(path.join(process.cwd(), importPath.slice(4)), noext);
     }
 
-    if (importPath.split('')[0] === '/') {
-
+    if (isRootPath) {
         return fillSCSSExt(importPath, noext);
     }    
 
     if (fileRootDir) {
-        const relativized = path.resolve(fileRootDir) + '/' + importPath;     
+        const relativized = path.join(path.resolve(fileRootDir), importPath);     
 
         if (importPath.split('')[0] === '.') {
             return fillSCSSExt(relativized, noext);
         }
 
         if (!fs.existsSync(relativized)) {
-            const partSplit = relativized.split('/');
+            const partSplit = relativized.split(path.sep);
             partSplit[partSplit.length - 1] = '_' + partSplit[partSplit.length - 1] + '.scss';
 
             const newPath = underscorePath(relativized);
@@ -52,9 +58,9 @@ function processImportPath(importPath, fileRootDir = null, noext = false): strin
 }
 
 function underscorePath(path, noext = false) {
-    const partSplit = path.split('/');
+    const partSplit = path.split(path.sep);
     partSplit[partSplit.length - 1] = '_' + partSplit[partSplit.length - 1] + (path.indexOf('.scss') > - 1 || noext ? '' : '.scss');
-    return partSplit.join('/');
+    return partSplit.join(path.sep);
 }
 
 function fillSCSSExt(scssPath, noext = false) {
@@ -121,7 +127,7 @@ function detectImports(code) {
 }
 
 function replaceWithNodeModules(input, fileDir = null, absolute = false, token = '~') {
-    return input.replace(token, absolute ? `${path.resolve(WORKSPACE, 'node_modules')}/` : this.node_modules_dir(fileDir ? fileDir : process.cwd()));
+    return input.replace(token, absolute ? `${path.resolve(WORKSPACE, 'node_modules')}${path.sep}` : this.node_modules_dir(fileDir ? fileDir : process.cwd()));
 }
 
 function processImports(imports, fileRootDir, importStorage = {}, sub = false) {
@@ -132,7 +138,7 @@ function processImports(imports, fileRootDir, importStorage = {}, sub = false) {
     }[] = [];
 
     const getStorage = (sourceComponentPath, importedFileContent) => {
-        const sourceComponentPathFormatted = sourceComponentPath.replace('/', '_');
+        const sourceComponentPathFormatted = sourceComponentPath.replace(path.sep, '_');
 
         if (!(sourceComponentPathFormatted in importStorage)) {
             importStorage[sourceComponentPathFormatted] = importedFileContent;
@@ -145,7 +151,8 @@ function processImports(imports, fileRootDir, importStorage = {}, sub = false) {
   
     imports.forEach(importData => {
         const originalImportPath = importData[0];
-        let importPath = processImportPath(originalImportPath, fileRootDir);                    
+        let importPath = processImportPath(originalImportPath, fileRootDir);    
+                
         let replacedScssContent = getStorage(importPath, _scss_fs.getCodeFromFile(importPath).replace(/\/\*[\s\S]*?\*\//g, ''));
 
         const recursiveImports = extractScssImports(replacedScssContent, importPath)[0];
