@@ -1,8 +1,8 @@
 // custom-html-loader.js
 const fs = require('fs');
 const chalk = require('chalk');
-const _scss_cache = require('../../cfg/build_steps/webpack/_cache');
-const LoadersHelper = require('../../cfg/build_steps/webpack/_loaders');
+const _scss_cache = require('../../../cfg/build_steps/webpack/_cache');
+const LoadersHelper = require('../../../cfg/build_steps/webpack/_loaders');
 const md5 = require('md5');
 
 
