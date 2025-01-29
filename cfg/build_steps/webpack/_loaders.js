@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
-const RWSCssPlugin = require("../../../webpack/rws_scss_plugin");
+const RWSCssPlugin = require("../../../builder/webpack/rws_scss_plugin");
 const plugin = new RWSCssPlugin();
 const JSON5 = require('json5');
 const chalk = require('chalk');

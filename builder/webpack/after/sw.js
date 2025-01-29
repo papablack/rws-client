@@ -1,7 +1,7 @@
 const fs = require('fs');
 const chalk = require('chalk');
 const path = require('path');
-const tools = require('../../_tools');
+const tools = require('../../../_tools');
 
 module.exports = async (swPath) => {
    const swFilePath = path.resolve(process.cwd(), swPath);

@@ -1,5 +1,5 @@
 const path = require('path');
-const _tools = require('../_tools');
+const _tools = require('../../_tools');
 
 const _scss_compiler_builder = require('./scss/_compiler');
 let _scss_compiler = null;
@@ -7,7 +7,7 @@ const _scss_import_builder = require('./scss/_import');
 
 let _scss_import = null;
 const _scss_fs_builder = require('./scss/_fs');
-const { timingStart, timingStop } = require('../cfg/build_steps/webpack/_timing');
+const { timingStart, timingStop } = require('../../cfg/build_steps/webpack/_timing');
 let _scss_fs = null;
 
 
