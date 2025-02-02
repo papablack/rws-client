@@ -1,0 +1,50 @@
+// Import the new grid system (if needed - depends on your build setup)
+// @import 'grid';
+
+// Keep the legacy breakpoints for backward compatibility
+$mediaQuerySteps: $breakpoints;
+
+// Legacy mixins using new system
+
+// Mixin for the grid container
+@mixin grid-container() {
+  @include rws-gr;
+}
+
+@mixin grid-container-gap($gap) {
+  @include rws-gr-gap($gap);
+}
+
+// Internal helper kept for backward compatibility
+@mixin internal-grid-column($columns: 12) {
+  @include _gr-col-calc($columns);
+}
+
+// Legacy column mixins using new system
+@mixin grid-column($columns: 12) {
+  @include rws-gr-col($columns);
+}
+
+// Two breakpoint version
+@mixin grid-column($columns: 12, $mdColumns: 12) {
+  @include rws-gr-col($columns, $mdColumns);
+}
+
+// Three breakpoint version
+@mixin grid-column($columns: 12, $mdColumns: 12, $smColumns: 12) {
+  @include rws-gr-col($columns, $mdColumns, $smColumns);
+}
+
+// Four breakpoint version
+@mixin grid-column($columns: 12, $mdColumns: 12, $smColumns: 12, $xsColumns: 12) {
+  @include rws-gr-col($columns, $mdColumns, $smColumns, $xsColumns);
+}
+
+// Mixins for grid alignment
+@mixin grid-flex-align-items($horizontal, $vertical: top) {
+  @include rws-gr-align($horizontal, $vertical);
+}
+
+@mixin center-container() {
+  @include rws-gr-center;
+}
